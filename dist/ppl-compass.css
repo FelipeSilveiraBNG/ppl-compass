@@ -474,6 +474,15 @@ body {
 /* O acento quente. No máximo um elemento dourado por tela. */
 .ppl-btn--gold { background: var(--ppl-grad-gold); color: var(--ppl-ink); }
 
+/* Botão de alternância marcado. Sem isto o `aria-pressed` conta ao leitor de
+   tela o que a tela não mostra a ninguém — e quem enxerga fica sem saber qual
+   das quatro opções está valendo. */
+.ppl-btn[aria-pressed="true"] {
+  border-color: var(--ppl-primary);
+  background: var(--ppl-blue-50);
+  color: var(--ppl-primary);
+}
+
 .ppl-btn--sm    { padding: 6px var(--ppl-space-3); font-size: var(--ppl-text-xs);
                   border-radius: var(--ppl-radius-md); }
 .ppl-btn--icon  { padding: var(--ppl-space-2); border-radius: var(--ppl-radius-md); }
@@ -737,14 +746,43 @@ body {
 .ppl-dialog__head  { display: flex; align-items: center; justify-content: space-between;
                      gap: var(--ppl-space-3); margin-bottom: var(--ppl-space-3); }
 .ppl-dialog__title { font-size: var(--ppl-text-md); font-weight: 600; color: var(--ppl-ink); }
-/* A frase que o operador precisa digitar no R3. */
+/* A frase que o operador precisa digitar no R3. `text-transform: none` NÃO é
+   detalhe: o rótulo em volta é caixa-alta, e a frase herdaria isso — mostrando
+   "JOSÉ DA SILVA" onde o que se pede é "José da Silva". Texto exato exibido
+   diferente do que é não é texto exato. */
 .ppl-dialog__phrase {
   border-radius: var(--ppl-radius-sm);
   background: var(--ppl-blue-50);
   padding: 2px 6px;
   font-family: var(--ppl-font-data);
+  text-transform: none;
+  letter-spacing: 0;
   color: var(--ppl-ink);
 }
+
+.ppl-dialog__body { display: flex; flex-direction: column; gap: var(--ppl-space-4); }
+.ppl-dialog__foot { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+
+/* O ALVO da ação, sempre visível. Sem ele o operador confirma o diálogo, não a
+   operação — e "excluir dependente" some do texto quando três abas depois ele
+   não lembra mais QUAL dependente. A barra azul à esquerda existe para o olho
+   achar o bloco antes de ler o título. */
+.ppl-dialog__alvo {
+  border: 1px solid var(--ppl-border);
+  border-left: 3px solid var(--ppl-primary);
+  border-radius: var(--ppl-radius-md);
+  background: var(--ppl-surface-sunk);
+  padding: var(--ppl-space-3) var(--ppl-space-4);
+  font-size: var(--ppl-text-base);
+  color: var(--ppl-ink);
+}
+.ppl-dialog__alvo--risco { border-left-color: var(--ppl-danger); }
+
+/* R3: o campo da frase exata. Em `--ppl-font-data` porque o que se digita aqui
+   é um identificador — competência, matrícula, nome — e comparar caractere a
+   caractere é mais fácil com largura fixa. */
+.ppl-dialog__typed { display: flex; flex-direction: column; gap: 6px; }
+.ppl-dialog__typed .ppl-input { font-family: var(--ppl-font-data); }
 
 .ppl-kbd {
   border: 1px solid var(--ppl-border);
@@ -1030,6 +1068,39 @@ body {
                 background: var(--ppl-border); overflow: hidden; }
 .ppl-progress__bar { height: 100%; background: var(--ppl-primary);
                      transition: width var(--ppl-slow) ease; }
+
+/* ── O painel de quatro estados ─────────────────────────────────────────────
+ * A receita mais copiada do console: 51 tabelas repetem esta mesma máquina à
+ * mão. Aqui o autor escreve os quatro blocos uma vez e troca UM atributo:
+ *
+ *   <div class="ppl-card ppl-panel ppl-data-panel" data-ppl-state="dados">
+ *     <div class="ppl-panel__head">…</div>          sem data-ppl-when: sempre visível
+ *     <div data-ppl-when="dados">…a tabela…</div>
+ *     <div data-ppl-when="carregando">…skeletons…</div>
+ *     <div data-ppl-when="vazio erro">…</div>       um bloco pode servir a dois
+ *   </div>
+ *
+ * O cabeçalho NÃO leva `data-ppl-when` de propósito: em qualquer estado ele
+ * continua dizendo de que painel se trata. Lista que perde o próprio título
+ * enquanto carrega obriga a esperar para saber o que se está esperando.
+ *
+ * Só declaramos `display: none`, nunca um valor de display. Forçar `block` no
+ * bloco visível quebraria quem usa grid ou flex dentro dele — e quebraria em
+ * silêncio, que é o pior jeito.
+ *
+ * `~=` e não `=` porque um bloco pode servir a mais de um estado: vazio e erro
+ * costumam ser a mesma moldura com outro texto e outra ação.
+ *
+ * Estado ausente ou desconhecido mostra TUDO, empilhado. É para incomodar: um
+ * painel que some inteiro esconde o defeito; um painel com os quatro estados
+ * um sobre o outro aponta para ele.
+ * ─────────────────────────────────────────────────────────────────────────── */
+.ppl-data-panel[data-ppl-state="dados"]      > [data-ppl-when]:not([data-ppl-when~="dados"]),
+.ppl-data-panel[data-ppl-state="carregando"] > [data-ppl-when]:not([data-ppl-when~="carregando"]),
+.ppl-data-panel[data-ppl-state="vazio"]      > [data-ppl-when]:not([data-ppl-when~="vazio"]),
+.ppl-data-panel[data-ppl-state="erro"]       > [data-ppl-when]:not([data-ppl-when~="erro"]) {
+  display: none;
+}
 
 /* ══════════════════════════════════════════════════════════════════════════
  * 18 · STEPS — wizard

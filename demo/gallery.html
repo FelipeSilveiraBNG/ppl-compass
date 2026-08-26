@@ -558,6 +558,116 @@
     </div>
   </div>
 
+  <!-- ============================================================ -->
+  <h2>20 · Painel de dados — a máquina de quatro estados</h2>
+  <p class="lead">
+    A receita mais copiada do console: 51 tabelas repetem esta mesma máquina à mão. Aqui os quatro
+    blocos são escritos uma vez e quem escolhe é o <code>data-ppl-state</code> do painel. O
+    cabeçalho fica fora da troca de propósito — lista que perde o próprio título enquanto carrega
+    obriga a esperar para saber o que se está esperando.
+  </p>
+  <div class="wrap" style="margin-bottom:12px">
+    <button class="ppl-btn ppl-btn--sm ppl-btn--secondary" data-ppl-state-set="g-painel:dados">Dados</button>
+    <button class="ppl-btn ppl-btn--sm ppl-btn--secondary" data-ppl-state-set="g-painel:carregando">Carregando</button>
+    <button class="ppl-btn ppl-btn--sm ppl-btn--secondary" data-ppl-state-set="g-painel:vazio">Vazio</button>
+    <button class="ppl-btn ppl-btn--sm ppl-btn--secondary" data-ppl-state-set="g-painel:erro">Erro</button>
+    <span class="ppl-muted" style="font-size:12.5px">— estado desconhecido mostra os quatro empilhados, de propósito.</span>
+  </div>
+
+  <div class="ppl-card ppl-panel ppl-data-panel" id="g-painel" data-ppl-state="dados">
+    <div class="ppl-panel__head">
+      <div class="ppl-panel__id">
+        <span class="ppl-icon-tile"><i data-ppl-icon="list" data-ppl-size="18"></i></span>
+        <div>
+          <div class="ppl-panel__title">Rubricas da competência</div>
+          <div class="ppl-panel__sub">O cabeçalho não tem <code>data-ppl-when</code>: aparece nos quatro estados.</div>
+        </div>
+      </div>
+      <button class="ppl-btn ppl-btn--sm ppl-btn--secondary">Nova rubrica</button>
+    </div>
+
+    <div class="ppl-table-wrap" data-ppl-when="dados">
+      <table class="ppl-table" style="min-width:0">
+        <thead><tr><th>Código</th><th>Descrição</th><th class="ppl-td-num">Valor</th></tr></thead>
+        <tbody>
+          <tr><td class="ppl-td-data">1001</td><td>Salário base</td><td class="ppl-td-num">R$ 6.120,00</td></tr>
+          <tr><td class="ppl-td-data">1030</td><td>Horas extras 50%</td><td class="ppl-td-num">R$ 612,00</td></tr>
+          <tr><td class="ppl-td-data">3010</td><td>INSS</td><td class="ppl-td-num">R$ 1.113,63</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ppl-stack ppl-stack--tight" data-ppl-when="carregando">
+      <div class="ppl-skeleton"></div><div class="ppl-skeleton"></div><div class="ppl-skeleton"></div>
+    </div>
+
+    <div class="ppl-state ppl-state--empty" data-ppl-when="vazio">
+      <span class="ppl-state__icon"><i data-ppl-icon="list" data-ppl-size="28"></i></span>
+      <p>Nenhuma rubrica ativa nesta competência.</p>
+      <button class="ppl-btn ppl-btn--primary ppl-btn--sm">Criar a primeira</button>
+    </div>
+
+    <div class="ppl-state" data-ppl-when="erro">
+      <span class="ppl-state__icon"><i data-ppl-icon="x-circle" data-ppl-size="28"></i></span>
+      <p>Não foi possível carregar as rubricas.</p>
+      <button class="ppl-btn ppl-btn--secondary ppl-btn--sm">Tentar de novo</button>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>21 · Confirmação por risco</h2>
+  <p class="lead">
+    O nível é atributo do <strong>processo</strong>, não decisão de tela — e é ele que escolhe o
+    diálogo. Repare no que o pacote <em>recusa</em>: R0 e R1 não abrem modal nenhum. Fadiga de
+    confirmação é risco mapeado, e confirmar ação reversível treina o operador a clicar sem ler —
+    é a confirmação do R3 que paga essa conta.
+  </p>
+  <div class="demo wrap">
+    <button class="ppl-btn ppl-btn--secondary"
+            data-ppl-confirm="R2"
+            data-ppl-confirm-titulo="Reabrir a competência 2026-08?"
+            data-ppl-confirm-corpo="A folha volta para apuração e os holerites já emitidos deixam de valer. Fechar de novo exige recalcular tudo."
+            data-ppl-confirm-alvo="Gestão Hospitalar Ltda · CNPJ 12.345.678/0001-90 · 1.240 contratos"
+            data-ppl-confirm-acao="Reabrir competência"
+            data-ppl-confirm-feito="Competência 2026-08 reaberta para apuração.">
+      R2 — reabrir competência
+    </button>
+
+    <button class="ppl-btn ppl-btn--danger"
+            data-ppl-confirm="R3"
+            data-ppl-confirm-titulo="Fechar a competência 2026-08 em definitivo?"
+            data-ppl-confirm-corpo="Gera os eventos S-1200 do eSocial para 1.240 contratos. Depois de transmitido, corrigir exige lote retificador."
+            data-ppl-confirm-alvo="Gestão Hospitalar Ltda · competência 2026-08 · R$ 1.284.930,55 líquidos"
+            data-ppl-confirm-frase="2026-08"
+            data-ppl-confirm-processo="fechamento-definitivo"
+            data-ppl-confirm-acao="Fechar em definitivo"
+            data-ppl-confirm-feito="Competência 2026-08 fechada. S-1200 na fila do eSocial.">
+      R3 — fechar competência
+    </button>
+
+    <button class="ppl-btn ppl-btn--secondary"
+            data-ppl-confirm="R1"
+            data-ppl-confirm-titulo="Aprovar a correção de ponto?"
+            data-ppl-confirm-alvo="Carlos Menezes · 26/08">
+      R1 — recusado, e diz por quê
+    </button>
+
+    <button class="ppl-btn ppl-btn--secondary"
+            data-ppl-confirm="R3"
+            data-ppl-confirm-titulo="Um R3 sem frase para digitar"
+            data-ppl-confirm-alvo="Alvo qualquer">
+      R3 sem frase — também recusado
+    </button>
+  </div>
+  <p class="lead" style="margin-top:8px">
+    No R3, <code>Esc</code> cancela mas <strong>nunca confirma</strong>, e o clique fora não fecha:
+    perder a frase digitada por um clique torto custa refazer o caminho todo. A comparação ignora
+    acento e caixa. O evento de auditoria sai em <code>document</code> como
+    <code>ppl:auditoria</code> — num protótipo ele não tem para onde ir, e é isso que a linha
+    abaixo mostra.
+  </p>
+  <div class="demo"><code id="g-auditoria" class="ppl-muted">nenhum evento de auditoria ainda</code></div>
+
 </div>
 
 <script src="../dist/ppl-compass-icons.js"></script>
@@ -607,6 +717,14 @@
       }
     },
     onConcluir: function () { PplCompass.toast.success('Admissão concluída — matrícula 2026-0042 criada.'); }
+  });
+
+  /* O R3 emite `ppl:auditoria` com quem, quando e o quê. Num protótipo não há
+     para onde mandar — mostrar aqui é o jeito honesto de dizer que o contrato
+     existe e que implementá-lo é trabalho de quem for construir de verdade. */
+  document.addEventListener('ppl:auditoria', function (e) {
+    document.getElementById('g-auditoria').textContent =
+      'ppl:auditoria · ' + JSON.stringify(e.detail);
   });
 </script>
 </body>

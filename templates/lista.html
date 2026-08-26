@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Folha da competência — BNG People</title>
 <link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.css"
-      integrity="sha384-DZwlqNlJtmEknq2/usdX6D4DQTBXNVqftwjE+xt2XQCTpjMS/4dk+Fa3Q8dzsvg9"
+      href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.3.0/dist/ppl-compass.css"
+      integrity="sha384-E/qBbSGDbYr5hi+Q+4F1wUy5uXO+0q56bzlXkG86ngrjw1upmDRUvA3d1m/MBjhT"
       crossorigin="anonymous">
 </head>
 <body data-brand="people">
 
 <!-- LISTA — o arquétipo mais comum do console: 51 tabelas seguem esta forma.
-     Os QUATRO estados estão todos aqui; três com `hidden`, troque o atributo de
-     lugar para ver cada um. Vêm no template de propósito: estado de lista é o
-     que separa protótipo bonito de protótipo implementável, e ninguém lembra
-     de desenhar o vazio e o erro depois. -->
+     Os QUATRO estados estão aqui, e quem escolhe é o `data-ppl-state` do painel:
+     troque "dados" por "carregando", "vazio" ou "erro". Vêm no template de
+     propósito — estado de lista é o que separa protótipo bonito de protótipo
+     implementável, e ninguém lembra de desenhar o vazio e o erro depois. -->
 
 <div class="ppl-shell">
 
@@ -97,7 +97,7 @@
           <div class="ppl-card ppl-stat"><span class="ppl-stat__value">R$ 1.284.930,55</span><span class="ppl-stat__label">Líquido</span></div>
         </div>
 
-        <div class="ppl-card ppl-panel">
+        <div class="ppl-card ppl-panel ppl-data-panel" id="painel-folha" data-ppl-state="dados">
           <div class="ppl-panel__head">
             <div class="ppl-panel__id">
               <span class="ppl-icon-tile"><i data-ppl-icon="users" data-ppl-size="18"></i></span>
@@ -113,7 +113,7 @@
           </div>
 
           <!-- ─── ESTADO 1 · COM DADOS ─────────────────────────────────── -->
-          <div class="ppl-table-wrap">
+          <div class="ppl-table-wrap" data-ppl-when="dados">
             <table class="ppl-table">
               <thead>
                 <tr>
@@ -158,14 +158,14 @@
           </div>
 
           <!-- ─── ESTADO 2 · CARREGANDO ────────────────────────────────── -->
-          <div class="ppl-stack ppl-stack--tight" hidden>
+          <div class="ppl-stack ppl-stack--tight" data-ppl-when="carregando">
             <div class="ppl-skeleton"></div>
             <div class="ppl-skeleton"></div>
             <div class="ppl-skeleton"></div>
           </div>
 
           <!-- ─── ESTADO 3 · VAZIO ─────────────────────────────────────── -->
-          <div class="ppl-state ppl-state--empty" hidden>
+          <div class="ppl-state ppl-state--empty" data-ppl-when="vazio">
             <span class="ppl-state__icon"><i data-ppl-icon="wallet" data-ppl-size="28"></i></span>
             <p>Nenhum colaborador apurado nesta competência.</p>
             <button class="ppl-btn ppl-btn--primary ppl-btn--sm">Calcular folha</button>
@@ -174,7 +174,7 @@
           <!-- ─── ESTADO 4 · ERRO ──────────────────────────────────────── -->
           <!-- Erro traz a saída, não só o diagnóstico: quem lê precisa saber
                o que fazer agora. -->
-          <div class="ppl-state" hidden>
+          <div class="ppl-state" data-ppl-when="erro">
             <span class="ppl-state__icon"><i data-ppl-icon="x-circle" data-ppl-size="28"></i></span>
             <p>Não foi possível carregar a apuração desta competência.</p>
             <button class="ppl-btn ppl-btn--secondary ppl-btn--sm">Tentar de novo</button>
@@ -187,10 +187,10 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass-icons.js"
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.3.0/dist/ppl-compass-icons.js"
         integrity="sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.js"
-        integrity="sha384-yyCdn8gp8pMPh0JSHtSNXE3SeRJJfN2M4LO940mZkTB9d9PuyqoSgkE1aTKUF9V/" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.3.0/dist/ppl-compass.js"
+        integrity="sha384-yPJN2qQps+sgUtFuxo3DDMO7FdKtRp0r5ilx2W6hlE8ispJkKBwj6xTxs8yZWGY5" crossorigin="anonymous"></script>
 <script>addEventListener('DOMContentLoaded', () => PplCompass.init());</script>
 </body>
 </html>

@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mariana Souza — BNG People</title>
 <link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.css"
-      integrity="sha384-DZwlqNlJtmEknq2/usdX6D4DQTBXNVqftwjE+xt2XQCTpjMS/4dk+Fa3Q8dzsvg9"
+      href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.3.0/dist/ppl-compass.css"
+      integrity="sha384-E/qBbSGDbYr5hi+Q+4F1wUy5uXO+0q56bzlXkG86ngrjw1upmDRUvA3d1m/MBjhT"
       crossorigin="anonymous">
 </head>
 <body data-brand="people">
@@ -176,16 +176,60 @@
           </div>
         </section>
 
+
+        <!-- As duas ações que mudam o contrato ficam separadas, no fim. Botão
+             destrutivo ao lado de "Gerar holerite" é a chave do arquivo morto
+             pendurada na porta da sala.
+
+             O nível de risco é atributo do PROCESSO, não decisão de tela: é ele
+             que escolhe o diálogo. R2 abre confirmação com o foco em "Cancelar";
+             R3 exige digitar o texto exato e registra evento de auditoria. -->
+        <section class="ppl-card ppl-panel">
+          <div class="ppl-panel__head">
+            <div class="ppl-panel__id">
+              <span class="ppl-icon-tile"><i data-ppl-icon="alert" data-ppl-size="18"></i></span>
+              <div>
+                <div class="ppl-panel__title">Ações que mudam o contrato</div>
+                <div class="ppl-panel__sub">Cada uma pede uma confirmação proporcional ao risco.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ppl-row">
+            <button class="ppl-btn ppl-btn--secondary"
+                    data-ppl-confirm="R2"
+                    data-ppl-confirm-titulo="Desativar o acesso de Mariana Souza?"
+                    data-ppl-confirm-corpo="Ela perde o acesso ao aplicativo e para de registrar ponto. Reativar exige um novo cadastro de credencial."
+                    data-ppl-confirm-alvo="Mariana Souza · matrícula 2026-0042 · UTI Adulto"
+                    data-ppl-confirm-acao="Desativar acesso"
+                    data-ppl-confirm-feito="Acesso de Mariana Souza desativado.">
+              Desativar acesso
+            </button>
+
+            <button class="ppl-btn ppl-btn--danger"
+                    data-ppl-confirm="R3"
+                    data-ppl-confirm-titulo="Concluir a rescisão de Mariana Souza?"
+                    data-ppl-confirm-corpo="Gera as verbas rescisórias e o evento S-2299 do eSocial. Depois de transmitido, corrigir exige retificação."
+                    data-ppl-confirm-alvo="Mariana Souza · matrícula 2026-0042 · admitida em 01/09/2026"
+                    data-ppl-confirm-frase="Mariana Souza"
+                    data-ppl-confirm-processo="rescisao-contrato"
+                    data-ppl-confirm-acao="Concluir rescisão"
+                    data-ppl-confirm-feito="Rescisão concluída — S-2299 na fila do eSocial.">
+              Rescindir contrato
+            </button>
+          </div>
+        </section>
+
       </div>
     </main>
 
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass-icons.js"
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.3.0/dist/ppl-compass-icons.js"
         integrity="sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.js"
-        integrity="sha384-yyCdn8gp8pMPh0JSHtSNXE3SeRJJfN2M4LO940mZkTB9d9PuyqoSgkE1aTKUF9V/" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.3.0/dist/ppl-compass.js"
+        integrity="sha384-yPJN2qQps+sgUtFuxo3DDMO7FdKtRp0r5ilx2W6hlE8ispJkKBwj6xTxs8yZWGY5" crossorigin="anonymous"></script>
 <script>addEventListener('DOMContentLoaded', () => PplCompass.init());</script>
 </body>
 </html>

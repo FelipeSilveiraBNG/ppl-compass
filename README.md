@@ -16,18 +16,18 @@ já correta e as regras de acessibilidade já embutidas.
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.css"
-        integrity="sha384-DZwlqNlJtmEknq2/usdX6D4DQTBXNVqftwjE+xt2XQCTpjMS/4dk+Fa3Q8dzsvg9"
+        href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.3.0/dist/ppl-compass.css"
+        integrity="sha384-E/qBbSGDbYr5hi+Q+4F1wUy5uXO+0q56bzlXkG86ngrjw1upmDRUvA3d1m/MBjhT"
         crossorigin="anonymous">
 </head>
 <body data-brand="people">
 
   <button class="ppl-btn ppl-btn--primary">Concluir admissão</button>
 
-  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass-icons.js"
+  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.3.0/dist/ppl-compass-icons.js"
           integrity="sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.js"
-          integrity="sha384-yyCdn8gp8pMPh0JSHtSNXE3SeRJJfN2M4LO940mZkTB9d9PuyqoSgkE1aTKUF9V/" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.3.0/dist/ppl-compass.js"
+          integrity="sha384-yPJN2qQps+sgUtFuxo3DDMO7FdKtRp0r5ilx2W6hlE8ispJkKBwj6xTxs8yZWGY5" crossorigin="anonymous"></script>
   <script>addEventListener('DOMContentLoaded', () => PplCompass.init());</script>
 </body>
 </html>
@@ -63,7 +63,7 @@ HTML copiável de cada um.
 **Formulário** `.ppl-field` `.ppl-input` `.ppl-select` `.ppl-check` `.ppl-combo`
 **Sobreposição** `.ppl-drawer` `.ppl-dialog` `.ppl-scrim`
 **Navegação** `.ppl-nav` `.ppl-topbar` `.ppl-tabbar` `.ppl-page-head`
-**Conteúdo** `.ppl-panel` `.ppl-choice` `.ppl-stat` `.ppl-table` `.ppl-steps` `.ppl-review` `.ppl-disclosure`
+**Conteúdo** `.ppl-panel` `.ppl-data-panel` `.ppl-choice` `.ppl-stat` `.ppl-table` `.ppl-steps` `.ppl-review` `.ppl-disclosure`
 **Público** `.ppl-landing` `.ppl-landing__bar` `.ppl-hero`
 **Layout** `.ppl-shell` `.ppl-main` `.ppl-app` `.ppl-stack` `.ppl-row` `.ppl-cols-2`
 
@@ -71,6 +71,10 @@ HTML copiável de cada um.
 
 ```html
 <aside class="ppl-nav" data-ppl-nav><script type="application/json">{ "itens": [ … ] }</script></aside>
+<div class="ppl-data-panel" id="p" data-ppl-state="dados"><div data-ppl-when="dados">…</div></div>
+<button data-ppl-state-set="p:vazio">Vazio</button>
+<button data-ppl-confirm="R2" data-ppl-confirm-titulo="…" data-ppl-confirm-alvo="…"
+        data-ppl-confirm-acao="…" data-ppl-confirm-feito="…">Reabrir</button>
 <button data-ppl-drawer-open="meu-drawer">Abrir</button>
 <button data-ppl-drawer-close>Fechar</button>
 <form data-ppl-submit="Rubrica 1042 criada.">…</form>
@@ -101,6 +105,20 @@ PplCompass.tema.alternar()
 PplCompass.icon(nome, tamanho)
 PplCompass.fmt.cpf / .cnpj / .dinheiro / .contagem / .competencia
 
+PplCompass.painel('painel-folha', 'carregando');   // dados | carregando | vazio | erro
+
+PplCompass.confirmar({
+  risco: 'R2' | 'R3',                 // R0 e R1 são RECUSADOS: não abrem diálogo
+  titulo: 'Reabrir a competência 2026-08?',        // a consequência, não a ação
+  alvo: 'Gestão Hospitalar Ltda · 12.345.678/0001-90',   // ou [{ chave, valor, data? }]
+  corpo: '…',
+  frase: '2026-08',                   // só R3 — obrigatório nele
+  processo: 'fechamento-definitivo',  // só R3 — o "o quê" do evento de auditoria
+  acao: 'Reabrir competência',
+  onConfirmar() {}, onCancelar() {}
+});
+// R3 emite `ppl:auditoria` em document: { processo, risco, alvo, quando }
+
 new PplCompass.Wizard({
   raiz, efeito: 'juridico' | 'financeiro' | 'nenhum',
   passos: [{ id, label, validar? }],   // 'revisao' é obrigatório se efeito ≠ 'nenhum'
@@ -126,6 +144,17 @@ Não são preferências de estilo. Um protótipo que as viola gera retrabalho na
 - **Fluxo de efeito jurídico ou financeiro termina em revisão.** O `Wizard` falha fechado:
   sem a etapa `revisao` ele não renderiza e mostra o defeito.
 - **Contador é o número real, com separador de milhar** — nunca `"99+"`.
+- **Confirmação é proporcional ao risco do processo**, e o risco é atributo do processo, não
+  decisão de tela. R0 e R1 **não abrem diálogo** — `confirmar()` recusa e diz por quê. Fadiga de
+  confirmação é risco mapeado: confirmar ação reversível treina o operador a clicar sem ler, e é a
+  confirmação do R3 que paga essa conta.
+- **O alvo da ação fica visível no diálogo**, sempre. Sem ele o operador confirma o diálogo, não a
+  operação.
+- **`Esc` nunca confirma** — mas cancela nos dois níveis, porque fechar diálogo pelo teclado é
+  requisito de acessibilidade. No R3 o clique fora não faz nada: perder a frase digitada por um
+  clique torto custa refazer o caminho inteiro.
+- **Um modal por vez.** O foco é preso marcando os irmãos como `inert`, então um segundo modal
+  nasceria inerte — desenhado na tela e invisível ao teclado. Empilhar aqui não degrada, apaga.
 - **Tabbar tem no máximo 5 itens.** O sexto não quebra o grid em silêncio: `nav()` falha fechado,
   como faz com grupo vazio, item sem destino e `rotaAtiva` que não existe no menu. Menu que não
   sabe onde você está é pior do que menu nenhum, porque mente com confiança.
@@ -158,7 +187,7 @@ gerenciar `tabindex` à mão —, custom properties e Grid. Fora da v1: aninhame
 
 | Referência | Cache | Consequência |
 |---|---|---|
-| `@0.2.0` | 1 ano, imutável | a demo de amanhã é byte a byte a de hoje |
+| `@0.3.0` | 1 ano, imutável | a demo de amanhã é byte a byte a de hoje |
 | `@main` | 12 h no edge | a demo pode mudar sozinha antes da reunião |
 
 **Use o arquivo com SRI, não o `.min`.** O jsDelivr gera `.min.css` automaticamente, mas avisa
@@ -205,7 +234,7 @@ node scripts/preview.mjs      # espelha templates/ em .preview/ apontando para .
 node scripts/sri.mjs          # tabela de hashes para colar neste README
 node scripts/sri.mjs --html   # as tags prontas, já com a URL do CDN
 
-PPL_TAG=v0.2.0 node scripts/sri.mjs --html
+PPL_TAG=v0.3.0 node scripts/sri.mjs --html
 ```
 
 ### Validar antes de publicar
@@ -230,8 +259,8 @@ python -m http.server 8777
 ```bash
 node scripts/build.mjs
 node scripts/sri.mjs              # cole os hashes aqui, em demo/proof.html e em templates/*.html
-git add -A && git commit -m "release: v0.2.0"
-git tag v0.2.0 && git push origin main --tags
+git add -A && git commit -m "release: v0.3.0"
+git tag v0.3.0 && git push origin main --tags
 ```
 
 O hash cobre o **byte exato** de cada arquivo: qualquer mudança, inclusive num comentário, gera
@@ -241,14 +270,14 @@ um hash novo. Regere **antes** de criar a tag, nunca depois.
 
 ## Hashes SRI
 
-| Arquivo | Tamanho | `integrity` (v0.2.0) |
+| Arquivo | Tamanho | `integrity` (v0.3.0) |
 |---|---|---|
-| `ppl-compass-components.css` | 48.7 KB | `sha384-CsCaJMBoewOhYxJy/9ABAHzI34e0ItTfTSacM2cGqNIQMaFxru4brtQd3xQkYv7O` |
+| `ppl-compass-components.css` | 52.6 KB | `sha384-rblKGhGSAqP+I5ktX6NVKEe38OV1BCbqM/48XsK697iZ8lXvo+DVbBwjH4GOPobk` |
 | `ppl-compass-icons.js` | 6.3 KB | `sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx` |
-| `ppl-compass-nofonts.css` | 62.3 KB | `sha384-d1PfJ66/scn9zF6LnpL+9iMqG2yafnZoTvwjlB9qsDmcKc3sYajAamy/zqQaYUhB` |
+| `ppl-compass-nofonts.css` | 66.2 KB | `sha384-2Yjt1p6csRAkxNtFsbk7kM/ngmCeReS5SVO60/Y2IXgIfh7j7g6+yDIf9l8Qbw6o` |
 | `ppl-compass-tokens.css` | 12.8 KB | `sha384-e9hvrC/d4+ZqAfi200UvHN5OofkTbnN6JmygwRhEOMD21yowqA9oRCNn91Whkssn` |
-| `ppl-compass.css` | 65.0 KB | `sha384-DZwlqNlJtmEknq2/usdX6D4DQTBXNVqftwjE+xt2XQCTpjMS/4dk+Fa3Q8dzsvg9` |
-| `ppl-compass.js` | 36.7 KB | `sha384-yyCdn8gp8pMPh0JSHtSNXE3SeRJJfN2M4LO940mZkTB9d9PuyqoSgkE1aTKUF9V/` |
+| `ppl-compass.css` | 68.8 KB | `sha384-E/qBbSGDbYr5hi+Q+4F1wUy5uXO+0q56bzlXkG86ngrjw1upmDRUvA3d1m/MBjhT` |
+| `ppl-compass.js` | 51.7 KB | `sha384-yPJN2qQps+sgUtFuxo3DDMO7FdKtRp0r5ilx2W6hlE8ispJkKBwj6xTxs8yZWGY5` |
 
 ---
 

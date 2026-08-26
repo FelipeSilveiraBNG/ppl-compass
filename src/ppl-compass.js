@@ -16,6 +16,55 @@
   var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
 
   /* ==========================================================================
+   * 0 · MODAL — o que drawer e diálogo compartilham
+   * --------------------------------------------------------------------------
+   * UM MODAL POR VEZ, e isso não é preferência estética. O foco é preso
+   * marcando os IRMÃOS do que está aberto como `inert`; um segundo modal, aberto
+   * por cima, nasceria irmão do primeiro e portanto inerte — desenhado na tela,
+   * invisível para o teclado e para o leitor de tela. Empilhar aqui não degrada,
+   * apaga. Então quem tenta abrir o segundo é recusado, e sabe por quê.
+   *
+   * A região de notificações fica FORA da inertização: um toast que aparece
+   * enquanto o modal está aberto precisa continuar sendo anunciado. Prender o
+   * foco é impedir que a pessoa se perca, não silenciar o sistema.
+   * ======================================================================== */
+  var modal = (function () {
+    var atual = null;
+    var gatilho = null;
+    var overflow = '';
+
+    function inertizar(el, ligado) {
+      $$('body > *').forEach(function (n) {
+        if (n === el || n.classList.contains('ppl-toaster')) return;
+        if (ligado) n.setAttribute('inert', ''); else n.removeAttribute('inert');
+      });
+    }
+
+    return {
+      /** O elemento modal aberto, ou null. */
+      aberto: function () { return atual; },
+
+      abrir: function (el, origem) {
+        atual = el;
+        gatilho = origem || document.activeElement;
+        overflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        inertizar(el, true);
+      },
+
+      fechar: function (el) {
+        inertizar(el, false);
+        document.body.style.overflow = overflow;
+        atual = null;
+        /* O foco VOLTA ao gatilho. Sem isto, fechar um painel joga o teclado
+           para o início do documento e a pessoa refaz o caminho inteiro. */
+        if (gatilho && gatilho.focus) gatilho.focus();
+        gatilho = null;
+      }
+    };
+  })();
+
+  /* ==========================================================================
    * 1 · DRAWER
    * --------------------------------------------------------------------------
    * Contrato de acessibilidade que a tradução não pode perder:
@@ -26,25 +75,13 @@
    *    não escapam do painel. Antes isso exigia varrer tabindex à mão.
    * ======================================================================== */
   var drawer = (function () {
-    var gatilho = null;
-    var overflow = '';
-
-    function inertizarIrmaos(el, ligado) {
-      $$('body > *').forEach(function (n) {
-        if (n === el) return;
-        if (ligado) n.setAttribute('inert', ''); else n.removeAttribute('inert');
-      });
-    }
-
     function abrir(id, origem) {
       var el = document.getElementById(id);
       if (!el || el.dataset.open === 'true') return;
-      gatilho = origem || document.activeElement;
+      if (modal.aberto()) return;              // um modal por vez — ver o bloco 0
       el.dataset.open = 'true';
       el.removeAttribute('aria-hidden');
-      overflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      inertizarIrmaos(el, true);
+      modal.abrir(el, origem);
       var painel = $('.ppl-drawer__panel', el);
       if (painel) { painel.setAttribute('tabindex', '-1'); painel.focus(); }
     }
@@ -54,10 +91,7 @@
       if (!el) return;
       el.dataset.open = 'false';
       el.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = overflow;
-      inertizarIrmaos(el, false);
-      if (gatilho && gatilho.focus) gatilho.focus();
-      gatilho = null;
+      modal.fechar(el);
     }
 
     function ligar() {
@@ -505,8 +539,12 @@
       raiz.textContent = '';
       var alerta = el('div', 'ppl-alert ppl-alert--danger');
       alerta.setAttribute('role', 'alert');
-      alerta.appendChild(el('strong', null, 'Navegação mal montada — nada foi exibido.'));
-      alerta.append(' ' + mensagem);
+      /* Um filho só. `.ppl-alert` é flex de [ícone, texto]: dois filhos de texto
+         viram duas colunas, e o aviso sai espremido em vez de legível. */
+      var linha = el('span');
+      linha.appendChild(el('strong', null, 'Navegação mal montada — nada foi exibido.'));
+      linha.append(' ' + mensagem);
+      alerta.appendChild(linha);
       raiz.appendChild(alerta);
       return null;
     }
@@ -679,8 +717,10 @@
       var alerta = document.createElement('div');
       alerta.className = 'ppl-alert ppl-alert--danger';
       alerta.setAttribute('role', 'alert');
-      alerta.innerHTML = '<strong>Fluxo mal montado — nada foi exibido.</strong>&nbsp;';
-      alerta.append(this.defeito);
+      var linha = document.createElement('span');
+      linha.innerHTML = '<strong>Fluxo mal montado — nada foi exibido.</strong>&nbsp;';
+      linha.append(this.defeito);
+      alerta.appendChild(linha);
       raiz.appendChild(alerta);
       return;
     }
@@ -848,6 +888,329 @@
   };
 
   /* ==========================================================================
+   * 11 · PAINEL DE DADOS — a máquina de quatro estados
+   * --------------------------------------------------------------------------
+   * A receita mora no CSS; aqui ficam só as duas portas para trocar de estado.
+   * Declarativa, para o protótipo demonstrar os quatro sem escrever JavaScript:
+   *
+   *   <button data-ppl-state-set="painel-folha:vazio">Vazio</button>
+   *
+   * E imperativa, para quando o protótipo simula uma carga:
+   *
+   *   PplCompass.painel('painel-folha', 'carregando');
+   *
+   * Os botões de um mesmo painel formam um grupo de alternância de fato, então
+   * carregam `aria-pressed`. Sem isso o leitor de tela anuncia quatro botões
+   * idênticos e nenhum jeito de saber em qual estado a lista está.
+   * ======================================================================== */
+  var painel = {
+    trocar: function (alvo, estado) {
+      var el = typeof alvo === 'string' ? document.getElementById(alvo) : alvo;
+      if (!el) return null;
+      el.dataset.pplState = estado;
+      painel._marcar(el.id, estado);
+      return el;
+    },
+
+    _marcar: function (id, estado) {
+      if (!id) return;
+      $$('[data-ppl-state-set^="' + id + ':"]').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.dataset.pplStateSet.split(':')[1] === estado));
+      });
+    },
+
+    _ligar: function () {
+      $$('[data-ppl-state-set]').forEach(function (b) {
+        var partes = b.dataset.pplStateSet.split(':');
+        b.addEventListener('click', function () { painel.trocar(partes[0], partes[1]); });
+      });
+      /* Marca o estado inicial a partir do que o HTML já diz. */
+      $$('.ppl-data-panel[data-ppl-state]').forEach(function (p) {
+        painel._marcar(p.id, p.dataset.pplState);
+      });
+    }
+  };
+
+  /* ==========================================================================
+   * 12 · CONFIRMAÇÃO POR RISCO — R2 e R3
+   * --------------------------------------------------------------------------
+   * O nível de risco é atributo do PROCESSO, não decisão de tela. Por isso ele
+   * é a primeira coisa que se declara, e é ele que escolhe o diálogo:
+   *
+   *   R2  difícil de reverter        reabrir competência, excluir dependente
+   *       consequência no título · alvo visível · botão destrutivo em `danger`
+   *       · FOCO INICIAL NO "CANCELAR"
+   *
+   *   R3  alto risco jurídico ou financeiro    concluir rescisão, fechamento
+   *       tudo do R2 + digitar o texto EXATO · comparação sem acento e sem
+   *       caixa · clique-fora não fecha · evento de auditoria
+   *
+   * FALHA FECHADO — e o caso mais importante é o que RECUSA um modal:
+   * R0 e R1 não abrem diálogo nenhum. R0 é toast de sucesso, R1 é toast com
+   * "Desfazer". Fadiga de confirmação é risco mapeado: modal em ação reversível
+   * treina o operador a clicar sem ler, e aí o modal do R3 também não é lido.
+   * Pedir confirmação demais custa a confirmação que importa.
+   *
+   * Sobre `Esc`: ele CANCELA nos dois níveis, e isso não contradiz o DS-22. O
+   * que o requisito proíbe é `Esc` VALER como confirmação. Fechar um diálogo
+   * pelo teclado é requisito de acessibilidade — prender a pessoa lá dentro
+   * seria trocar um risco por outro.
+   * ======================================================================== */
+  var confirmacao = (function () {
+    var NIVEIS = {
+      R2: { digita: false, scrimCancela: true,  audita: false },
+      R3: { digita: true,  scrimCancela: false, audita: true }
+    };
+
+    /** Sem acento, sem caixa, sem espaço sobrando. "JOSÉ  SILVA" casa com "jose silva". */
+    function normalizar(t) {
+      return String(t == null ? '' : t)
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .trim().replace(/\s+/g, ' ').toLowerCase();
+    }
+
+    function el(tag, cls, texto) {
+      var n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (texto != null) n.textContent = texto;
+      return n;
+    }
+
+    function conferir(cfg) {
+      if (modal.aberto())
+        return 'Já existe um painel ou diálogo aberto. Um modal por vez: o segundo nasceria inerte, desenhado na tela e invisível para o teclado.';
+
+      var r = cfg.risco;
+      if (r === 'R0' || r === 'R1')
+        return r + ' não abre diálogo. R0 é toast de sucesso e R1 é toast com "Desfazer" — confirmar ação reversível treina o operador a clicar sem ler, e é a confirmação do R3 que paga essa conta.';
+      if (r === 'R4')
+        return 'R4 exige step-up de autenticação além do R3, e um protótipo não tem como fazer isso de verdade. Trate como R3 e registre o step-up como requisito.';
+      if (!NIVEIS[r])
+        return 'Risco "' + (r == null ? '' : r) + '" desconhecido. Os níveis que abrem diálogo são R2 e R3.';
+
+      if (!cfg.titulo)
+        return 'Falta o "titulo", e ele precisa dizer a CONSEQUÊNCIA, não a ação: "Reabrir a competência 2026-08?" e não "Tem certeza?".';
+      if (!cfg.alvo)
+        return 'Falta o "alvo". O alvo da ação fica visível no diálogo, sempre — sem ele o operador confirma o diálogo, não a operação.';
+
+      if (NIVEIS[r].digita) {
+        if (!cfg.frase)
+          return 'R3 sem "frase" é um R2 fantasiado. O que separa os dois níveis é digitar o texto exato.';
+        if (!cfg.processo)
+          return 'R3 sem "processo" não tem o "o quê" do evento de auditoria — que é quem, quando e o quê.';
+      }
+      return null;
+    }
+
+    function fechar() {
+      var atual = modal.aberto();
+      if (!atual) return;
+      modal.fechar(atual);
+      atual.remove();
+    }
+
+    /** O defeito ocupa o lugar do diálogo: quem clicou tem que ver que não funcionou. */
+    function defeito(mensagem) {
+      var scrim = el('div', 'ppl-scrim');
+      var caixa = el('div', 'ppl-dialog');
+      caixa.setAttribute('role', 'alertdialog');
+      caixa.setAttribute('aria-modal', 'true');
+      caixa.setAttribute('aria-label', 'Confirmação mal montada');
+
+      var alerta = el('div', 'ppl-alert ppl-alert--danger');
+      var linha = el('span');
+      linha.appendChild(el('strong', null, 'Confirmação mal montada — nada foi perguntado.'));
+      linha.append(' ' + mensagem);
+      alerta.appendChild(linha);
+
+      var pe = el('div', 'ppl-dialog__foot');
+      var ok = el('button', 'ppl-btn ppl-btn--secondary', 'Fechar');
+      ok.type = 'button';
+      /* Fecha a si mesmo, e não via fechar(): este diálogo não se registra em
+         `modal`, então a rotina de fechar modal registrado não o enxerga. */
+      ok.addEventListener('click', function () { scrim.remove(); });
+      pe.appendChild(ok);
+
+      caixa.appendChild(alerta);
+      caixa.appendChild(pe);
+      scrim.appendChild(caixa);
+      document.body.appendChild(scrim);
+
+      /* Sem modal.abrir(): o defeito não disputa a trava com um modal que já
+         esteja aberto — ele pode justamente ser o aviso de que existe um. */
+      ok.focus();
+      scrim.addEventListener('click', function (e) { if (e.target === scrim) scrim.remove(); });
+      scrim.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { e.stopPropagation(); scrim.remove(); }
+      });
+      return null;
+    }
+
+    function montarAlvo(alvo) {
+      var caixa = el('div', 'ppl-dialog__alvo');
+      if (typeof alvo === 'string') { caixa.textContent = alvo; return caixa; }
+      var dl = el('dl', 'ppl-review');
+      alvo.forEach(function (par) {
+        var linha = el('div', 'ppl-review__row');
+        linha.appendChild(el('dt', 'ppl-review__key', par.chave));
+        linha.appendChild(el('dd', 'ppl-review__val' + (par.data ? ' ppl-review__val--data' : ''), par.valor));
+        dl.appendChild(linha);
+      });
+      caixa.appendChild(dl);
+      return caixa;
+    }
+
+    function confirmar(cfg) {
+      cfg = cfg || {};
+      var problema = conferir(cfg);
+      if (problema) return defeito(problema);
+
+      var nivel = NIVEIS[cfg.risco];
+      var idTitulo = 'ppl-confirm-t';
+
+      var scrim = el('div', 'ppl-scrim');
+      var caixa = el('div', 'ppl-dialog');
+      /* alertdialog e não dialog: a mensagem é a razão de o diálogo existir, e
+         o leitor de tela precisa anunciá-la junto com o título. */
+      caixa.setAttribute('role', 'alertdialog');
+      caixa.setAttribute('aria-modal', 'true');
+      caixa.setAttribute('aria-labelledby', idTitulo);
+
+      var cabeca = el('div', 'ppl-dialog__head');
+      var titulo = el('h2', 'ppl-dialog__title', cfg.titulo);
+      titulo.id = idTitulo;
+      cabeca.appendChild(titulo);
+
+      var corpo = el('div', 'ppl-dialog__body');
+      if (cfg.corpo) corpo.appendChild(el('p', 'ppl-muted', cfg.corpo));
+
+      var alvo = montarAlvo(cfg.alvo);
+      if (nivel.digita) alvo.classList.add('ppl-dialog__alvo--risco');
+      corpo.appendChild(alvo);
+
+      var campo = null, acao = null;
+
+      if (nivel.digita) {
+        var bloco = el('div', 'ppl-dialog__typed');
+        var rotulo = el('label', 'ppl-field__label');
+        rotulo.htmlFor = 'ppl-confirm-frase';
+        rotulo.append(cfg.rotuloFrase || 'Para confirmar, digite ');
+        rotulo.appendChild(el('span', 'ppl-dialog__phrase', cfg.frase));
+        campo = el('input', 'ppl-input');
+        campo.id = 'ppl-confirm-frase';
+        campo.type = 'text';
+        campo.autocomplete = 'off';
+        campo.setAttribute('aria-describedby', 'ppl-confirm-hint');
+        var dica = el('p', 'ppl-field__hint', 'Sem diferença entre maiúsculas e minúsculas, nem entre letras com e sem acento.');
+        dica.id = 'ppl-confirm-hint';
+        bloco.appendChild(rotulo);
+        bloco.appendChild(campo);
+        bloco.appendChild(dica);
+        corpo.appendChild(bloco);
+
+        var aviso = el('div', 'ppl-alert ppl-alert--warning');
+        aviso.innerHTML = icons.svg('shield', 16);
+        aviso.append(' Esta ação fica registrada com quem, quando e o quê.');
+        corpo.appendChild(aviso);
+      }
+
+      var pe = el('div', 'ppl-dialog__foot');
+      /* "Cancelar" vem PRIMEIRO no DOM e é quem recebe o foco no R2: a tecla
+         mais fácil de apertar sem querer tem que ser a que não faz nada. */
+      var cancelar = el('button', 'ppl-btn ppl-btn--secondary ppl-btn--touch', cfg.rotuloCancelar || 'Cancelar');
+      cancelar.type = 'button';
+      acao = el('button', 'ppl-btn ppl-btn--danger ppl-btn--touch', cfg.acao || 'Confirmar');
+      acao.type = 'button';
+      if (nivel.digita) acao.disabled = true;
+      pe.appendChild(cancelar);
+      pe.appendChild(acao);
+
+      caixa.appendChild(cabeca);
+      caixa.appendChild(corpo);
+      caixa.appendChild(pe);
+      scrim.appendChild(caixa);
+      document.body.appendChild(scrim);
+
+      function cancelou() {
+        fechar();
+        if (cfg.onCancelar) cfg.onCancelar();
+      }
+
+      function confirmou() {
+        /* Confere de novo na hora de agir. A trava do botão é conveniência de
+           interface; a regra é esta. */
+        if (nivel.digita && normalizar(campo.value) !== normalizar(cfg.frase)) return;
+        if (nivel.audita) {
+          document.dispatchEvent(new CustomEvent('ppl:auditoria', {
+            detail: {
+              processo: cfg.processo,
+              risco: cfg.risco,
+              alvo: cfg.alvo,
+              quando: new Date().toISOString()
+            }
+          }));
+        }
+        fechar();
+        if (cfg.onConfirmar) cfg.onConfirmar();
+      }
+
+      cancelar.addEventListener('click', cancelou);
+      acao.addEventListener('click', confirmou);
+
+      if (campo) {
+        campo.addEventListener('input', function () {
+          acao.disabled = normalizar(campo.value) !== normalizar(cfg.frase);
+        });
+        campo.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' && !acao.disabled) { e.preventDefault(); confirmou(); }
+        });
+      }
+
+      scrim.addEventListener('click', function (e) {
+        if (e.target !== scrim) return;
+        /* No R3 o clique fora não faz nada: perder a frase digitada por um
+           clique torto custa refazer o caminho todo, e a alternativa — fechar
+           confirmando — está fora de questão. Devolve o foco ao campo, senão o
+           clique deixa o teclado sem lugar nenhum dentro do diálogo. */
+        if (nivel.scrimCancela) cancelou();
+        else if (campo) campo.focus();
+      });
+
+      scrim.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { e.stopPropagation(); cancelou(); }
+      });
+
+      modal.abrir(scrim, cfg.origem);
+      if (campo) campo.focus(); else cancelar.focus();
+      return scrim;
+    }
+
+    function ligar() {
+      $$('[data-ppl-confirm]').forEach(function (b) {
+        b.addEventListener('click', function (e) {
+          e.preventDefault();
+          var d = b.dataset;
+          confirmar({
+            risco: d.pplConfirm,
+            titulo: d.pplConfirmTitulo,
+            corpo: d.pplConfirmCorpo,
+            alvo: d.pplConfirmAlvo,
+            frase: d.pplConfirmFrase,
+            processo: d.pplConfirmProcesso,
+            acao: d.pplConfirmAcao,
+            origem: b,
+            onConfirmar: function () {
+              if (d.pplConfirmFeito) toast.success(d.pplConfirmFeito);
+            }
+          });
+        });
+      });
+    }
+
+    return { abrir: confirmar, fechar: fechar, _ligar: ligar };
+  })();
+
+  /* ==========================================================================
    * ÍCONES — preenchido por ppl-compass-icons.js quando ele estiver na página.
    * Sem ele, `svg()` devolve string vazia e nada quebra.
    * ======================================================================== */
@@ -873,6 +1236,8 @@
     disclosure._ligar();
     combo._ligar();
     envio._ligar();
+    painel._ligar();
+    confirmacao._ligar();
     nav._ligar();
     tema._ligar();
     busca._ligar(config || {});
@@ -886,6 +1251,8 @@
     disclosure: disclosure,
     combo: combo,
     nav: nav,
+    painel: painel.trocar,
+    confirmar: confirmacao.abrir,
     tema: tema,
     fmt: fmt,
     icon: function (nome, tam) { return icons.svg(nome, tam); },

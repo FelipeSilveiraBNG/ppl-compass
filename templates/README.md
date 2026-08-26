@@ -11,11 +11,11 @@ apontando para o CDN — **copie o arquivo, troque o conteúdo, pronto**. Não h
 | A tela que você quer | Template | O que ela é |
 |---|---|---|
 | Qualquer uma — comece aqui | [`shell.html`](shell.html) | navegação + topo + `<main>` vazio |
-| Tabela de registros | [`lista.html`](lista.html) | painel com tabela e os **quatro estados** |
+| Tabela de registros | [`lista.html`](lista.html) | painel com tabela e os **quatro estados** por `data-ppl-state` |
 | Tabela + edição num painel | [`form-drawer.html`](form-drawer.html) | o padrão de 35 telas do console |
 | Fluxo em etapas | [`wizard.html`](wizard.html) | numerado, com revisão e conclusão |
 | Ponto de partida do operador | [`home.html`](home.html) | saudação e processos em cards grandes |
-| Ficha de um registro | [`detalhe.html`](detalhe.html) | contexto, números e seções colapsáveis |
+| Ficha de um registro | [`detalhe.html`](detalhe.html) | contexto, seções colapsáveis e as confirmações R2/R3 |
 | Página pública | [`landing.html`](landing.html) | vidro e tema escuro — a única superfície com os dois |
 | Aplicativo do colaborador | [`pwa.html`](pwa.html) | molde móvel com tabbar e alvo de toque |
 
@@ -34,6 +34,19 @@ A navegação inteira sai de um `<script type="application/json">` dentro do `<a
 É por isso que dez telas não custam dez cópias de marcação: custam dez vezes a mesma lista com uma
 rota diferente. Trocar um item de lugar muda as dez de uma vez, porque o JSON é o mesmo texto
 colado — colar é a única forma de reúso que sobrevive à restrição de zero build no consumidor.
+
+### A confirmação também é declarativa, e recusa mais do que aceita
+
+`lista.html` troca os quatro estados no `data-ppl-state` do painel; `detalhe.html` traz as duas
+confirmações. O nível de risco é atributo do **processo**, e é ele que escolhe o diálogo:
+
+| | quando | o que o diálogo faz |
+|---|---|---|
+| **R2** | difícil de reverter | consequência no título, alvo visível, botão destrutivo — e o **foco nasce em "Cancelar"** |
+| **R3** | efeito jurídico ou financeiro | tudo do R2 + digitar o texto exato, clique-fora inerte, evento de auditoria |
+
+`R0` e `R1` são **recusados**: não abrem diálogo nenhum. Também são recusados R3 sem frase, R2 sem
+alvo, título ausente e um segundo modal por cima de outro.
 
 ### A navegação falha fechado
 
@@ -66,6 +79,10 @@ Ela não aparece meio certa. Some, e no lugar dela vem um alerta dizendo o defei
   não haver estado.
 - **Voltar uma etapa no wizard redesenha o formulário**, então o que foi digitado se perde. Mesma
   causa.
+- **O evento de auditoria do R3 não vai a lugar nenhum.** `ppl:auditoria` é despachado em
+  `document` com quem, quando e o quê — o contrato existe e está visível, mas persistir é trabalho
+  de quem construir de verdade. A galeria escuta o evento e mostra o payload, que é o jeito honesto
+  de dizer isso.
 - **A navegação precisa de JavaScript.** Com o script bloqueado, o `<aside>` fica vazio — os ícones
   já dependiam disso, mas navegação é conteúdo, e isso é um recuo em relação a "degrada sem JS".
   A troca foi aceita porque o alternativa é dez cópias da mesma marcação divergindo em silêncio.
@@ -80,6 +97,9 @@ Sete dos oito templates têm exatamente uma linha de script: `PplCompass.init()`
 atributo no HTML.
 
 ```html
+<div class="ppl-data-panel" id="p" data-ppl-state="dados"><div data-ppl-when="dados">…</div></div>
+<button data-ppl-state-set="p:vazio">Vazio</button>
+<button data-ppl-confirm="R2" data-ppl-confirm-titulo="…" data-ppl-confirm-alvo="…">Reabrir</button>
 <button data-ppl-drawer-open="meu-drawer">Abrir</button>
 <button data-ppl-drawer-close>Fechar</button>
 <form data-ppl-submit="Rubrica 1042 criada.">…</form>
