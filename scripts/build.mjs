@@ -16,6 +16,13 @@ const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = join(raiz, 'src');
 const DIST = join(raiz, 'dist');
 
+/**
+ * As pastas de HTML que também passam pelas invariantes. Não entram em dist/ —
+ * são conferidas porque um template é feito para ser COPIADO: um nome
+ * aposentado que sobrevive aqui se espalha por todo protótipo que nascer dele.
+ */
+const HTML = ['templates', 'demo'];
+
 /** Cada saída do CDN e as partes de src/ que a compõem, na ordem. */
 const BUNDLES = [
   { saida: 'ppl-compass.css',            partes: ['fonts.css', 'tokens.css', 'components.css'] },
@@ -72,6 +79,25 @@ for (const rel of textuais) {
     }
   });
 }
+for (const pasta of HTML) {
+  const base = join(raiz, pasta);
+  let lista;
+  try {
+    lista = (await listar(base)).filter((f) => f.endsWith('.html'));
+  } catch {
+    continue;                       // a pasta pode não existir ainda
+  }
+  for (const rel of lista) {
+    const linhas = (await readFile(join(base, rel), 'utf8')).split('\n');
+    linhas.forEach((linha, i) => {
+      if (EXPLICATIVA.test(linha)) return;
+      for (const { re, motivo } of PROIBIDO) {
+        if (re.test(linha)) erros.push(`  ${pasta}/${rel}:${i + 1}  ${motivo}\n    ${linha.trim()}`);
+      }
+    });
+  }
+}
+
 if (erros.length) {
   console.error('\n✗ build reprovado:\n');
   console.error(erros.join('\n'));

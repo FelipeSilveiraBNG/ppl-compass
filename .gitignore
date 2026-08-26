@@ -9,3 +9,7 @@ Thumbs.db
 .idea/
 
 # dist/ NÃO entra aqui: é o que o CDN serve, precisa estar versionado.
+
+# Espelho local dos templates apontando para dist/ (node scripts/preview.mjs).
+# Artefato de conferência, nunca entregável.
+.preview/

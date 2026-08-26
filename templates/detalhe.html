@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mariana Souza — BNG People</title>
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.css"
+      integrity="sha384-DZwlqNlJtmEknq2/usdX6D4DQTBXNVqftwjE+xt2XQCTpjMS/4dk+Fa3Q8dzsvg9"
+      crossorigin="anonymous">
+</head>
+<body data-brand="people">
+
+<!-- DETALHE — cabeçalho de contexto, números e seções colapsáveis.
+     Fechada, cada seção continua dizendo o que importa: contagem e resumo no
+     próprio cabeçalho. Disclosure que esconde a informação de decisão obriga
+     a abrir tudo para conferir qualquer coisa. -->
+
+<div class="ppl-shell">
+
+  <aside class="ppl-nav" data-ppl-nav>
+    <script type="application/json">
+    {
+      "rotaAtiva": "/colaboradores",
+      "marca":  { "sigla": "b", "nome": "BNG People", "tag": "Depto. Pessoal" },
+      "itens": [
+        { "label": "Início",     "icone": "home",         "href": "/" },
+        { "label": "Pendências", "icone": "alert-circle", "href": "/pendencias", "contador": 184368 },
+        { "grupo": "Estrutura", "itens": [
+          { "label": "Empresas",      "icone": "building", "href": "/empresas" },
+          { "label": "Colaboradores", "icone": "users",    "href": "/colaboradores" },
+          { "label": "Lotações",      "icone": "map-pin",  "href": "/lotacoes" }
+        ]},
+        { "grupo": "Folha", "itens": [
+          { "label": "Rubricas",  "icone": "list",       "href": "/rubricas" },
+          { "label": "Folha",     "icone": "wallet",     "href": "/folha" },
+          { "label": "Férias",    "icone": "palm",       "href": "/ferias" },
+          { "label": "Rescisões", "icone": "calendar-x", "href": "/rescisoes" }
+        ]},
+        { "grupo": "Ponto", "itens": [
+          { "label": "Espelho",   "icone": "calendar",     "href": "/ponto" },
+          { "label": "Correções", "icone": "clock-dashed", "href": "/correcoes", "contador": 42 }
+        ]},
+        { "grupo": "Obrigações", "itens": [
+          { "label": "eSocial",    "icone": "send", "href": "/esocial" },
+          { "label": "Relatórios", "icone": "file", "href": "/relatorios" }
+        ]}
+      ],
+      "usuario": {
+        "iniciais": "AR",
+        "nome": "ana.ribeiro@gestaohospitalar.com.br",
+        "papel": "Console RH",
+        "sair": "/sair"
+      }
+    }
+    </script>
+  </aside>
+
+  <div class="ppl-shell__col ppl-canvas">
+
+    <header class="ppl-topbar ppl-bar">
+      <div class="ppl-topbar__row">
+        <span class="ppl-eyebrow">Grupo Boas Novas</span>
+        <span class="ppl-topbar__crumb"><i data-ppl-icon="users" data-ppl-size="15"></i>Colaboradores</span>
+        <div class="ppl-topbar__actions">
+          <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Produtos">
+            <i data-ppl-icon="grid" data-ppl-size="16"></i>
+          </button>
+          <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Buscar" data-ppl-search-open>
+            <i data-ppl-icon="search" data-ppl-size="16"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="ppl-main">
+
+      <div class="ppl-page-head">
+        <div class="ppl-page-head__id">
+          <div class="ppl-page-head__meta ppl-eyebrow">Matrícula 2026-0042 · Gestão Hospitalar Ltda</div>
+          <h1 class="ppl-page-head__title">Mariana Souza</h1>
+          <p class="ppl-page-head__desc">
+            Enfermeira · UTI Adulto · admitida em 01/09/2026 ·
+            CPF <span class="ppl-data">111.222.333-44</span>
+          </p>
+        </div>
+        <div class="ppl-page-head__actions">
+          <span class="ppl-badge ppl-badge--success"><i data-ppl-icon="check" data-ppl-size="12"></i>Ativa</span>
+          <button class="ppl-btn ppl-btn--secondary ppl-btn--sm"><i data-ppl-icon="edit" data-ppl-size="15"></i>Editar</button>
+          <button class="ppl-btn ppl-btn--primary ppl-btn--sm">Gerar holerite</button>
+        </div>
+      </div>
+
+      <div class="ppl-stack">
+
+        <div class="ppl-cols-2">
+          <div class="ppl-stat-hero">
+            <span class="ppl-stat-hero__label">Líquido de 2026-08</span>
+            <span class="ppl-stat-hero__value">R$ 4.812,37</span>
+          </div>
+          <div class="ppl-stat-grid">
+            <div class="ppl-card ppl-stat"><span class="ppl-stat__value">R$ 6.120,00</span><span class="ppl-stat__label">Proventos</span></div>
+            <div class="ppl-card ppl-stat"><span class="ppl-stat__value">R$ 1.307,63</span><span class="ppl-stat__label">Descontos</span></div>
+            <div class="ppl-card ppl-stat"><span class="ppl-stat__value">180h</span><span class="ppl-stat__label">Jornada</span></div>
+            <div class="ppl-card ppl-stat"><span class="ppl-stat__value">12h</span><span class="ppl-stat__label">Extras 50%</span></div>
+          </div>
+        </div>
+
+        <section class="ppl-card" data-ppl-disclosure>
+          <h2>
+            <button class="ppl-disclosure__btn" aria-expanded="false" aria-controls="sec-contrato">
+              <span>Contrato</span>
+              <span class="ppl-row">
+                <span class="ppl-disclosure__count">CLT · 44h semanais</span>
+                <span class="ppl-chevron"><i data-ppl-icon="chevron-down" data-ppl-size="16"></i></span>
+              </span>
+            </button>
+          </h2>
+          <div class="ppl-disclosure__body" id="sec-contrato" hidden>
+            <dl class="ppl-review">
+              <div class="ppl-review__row"><dt class="ppl-review__key">Regime</dt><dd class="ppl-review__val">CLT — prazo indeterminado</dd></div>
+              <div class="ppl-review__row"><dt class="ppl-review__key">Admissão</dt><dd class="ppl-review__val ppl-review__val--data">01/09/2026</dd></div>
+              <div class="ppl-review__row"><dt class="ppl-review__key">Cargo</dt><dd class="ppl-review__val">Enfermeira</dd></div>
+              <div class="ppl-review__row"><dt class="ppl-review__key">Salário base</dt><dd class="ppl-review__val ppl-review__val--data">R$ 6.120,00</dd></div>
+              <div class="ppl-review__row"><dt class="ppl-review__key">Lotação</dt><dd class="ppl-review__val">UTI Adulto</dd></div>
+            </dl>
+          </div>
+        </section>
+
+        <section class="ppl-card" data-ppl-disclosure>
+          <h2>
+            <button class="ppl-disclosure__btn" aria-expanded="false" aria-controls="sec-rubricas">
+              <span>Rubricas da competência</span>
+              <span class="ppl-row">
+                <span class="ppl-disclosure__count">4 lançamentos</span>
+                <span class="ppl-chevron"><i data-ppl-icon="chevron-down" data-ppl-size="16"></i></span>
+              </span>
+            </button>
+          </h2>
+          <div class="ppl-disclosure__body" id="sec-rubricas" hidden>
+            <div class="ppl-table-wrap">
+              <table class="ppl-table">
+                <thead><tr><th>Código</th><th>Descrição</th><th class="ppl-td-num">Referência</th><th class="ppl-td-num">Valor</th></tr></thead>
+                <tbody>
+                  <tr><td class="ppl-td-data">1001</td><td>Salário base</td><td class="ppl-td-num">180h</td><td class="ppl-td-num">R$ 6.120,00</td></tr>
+                  <tr><td class="ppl-td-data">1030</td><td>Horas extras 50%</td><td class="ppl-td-num">12h</td><td class="ppl-td-num">R$ 612,00</td></tr>
+                  <tr><td class="ppl-td-data">3010</td><td>INSS</td><td class="ppl-td-num">11%</td><td class="ppl-td-num">R$ 1.113,63</td></tr>
+                  <tr><td class="ppl-td-data">3055</td><td>Vale-transporte</td><td class="ppl-td-num">6%</td><td class="ppl-td-num">R$ 194,00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="ppl-card" data-ppl-disclosure>
+          <h2>
+            <button class="ppl-disclosure__btn" aria-expanded="false" aria-controls="sec-esocial">
+              <span>eSocial</span>
+              <span class="ppl-row">
+                <span class="ppl-disclosure__count">S-2200 aceito · S-1200 na fila</span>
+                <span class="ppl-chevron"><i data-ppl-icon="chevron-down" data-ppl-size="16"></i></span>
+              </span>
+            </button>
+          </h2>
+          <div class="ppl-disclosure__body" id="sec-esocial" hidden>
+            <div class="ppl-stack ppl-stack--tight">
+              <div class="ppl-row">
+                <span class="ppl-badge ppl-badge--success"><i data-ppl-icon="check-circle" data-ppl-size="12"></i>Aceito</span>
+                <span class="ppl-data">S-2200</span><span class="ppl-muted">Admissão · transmitido em 01/09/2026</span>
+              </div>
+              <div class="ppl-row">
+                <span class="ppl-badge ppl-badge--muted"><i data-ppl-icon="clock" data-ppl-size="12"></i>Na fila</span>
+                <span class="ppl-data">S-1200</span><span class="ppl-muted">Remuneração 2026-08 · aguardando o fechamento</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass-icons.js"
+        integrity="sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.js"
+        integrity="sha384-yyCdn8gp8pMPh0JSHtSNXE3SeRJJfN2M4LO940mZkTB9d9PuyqoSgkE1aTKUF9V/" crossorigin="anonymous"></script>
+<script>addEventListener('DOMContentLoaded', () => PplCompass.init());</script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admitir colaborador — BNG People</title>
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.css"
+      integrity="sha384-DZwlqNlJtmEknq2/usdX6D4DQTBXNVqftwjE+xt2XQCTpjMS/4dk+Fa3Q8dzsvg9"
+      crossorigin="anonymous">
+</head>
+<body data-brand="people">
+
+<!-- WIZARD — fluxo numerado com revisão e conclusão.
+     Avançar SEMPRE valida a etapa corrente. Voltar é direito do operador;
+     saltar para frente burlaria a validação e está bloqueado. Fluxo de efeito
+     jurídico ou financeiro TERMINA em revisão — e o pacote se recusa a
+     renderizar um que não termine.
+
+     Este é o único template com um <script> de configuração: os passos, a
+     validação e a conclusão são dados do fluxo, não marcação. Note o limite
+     de não haver estado (decisão Q12): voltar uma etapa redesenha o
+     formulário, então o que foi digitado se perde. -->
+
+<div class="ppl-shell">
+
+  <aside class="ppl-nav" data-ppl-nav>
+    <script type="application/json">
+    {
+      "rotaAtiva": "/colaboradores",
+      "marca":  { "sigla": "b", "nome": "BNG People", "tag": "Depto. Pessoal" },
+      "itens": [
+        { "label": "Início",     "icone": "home",         "href": "/" },
+        { "label": "Pendências", "icone": "alert-circle", "href": "/pendencias", "contador": 184368 },
+        { "grupo": "Estrutura", "itens": [
+          { "label": "Empresas",      "icone": "building", "href": "/empresas" },
+          { "label": "Colaboradores", "icone": "users",    "href": "/colaboradores" },
+          { "label": "Lotações",      "icone": "map-pin",  "href": "/lotacoes" }
+        ]},
+        { "grupo": "Folha", "itens": [
+          { "label": "Rubricas",  "icone": "list",       "href": "/rubricas" },
+          { "label": "Folha",     "icone": "wallet",     "href": "/folha" },
+          { "label": "Férias",    "icone": "palm",       "href": "/ferias" },
+          { "label": "Rescisões", "icone": "calendar-x", "href": "/rescisoes" }
+        ]},
+        { "grupo": "Ponto", "itens": [
+          { "label": "Espelho",   "icone": "calendar",     "href": "/ponto" },
+          { "label": "Correções", "icone": "clock-dashed", "href": "/correcoes", "contador": 42 }
+        ]},
+        { "grupo": "Obrigações", "itens": [
+          { "label": "eSocial",    "icone": "send", "href": "/esocial" },
+          { "label": "Relatórios", "icone": "file", "href": "/relatorios" }
+        ]}
+      ],
+      "usuario": {
+        "iniciais": "AR",
+        "nome": "ana.ribeiro@gestaohospitalar.com.br",
+        "papel": "Console RH",
+        "sair": "/sair"
+      }
+    }
+    </script>
+  </aside>
+
+  <div class="ppl-shell__col ppl-canvas">
+
+    <header class="ppl-topbar ppl-bar">
+      <div class="ppl-topbar__row">
+        <span class="ppl-eyebrow">Grupo Boas Novas</span>
+        <span class="ppl-topbar__crumb"><i data-ppl-icon="users" data-ppl-size="15"></i>Colaboradores</span>
+        <div class="ppl-topbar__actions">
+          <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Produtos">
+            <i data-ppl-icon="grid" data-ppl-size="16"></i>
+          </button>
+          <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Buscar" data-ppl-search-open>
+            <i data-ppl-icon="search" data-ppl-size="16"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="ppl-main">
+
+      <div class="ppl-page-head">
+        <div class="ppl-page-head__id">
+          <div class="ppl-page-head__meta ppl-eyebrow">Gestão Hospitalar Ltda · 12.345.678/0001-90</div>
+          <h1 class="ppl-page-head__title">Admitir colaborador</h1>
+          <p class="ppl-page-head__desc">Dados pessoais, contrato e jornada. A conclusão gera o S-2200.</p>
+        </div>
+        <div class="ppl-page-head__actions">
+          <a class="ppl-btn ppl-btn--secondary ppl-btn--sm" href="/colaboradores">Cancelar</a>
+        </div>
+      </div>
+
+      <div class="ppl-card ppl-panel">
+        <div id="wizard"></div>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass-icons.js"
+        integrity="sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.js"
+        integrity="sha384-yyCdn8gp8pMPh0JSHtSNXE3SeRJJfN2M4LO940mZkTB9d9PuyqoSgkE1aTKUF9V/" crossorigin="anonymous"></script>
+<script>
+addEventListener('DOMContentLoaded', () => {
+  PplCompass.init();
+
+  /* O conteúdo de cada etapa. Uma decisão por etapa: quando a etapa faz duas
+     perguntas independentes, ela é duas etapas. */
+  const PASSOS = {
+    pessoais: `
+      <div class="ppl-stack">
+        <div class="ppl-cols-2">
+          <label class="ppl-field"><span class="ppl-field__label">Nome completo</span>
+            <input class="ppl-input" id="w-nome" value="Mariana Souza"></label>
+          <label class="ppl-field"><span class="ppl-field__label">CPF</span>
+            <input class="ppl-input ppl-input--data" id="w-cpf" value="111.222.333-44"></label>
+        </div>
+        <label class="ppl-field"><span class="ppl-field__label">Data de nascimento</span>
+          <input class="ppl-input ppl-input--data" type="date" value="1994-03-18"></label>
+      </div>`,
+    contrato: `
+      <div class="ppl-stack">
+        <div class="ppl-cols-2">
+          <label class="ppl-field"><span class="ppl-field__label">Cargo</span>
+            <input class="ppl-input" value="Enfermeira"></label>
+          <label class="ppl-field"><span class="ppl-field__label">Salário base</span>
+            <input class="ppl-input ppl-input--data" value="6.120,00"></label>
+        </div>
+        <label class="ppl-field"><span class="ppl-field__label">Admissão</span>
+          <input class="ppl-input ppl-input--data" type="date" id="w-admissao" value="2026-09-01">
+          <span class="ppl-field__hint">A validação da tela é espelho, não autoridade: quem recusa de verdade é o backend.</span></label>
+      </div>`,
+    jornada: `
+      <div class="ppl-stack">
+        <label class="ppl-field"><span class="ppl-field__label">Escala</span>
+          <select class="ppl-select"><option>12x36 — diurna</option><option>12x36 — noturna</option><option>44h semanais</option></select></label>
+        <label class="ppl-field"><span class="ppl-field__label">Lotação</span>
+          <select class="ppl-select"><option>UTI Adulto</option><option>Pronto-socorro</option><option>Centro cirúrgico</option></select></label>
+      </div>`
+  };
+
+  const RESUMO = `
+    <h3 class="ppl-panel__title" style="margin-bottom:12px">Revise antes de enviar</h3>
+    <dl class="ppl-review">
+      <div class="ppl-review__row"><dt class="ppl-review__key">Colaboradora</dt><dd class="ppl-review__val">Mariana Souza</dd></div>
+      <div class="ppl-review__row"><dt class="ppl-review__key">CPF</dt><dd class="ppl-review__val ppl-review__val--data">111.222.333-44</dd></div>
+      <div class="ppl-review__row"><dt class="ppl-review__key">Cargo</dt><dd class="ppl-review__val">Enfermeira</dd></div>
+      <div class="ppl-review__row"><dt class="ppl-review__key">Salário base</dt><dd class="ppl-review__val ppl-review__val--data">R$ 6.120,00</dd></div>
+      <div class="ppl-review__row"><dt class="ppl-review__key">Admissão</dt><dd class="ppl-review__val ppl-review__val--data">01/09/2026</dd></div>
+      <div class="ppl-review__row"><dt class="ppl-review__key">Escala</dt><dd class="ppl-review__val">12x36 — diurna</dd></div>
+    </dl>
+    <div class="ppl-alert ppl-alert--warning" style="margin-top:16px">
+      <i data-ppl-icon="shield" data-ppl-size="16"></i>
+      Concluir gera o evento S-2200 do eSocial. Depois de transmitido, corrigir exige retificação.
+    </div>`;
+
+  const raiz = document.getElementById('wizard');
+
+  new PplCompass.Wizard({
+    raiz,
+    /* Efeito jurídico: o pacote RECUSA renderizar um fluxo destes sem a etapa
+       de revisão. Tire o passo "revisao" abaixo e veja — não é um fluxo com
+       uma tela a menos, é um fluxo que assina sem conferir. */
+    efeito: 'juridico',
+    rotuloConfirmar: 'Concluir admissão',
+    passos: [
+      { id: 'pessoais', label: 'Dados pessoais',
+        validar: () => document.getElementById('w-cpf').value.replace(/\D/g, '').length === 11
+          ? null : 'Informe um CPF com 11 dígitos.' },
+      { id: 'contrato', label: 'Contrato',
+        validar: () => document.getElementById('w-admissao').value ? null : 'Informe a data de admissão.' },
+      { id: 'jornada',  label: 'Jornada' },
+      { id: 'revisao',  label: 'Revisão' }
+    ],
+    aoRenderizar: (passo, corpo) => {
+      corpo.innerHTML = passo.id === 'revisao' ? RESUMO : PASSOS[passo.id];
+      PplCompass.init();                       // hidrata os ícones da etapa
+    },
+    /* Conclusão traz o IDENTIFICADOR e UM próximo passo. Uma tela de sucesso
+       com quatro botões devolve ao operador a decisão que ela deveria tomar. */
+    onConcluir: () => {
+      raiz.innerHTML = `
+        <div class="ppl-state">
+          <span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="check-circle" data-ppl-size="22"></i></span>
+          <p class="ppl-display ppl-display--hero">Admissão concluída</p>
+          <p>Matrícula <span class="ppl-data">2026-0042</span> criada. O S-2200 entrou na fila do eSocial.</p>
+          <a class="ppl-btn ppl-btn--primary ppl-btn--touch" href="/colaboradores">Ver a colaboradora</a>
+        </div>`;
+      PplCompass.init();
+      PplCompass.toast.success('Admissão concluída — matrícula 2026-0042 criada.');
+    }
+  });
+});
+</script>
+</body>
+</html>

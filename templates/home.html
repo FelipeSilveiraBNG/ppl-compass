@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Início — BNG People</title>
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.css"
+      integrity="sha384-DZwlqNlJtmEknq2/usdX6D4DQTBXNVqftwjE+xt2XQCTpjMS/4dk+Fa3Q8dzsvg9"
+      crossorigin="anonymous">
+</head>
+<body data-brand="people">
+
+<!-- HOME — saudação, contexto e os processos como decisão de caminho.
+     Cards grandes e não um dropdown escondido: escolher processo é a decisão
+     mais frequente do dia, e ela não pode custar dois cliques e uma lista.
+     UM card recebe o dourado. Só um. -->
+
+<div class="ppl-shell">
+
+  <aside class="ppl-nav" data-ppl-nav>
+    <script type="application/json">
+    {
+      "rotaAtiva": "/",
+      "marca":  { "sigla": "b", "nome": "BNG People", "tag": "Depto. Pessoal" },
+      "itens": [
+        { "label": "Início",     "icone": "home",         "href": "/" },
+        { "label": "Pendências", "icone": "alert-circle", "href": "/pendencias", "contador": 184368 },
+        { "grupo": "Estrutura", "itens": [
+          { "label": "Empresas",      "icone": "building", "href": "/empresas" },
+          { "label": "Colaboradores", "icone": "users",    "href": "/colaboradores" },
+          { "label": "Lotações",      "icone": "map-pin",  "href": "/lotacoes" }
+        ]},
+        { "grupo": "Folha", "itens": [
+          { "label": "Rubricas",  "icone": "list",       "href": "/rubricas" },
+          { "label": "Folha",     "icone": "wallet",     "href": "/folha" },
+          { "label": "Férias",    "icone": "palm",       "href": "/ferias" },
+          { "label": "Rescisões", "icone": "calendar-x", "href": "/rescisoes" }
+        ]},
+        { "grupo": "Ponto", "itens": [
+          { "label": "Espelho",   "icone": "calendar",     "href": "/ponto" },
+          { "label": "Correções", "icone": "clock-dashed", "href": "/correcoes", "contador": 42 }
+        ]},
+        { "grupo": "Obrigações", "itens": [
+          { "label": "eSocial",    "icone": "send", "href": "/esocial" },
+          { "label": "Relatórios", "icone": "file", "href": "/relatorios" }
+        ]}
+      ],
+      "usuario": {
+        "iniciais": "AR",
+        "nome": "ana.ribeiro@gestaohospitalar.com.br",
+        "papel": "Console RH",
+        "sair": "/sair"
+      }
+    }
+    </script>
+  </aside>
+
+  <div class="ppl-shell__col ppl-canvas">
+
+    <header class="ppl-topbar ppl-bar">
+      <div class="ppl-topbar__row">
+        <span class="ppl-eyebrow">Grupo Boas Novas</span>
+        <span class="ppl-topbar__crumb"><i data-ppl-icon="home" data-ppl-size="15"></i>Início</span>
+        <div class="ppl-topbar__actions">
+          <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Produtos">
+            <i data-ppl-icon="grid" data-ppl-size="16"></i>
+          </button>
+          <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Buscar" data-ppl-search-open>
+            <i data-ppl-icon="search" data-ppl-size="16"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="ppl-main">
+
+      <div class="ppl-page-head">
+        <div class="ppl-page-head__id">
+          <div class="ppl-page-head__meta ppl-eyebrow">Grupo Boas Novas · competência 2026-08</div>
+          <!-- O display humano SÓ aqui: saudação, sucesso e hero. Nunca em
+               formulário, tabela ou cromo. -->
+          <p class="ppl-display ppl-display--hero">Boa tarde, Ana</p>
+          <p class="ppl-page-head__desc">
+            1.240 contratos ativos em 3 CNPJs. A folha de agosto fecha em 5 dias úteis.
+          </p>
+        </div>
+        <div class="ppl-page-head__actions">
+          <button class="ppl-btn ppl-btn--secondary ppl-btn--sm" data-ppl-search-open>
+            <i data-ppl-icon="search" data-ppl-size="15"></i>Buscar
+          </button>
+        </div>
+      </div>
+
+      <div class="ppl-stack">
+
+        <div class="ppl-alert ppl-alert--warning">
+          <i data-ppl-icon="alert" data-ppl-size="16"></i>
+          <span>184.368 pendências aguardam tratamento. <a href="/pendencias" class="ppl-state__action">Abrir a fila</a></span>
+        </div>
+
+        <div class="ppl-choice-grid">
+
+          <!-- O único dourado da tela: o processo que o operador faz mais. -->
+          <a class="ppl-card ppl-choice ppl-card--interactive" href="/colaboradores/novo">
+            <span class="ppl-icon-tile ppl-icon-tile--gold ppl-icon-tile--lg"><i data-ppl-icon="user" data-ppl-size="20"></i></span>
+            <span class="ppl-choice__title">Admitir colaborador</span>
+            <span class="ppl-choice__line">Dados pessoais, contrato, jornada e o S-2200 do eSocial.</span>
+            <span class="ppl-choice__foot">7 admissões em agosto</span>
+          </a>
+
+          <a class="ppl-card ppl-choice ppl-card--interactive" href="/correcoes">
+            <span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="clock-dashed" data-ppl-size="20"></i></span>
+            <span class="ppl-choice__title">Corrigir marcação de ponto</span>
+            <span class="ppl-choice__line">Tratamento das batidas propostas pelos líderes.</span>
+            <span class="ppl-choice__foot">42 aguardando o RH</span>
+          </a>
+
+          <a class="ppl-card ppl-choice ppl-card--interactive" href="/folha">
+            <span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="wallet" data-ppl-size="20"></i></span>
+            <span class="ppl-choice__title">Fechar folha da competência</span>
+            <span class="ppl-choice__line">Apurar, conferir divergências e fechar por CNPJ.</span>
+            <span class="ppl-choice__foot">2026-08 · em apuração</span>
+          </a>
+
+          <a class="ppl-card ppl-choice ppl-card--interactive" href="/ferias">
+            <span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="palm" data-ppl-size="20"></i></span>
+            <span class="ppl-choice__title">Programar férias</span>
+            <span class="ppl-choice__line">Período aquisitivo, abono e aviso com 30 dias.</span>
+            <span class="ppl-choice__foot">18 períodos vencendo</span>
+          </a>
+
+          <a class="ppl-card ppl-choice ppl-card--interactive" href="/rescisoes">
+            <span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="calendar-x" data-ppl-size="20"></i></span>
+            <span class="ppl-choice__title">Rescindir contrato</span>
+            <span class="ppl-choice__line">Verbas, homologação e o S-2299.</span>
+            <span class="ppl-choice__foot">3 em andamento</span>
+          </a>
+
+          <a class="ppl-card ppl-choice ppl-card--interactive" href="/esocial">
+            <span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="send" data-ppl-size="20"></i></span>
+            <span class="ppl-choice__title">Transmitir eSocial</span>
+            <span class="ppl-choice__line">Fila de eventos, retornos e reenvio do que falhou.</span>
+            <span class="ppl-choice__foot">S-1200 pendente</span>
+          </a>
+
+        </div>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass-icons.js"
+        integrity="sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.js"
+        integrity="sha384-yyCdn8gp8pMPh0JSHtSNXE3SeRJJfN2M4LO940mZkTB9d9PuyqoSgkE1aTKUF9V/" crossorigin="anonymous"></script>
+<script>addEventListener('DOMContentLoaded', () => PplCompass.init());</script>
+</body>
+</html>

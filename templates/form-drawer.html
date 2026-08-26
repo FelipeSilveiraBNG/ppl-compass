@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rubricas — BNG People</title>
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.css"
+      integrity="sha384-DZwlqNlJtmEknq2/usdX6D4DQTBXNVqftwjE+xt2XQCTpjMS/4dk+Fa3Q8dzsvg9"
+      crossorigin="anonymous">
+</head>
+<body data-brand="people">
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     LISTA + DRAWER DE EDIÇÃO — o padrão de 35 telas do console.
+
+     O drawer é acessível sem nenhuma linha de JavaScript nesta página:
+     `data-ppl-drawer-open` abre, `Esc` e o clique fora fecham, o foco vai ao
+     painel e VOLTA ao gatilho, e o resto da página fica inerte enquanto ele
+     está aberto.
+
+     O formulário usa `data-ppl-submit`: o protótipo não guarda nada, então o
+     envio fecha o painel e anuncia o que teria acontecido. A tabela por baixo
+     NÃO ganha a linha — numa tela de verdade isso seria defeito; aqui é a
+     consequência aceita de não haver estado.
+     ════════════════════════════════════════════════════════════════════ -->
+
+<div class="ppl-shell">
+
+  <aside class="ppl-nav" data-ppl-nav>
+    <script type="application/json">
+    {
+      "rotaAtiva": "/rubricas",
+      "marca":  { "sigla": "b", "nome": "BNG People", "tag": "Depto. Pessoal" },
+      "itens": [
+        { "label": "Início",     "icone": "home",         "href": "/" },
+        { "label": "Pendências", "icone": "alert-circle", "href": "/pendencias", "contador": 184368 },
+        { "grupo": "Estrutura", "itens": [
+          { "label": "Empresas",      "icone": "building", "href": "/empresas" },
+          { "label": "Colaboradores", "icone": "users",    "href": "/colaboradores" },
+          { "label": "Lotações",      "icone": "map-pin",  "href": "/lotacoes" }
+        ]},
+        { "grupo": "Folha", "itens": [
+          { "label": "Rubricas",  "icone": "list",       "href": "/rubricas" },
+          { "label": "Folha",     "icone": "wallet",     "href": "/folha" },
+          { "label": "Férias",    "icone": "palm",       "href": "/ferias" },
+          { "label": "Rescisões", "icone": "calendar-x", "href": "/rescisoes" }
+        ]},
+        { "grupo": "Ponto", "itens": [
+          { "label": "Espelho",   "icone": "calendar",     "href": "/ponto" },
+          { "label": "Correções", "icone": "clock-dashed", "href": "/correcoes", "contador": 42 }
+        ]},
+        { "grupo": "Obrigações", "itens": [
+          { "label": "eSocial",    "icone": "send", "href": "/esocial" },
+          { "label": "Relatórios", "icone": "file", "href": "/relatorios" }
+        ]}
+      ],
+      "usuario": {
+        "iniciais": "AR",
+        "nome": "ana.ribeiro@gestaohospitalar.com.br",
+        "papel": "Console RH",
+        "sair": "/sair"
+      }
+    }
+    </script>
+  </aside>
+
+  <div class="ppl-shell__col ppl-canvas">
+
+    <header class="ppl-topbar ppl-bar">
+      <div class="ppl-topbar__row">
+        <span class="ppl-eyebrow">Grupo Boas Novas</span>
+        <span class="ppl-topbar__crumb"><i data-ppl-icon="list" data-ppl-size="15"></i>Rubricas</span>
+        <div class="ppl-topbar__actions">
+          <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Produtos">
+            <i data-ppl-icon="grid" data-ppl-size="16"></i>
+          </button>
+          <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Buscar" data-ppl-search-open>
+            <i data-ppl-icon="search" data-ppl-size="16"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="ppl-main">
+
+      <div class="ppl-page-head">
+        <div class="ppl-page-head__id">
+          <div class="ppl-page-head__meta ppl-eyebrow">Gestão Hospitalar Ltda · 12.345.678/0001-90</div>
+          <h1 class="ppl-page-head__title">Rubricas</h1>
+          <p class="ppl-page-head__desc">Códigos de provento e desconto e a incidência de cada um.</p>
+        </div>
+        <div class="ppl-page-head__actions">
+          <button class="ppl-btn ppl-btn--primary ppl-btn--sm" data-ppl-drawer-open="drawer-rubrica">
+            <i data-ppl-icon="plus" data-ppl-size="15"></i>Nova rubrica
+          </button>
+        </div>
+      </div>
+
+      <div class="ppl-card ppl-panel">
+        <div class="ppl-panel__head">
+          <div class="ppl-panel__id">
+            <span class="ppl-icon-tile"><i data-ppl-icon="list" data-ppl-size="18"></i></span>
+            <div>
+              <div class="ppl-panel__title">Tabela de rubricas</div>
+              <div class="ppl-panel__sub">4 ativas na competência 2026-08</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ppl-table-wrap">
+          <table class="ppl-table">
+            <thead>
+              <tr><th>Código</th><th>Descrição</th><th>Tipo</th><th>Incidências</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="ppl-td-data">1001</td><td>Salário base</td>
+                <td><span class="ppl-badge ppl-badge--info">Provento</span></td>
+                <td class="ppl-td-mute">INSS · FGTS · IRRF</td>
+                <td><button class="ppl-btn ppl-btn--sm ppl-btn--secondary" data-ppl-drawer-open="drawer-rubrica">Editar</button></td>
+              </tr>
+              <tr>
+                <td class="ppl-td-data">1030</td><td>Horas extras 50%</td>
+                <td><span class="ppl-badge ppl-badge--info">Provento</span></td>
+                <td class="ppl-td-mute">INSS · FGTS · IRRF</td>
+                <td><button class="ppl-btn ppl-btn--sm ppl-btn--secondary" data-ppl-drawer-open="drawer-rubrica">Editar</button></td>
+              </tr>
+              <tr>
+                <td class="ppl-td-data">3010</td><td>INSS</td>
+                <td><span class="ppl-badge ppl-badge--muted">Desconto</span></td>
+                <td class="ppl-td-mute">—</td>
+                <td><button class="ppl-btn ppl-btn--sm ppl-btn--secondary" data-ppl-drawer-open="drawer-rubrica">Editar</button></td>
+              </tr>
+              <tr>
+                <td class="ppl-td-data">3055</td><td>Vale-transporte</td>
+                <td><span class="ppl-badge ppl-badge--muted">Desconto</span></td>
+                <td class="ppl-td-mute">—</td>
+                <td><button class="ppl-btn ppl-btn--sm ppl-btn--secondary" data-ppl-drawer-open="drawer-rubrica">Editar</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<!-- ─── O DRAWER ───────────────────────────────────────────────────────── -->
+<div class="ppl-drawer" id="drawer-rubrica" data-open="false" aria-hidden="true">
+  <div class="ppl-drawer__scrim"></div>
+  <div class="ppl-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawer-rubrica-t">
+
+    <div class="ppl-drawer__head">
+      <div>
+        <h2 class="ppl-drawer__title" id="drawer-rubrica-t">Nova rubrica</h2>
+        <p class="ppl-drawer__desc">Código, descrição e incidência na competência.</p>
+      </div>
+      <button class="ppl-btn ppl-btn--icon ppl-btn--ghost" data-ppl-drawer-close aria-label="Fechar painel">
+        <i data-ppl-icon="x" data-ppl-size="16"></i>
+      </button>
+    </div>
+
+    <div class="ppl-drawer__body">
+      <form class="ppl-stack" data-ppl-submit="Rubrica 1042 criada na competência 2026-08.">
+
+        <div class="ppl-cols-2">
+          <label class="ppl-field">
+            <span class="ppl-field__label">Código</span>
+            <input class="ppl-input ppl-input--data" name="codigo" value="1042" inputmode="numeric" required>
+          </label>
+          <label class="ppl-field">
+            <span class="ppl-field__label">Tipo</span>
+            <select class="ppl-select" name="tipo">
+              <option>Provento</option>
+              <option>Desconto</option>
+              <option>Informativa</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="ppl-field">
+          <span class="ppl-field__label">Descrição</span>
+          <input class="ppl-input" name="descricao" placeholder="Adicional noturno 20%" required>
+          <span class="ppl-field__hint">Aparece no holerite exatamente como for escrita aqui.</span>
+        </label>
+
+        <!-- Combobox e não <select>: a lista de lotações é paginada na origem,
+             e o item que se procura simplesmente não está no dropdown. -->
+        <div class="ppl-field">
+          <span class="ppl-field__label">Lotação <span class="ppl-optional">(opcional)</span></span>
+          <div class="ppl-combo" data-ppl-combo>
+            <input class="ppl-input ppl-combo__input" role="combobox" aria-expanded="false"
+                   aria-controls="lista-lotacao" aria-autocomplete="list" autocomplete="off"
+                   placeholder="Todas as lotações">
+            <span class="ppl-combo__chevron"><i data-ppl-icon="chevron-updown" data-ppl-size="15"></i></span>
+            <ul class="ppl-combo__list" id="lista-lotacao" role="listbox" hidden>
+              <li role="option" aria-selected="false"><span class="ppl-combo__option"><span><span>UTI Adulto</span><span class="ppl-combo__hint">42 contratos</span></span></span></li>
+              <li role="option" aria-selected="false"><span class="ppl-combo__option"><span><span>Pronto-socorro</span><span class="ppl-combo__hint">88 contratos</span></span></span></li>
+              <li role="option" aria-selected="false"><span class="ppl-combo__option"><span><span>Centro cirúrgico</span><span class="ppl-combo__hint">31 contratos</span></span></span></li>
+              <li role="option" aria-selected="false"><span class="ppl-combo__option"><span><span>Administrativo</span><span class="ppl-combo__hint">67 contratos</span></span></span></li>
+              <li class="ppl-combo__empty ppl-state ppl-state--empty" hidden>Nenhuma lotação com esse nome.</li>
+            </ul>
+          </div>
+        </div>
+
+        <fieldset class="ppl-stack ppl-stack--tight">
+          <legend class="ppl-field__label">Incidências</legend>
+          <label class="ppl-check"><input type="checkbox" checked> INSS</label>
+          <label class="ppl-check"><input type="checkbox" checked> FGTS</label>
+          <label class="ppl-check"><input type="checkbox"> IRRF</label>
+        </fieldset>
+
+        <div class="ppl-alert ppl-alert--info">
+          <i data-ppl-icon="info" data-ppl-size="16"></i>
+          A rubrica passa a valer a partir da competência aberta. Competências fechadas não mudam.
+        </div>
+
+        <div class="ppl-drawer__foot">
+          <button type="button" class="ppl-btn ppl-btn--secondary" data-ppl-drawer-close>Cancelar</button>
+          <button type="submit" class="ppl-btn ppl-btn--primary">Criar rubrica</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass-icons.js"
+        integrity="sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.js"
+        integrity="sha384-yyCdn8gp8pMPh0JSHtSNXE3SeRJJfN2M4LO940mZkTB9d9PuyqoSgkE1aTKUF9V/" crossorigin="anonymous"></script>
+<script>addEventListener('DOMContentLoaded', () => PplCompass.init());</script>
+</body>
+</html>

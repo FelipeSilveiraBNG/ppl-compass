@@ -445,67 +445,43 @@
     <span class="ppl-kbd">Ctrl</span><span class="ppl-kbd">K</span>
     <span class="ppl-muted" style="font-size:12.5px">— atalho desativado em toque; lá a porta é o botão.</span>
   </div>
-
-  <div class="ppl-scrim" id="ppl-search" hidden>
-    <div class="ppl-dialog ppl-dialog--wide" role="dialog" aria-modal="true" aria-label="Busca global">
-      <div class="ppl-dialog__head">
-        <h2 class="ppl-dialog__title">Busca global</h2>
-        <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" onclick="PplCompass.busca.fechar()" aria-label="Fechar">
-          <i data-ppl-icon="x" data-ppl-size="16"></i>
-        </button>
-      </div>
-      <input class="ppl-input" id="ppl-search-input" role="combobox" aria-expanded="true"
-             aria-controls="ppl-search-list" aria-autocomplete="list" autocomplete="off"
-             placeholder="Buscar processo, tela ou registro…">
-      <ul class="ppl-combo__list" id="ppl-search-list" role="listbox"
-          style="position:static;box-shadow:none;border:none;margin-top:8px;max-height:320px"></ul>
-    </div>
-  </div>
+  <p class="lead" style="margin-top:8px">
+    O diálogo não está nesta página: <code>init()</code> monta, como faz com a região do toast.
+    A lista sai de <code>acoes</code>; <strong>sem essa chave, ela herda o que a navegação compôs</strong>
+    — declarar as rotas duas vezes cria duas verdades que divergem na primeira rota nova.
+  </p>
 
   <!-- ============================================================ -->
   <h2>17 · Shell</h2>
+  <p class="lead">
+    A navegação inteira sai do JSON abaixo, via <code>data-ppl-nav</code>. É o que faz um template
+    virar dez sem copiar marcação: as telas são a mesma lista com uma <code>rotaAtiva</code>
+    diferente. Falha fechado — grupo vazio, contador que não é número ou rota ativa fora do menu
+    trocam a navegação por um alerta que diz o defeito.
+  </p>
   <div class="shell-demo">
-    <aside class="ppl-nav">
-      <div class="ppl-nav__brand">
-        <span class="ppl-nav__mark">b</span>
-        <span style="min-width:0">
-          <span class="ppl-nav__name">BNG People</span>
-          <span class="ppl-nav__tag">Depto. Pessoal</span>
-        </span>
-      </div>
-      <nav aria-label="Navegação principal" style="display:flex;flex-direction:column;gap:2px">
-        <a class="ppl-nav__item" href="#"><i data-ppl-icon="home" data-ppl-size="16"></i><span>Início</span></a>
-        <a class="ppl-nav__item" href="#"><i data-ppl-icon="alert-circle" data-ppl-size="16"></i><span>Pendências</span>
-          <span class="ppl-badge ppl-badge--gold ppl-badge--count" style="margin-left:auto">184.368</span></a>
-        <div style="padding-top:6px">
-          <button class="ppl-nav__group" aria-controls="g-estrutura">Estrutura
-            <span class="ppl-chevron"><i data-ppl-icon="chevron-down" data-ppl-size="13"></i></span>
-          </button>
-          <div id="g-estrutura" style="display:flex;flex-direction:column;gap:2px">
-            <a class="ppl-nav__item" href="#"><i data-ppl-icon="building" data-ppl-size="16"></i><span>Empresas</span></a>
-            <a class="ppl-nav__item" href="#"><i data-ppl-icon="users" data-ppl-size="16"></i><span>Colaboradores</span></a>
-          </div>
-        </div>
-        <div style="padding-top:6px">
-          <button class="ppl-nav__group" aria-controls="g-folha">Folha
-            <span class="ppl-chevron"><i data-ppl-icon="chevron-down" data-ppl-size="13"></i></span>
-          </button>
-          <div id="g-folha" style="display:flex;flex-direction:column;gap:2px">
-            <a class="ppl-nav__item" href="#"><i data-ppl-icon="list" data-ppl-size="16"></i><span>Rubricas</span></a>
-            <a class="ppl-nav__item" href="#" aria-current="page"><i data-ppl-icon="wallet" data-ppl-size="16"></i><span>Folha</span></a>
-            <a class="ppl-nav__item" href="#"><i data-ppl-icon="palm" data-ppl-size="16"></i><span>Férias</span></a>
-          </div>
-        </div>
-      </nav>
-      <div class="ppl-spacer"></div>
-      <div class="ppl-nav__foot">
-        <span class="ppl-avatar">FS</span>
-        <span style="min-width:0;flex:1">
-          <span style="display:block;font-size:12.5px;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">felipe.silveira@…</span>
-          <span style="display:block;font-size:11px;color:var(--ppl-on-dark-soft)">Console RH</span>
-        </span>
-        <button class="ppl-btn ppl-btn--icon" style="color:rgb(255 255 255 / .7)" aria-label="Sair"><i data-ppl-icon="log-out" data-ppl-size="15"></i></button>
-      </div>
+    <aside class="ppl-nav" data-ppl-nav>
+      <script type="application/json">
+      {
+        "rotaAtiva": "/folha",
+        "marca":  { "sigla": "b", "nome": "BNG People", "tag": "Depto. Pessoal" },
+        "itens": [
+          { "label": "Início",     "icone": "home",         "href": "/" },
+          { "label": "Pendências", "icone": "alert-circle", "href": "/pendencias", "contador": 184368 },
+          { "grupo": "Estrutura", "itens": [
+            { "label": "Empresas",      "icone": "building", "href": "/empresas" },
+            { "label": "Colaboradores", "icone": "users",    "href": "/colaboradores" }
+          ]},
+          { "grupo": "Folha", "itens": [
+            { "label": "Rubricas", "icone": "list",   "href": "/rubricas" },
+            { "label": "Folha",    "icone": "wallet", "href": "/folha" },
+            { "label": "Férias",   "icone": "palm",   "href": "/ferias" }
+          ]}
+        ],
+        "usuario": { "iniciais": "AR", "nome": "ana.ribeiro@gestaohospitalar.com.br",
+                     "papel": "Console RH", "sair": "/sair" }
+      }
+      </script>
     </aside>
 
     <div class="ppl-shell__col ppl-canvas" style="display:flex;flex-direction:column">
@@ -544,12 +520,20 @@
 
   <!-- ============================================================ -->
   <h2>18 · Tabbar (mobile)</h2>
-  <p class="lead">Máximo 5 itens. O alvo de toque é o link inteiro, ≥ 44px — não a pílula. O grid é dirigido pela contagem.</p>
+  <p class="lead">Máximo 5 itens — e o sexto não quebra o grid em silêncio: a navegação some e aparece o alerta. Sai do MESMO <code>nav(json)</code> do shell, com <code>"variante": "tabbar"</code>; um produto não mantém duas listas de rotas. O alvo de toque é o link inteiro, ≥ 44px, nunca a pílula.</p>
   <div style="max-width:420px;border:1px solid var(--ppl-border);border-radius:var(--ppl-radius-card);overflow:hidden;margin-top:12px">
-    <nav class="ppl-tabbar" aria-label="Navegação principal">
-      <a class="ppl-tabbar__item" href="#" aria-current="page"><span class="ppl-tabbar__pill"><i data-ppl-icon="calendar" data-ppl-size="20"></i></span>Espelho</a>
-      <a class="ppl-tabbar__item" href="#"><span class="ppl-tabbar__pill"><i data-ppl-icon="fingerprint" data-ppl-size="20"></i></span>Bater ponto</a>
-      <a class="ppl-tabbar__item" href="#"><span class="ppl-tabbar__pill"><i data-ppl-icon="file" data-ppl-size="20"></i></span>Holerite</a>
+    <nav data-ppl-nav>
+      <script type="application/json">
+      {
+        "variante": "tabbar",
+        "rotaAtiva": "/espelho",
+        "itens": [
+          { "label": "Espelho",     "icone": "calendar",    "href": "/espelho" },
+          { "label": "Bater ponto", "icone": "fingerprint", "href": "/ponto" },
+          { "label": "Holerite",    "icone": "file",        "href": "/holerite" }
+        ]
+      }
+      </script>
     </nav>
   </div>
 

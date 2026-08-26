@@ -16,25 +16,29 @@ já correta e as regras de acessibilidade já embutidas.
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@1.0.0/dist/ppl-compass.css"
-        integrity="sha384-gnNykpgFhVW6TBfaNWy6T1ldwqhfUN3E+PYaY8GFggoA13BNNJJl7prnULMptiQB"
+        href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.css"
+        integrity="sha384-DZwlqNlJtmEknq2/usdX6D4DQTBXNVqftwjE+xt2XQCTpjMS/4dk+Fa3Q8dzsvg9"
         crossorigin="anonymous">
 </head>
 <body data-brand="people">
 
   <button class="ppl-btn ppl-btn--primary">Concluir admissão</button>
 
-  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@1.0.0/dist/ppl-compass-icons.js"
+  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass-icons.js"
           integrity="sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@1.0.0/dist/ppl-compass.js"
-          integrity="sha384-IMIGtsjZiQD10er++tBRXDGL3zDqQmMRuO3o6PoV+t5N0qQghwcp/znJ4us18aMO" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.js"
+          integrity="sha384-yyCdn8gp8pMPh0JSHtSNXE3SeRJJfN2M4LO940mZkTB9d9PuyqoSgkE1aTKUF9V/" crossorigin="anonymous"></script>
   <script>addEventListener('DOMContentLoaded', () => PplCompass.init());</script>
 </body>
 </html>
 ```
 
-**Comece pela galeria:** [`demo/gallery.html`](demo/gallery.html) traz os 19 blocos com o HTML
-copiável de cada componente.
+**Para montar uma tela:** [`templates/`](templates/README.md) traz oito arquétipos prontos —
+lista, lista com drawer de edição, wizard, home, detalhe, landing, molde móvel e a casca vazia.
+Copie o mais próximo e troque o conteúdo.
+
+**Para escolher um componente:** [`demo/gallery.html`](demo/gallery.html) traz os 19 blocos com o
+HTML copiável de cada um.
 
 ### Arquivos publicados
 
@@ -53,20 +57,23 @@ copiável de cada componente.
 ## O que existe
 
 **Superfícies** `.ppl-canvas` `.ppl-card` `.ppl-bar` `.ppl-glass` `.ppl-sheet`
-**Texto** `.ppl-display` `.ppl-data` `.ppl-eyebrow` `.ppl-grad-text`
+**Texto** `.ppl-display` (`--hero`) `.ppl-data` `.ppl-eyebrow` `.ppl-grad-text`
 **Ação** `.ppl-btn` (`--primary --hero --secondary --ghost --danger --gold --sm --icon --touch`)
 **Estado** `.ppl-badge` `.ppl-alert` `.ppl-toast` `.ppl-state` `.ppl-skeleton` `.ppl-spinner` `.ppl-progress`
 **Formulário** `.ppl-field` `.ppl-input` `.ppl-select` `.ppl-check` `.ppl-combo`
 **Sobreposição** `.ppl-drawer` `.ppl-dialog` `.ppl-scrim`
 **Navegação** `.ppl-nav` `.ppl-topbar` `.ppl-tabbar` `.ppl-page-head`
 **Conteúdo** `.ppl-panel` `.ppl-choice` `.ppl-stat` `.ppl-table` `.ppl-steps` `.ppl-review` `.ppl-disclosure`
-**Layout** `.ppl-shell` `.ppl-main` `.ppl-stack` `.ppl-row` `.ppl-cols-2`
+**Público** `.ppl-landing` `.ppl-landing__bar` `.ppl-hero`
+**Layout** `.ppl-shell` `.ppl-main` `.ppl-app` `.ppl-stack` `.ppl-row` `.ppl-cols-2`
 
 ### Comportamento sem escrever JavaScript
 
 ```html
+<aside class="ppl-nav" data-ppl-nav><script type="application/json">{ "itens": [ … ] }</script></aside>
 <button data-ppl-drawer-open="meu-drawer">Abrir</button>
 <button data-ppl-drawer-close>Fechar</button>
+<form data-ppl-submit="Rubrica 1042 criada.">…</form>
 <section data-ppl-disclosure>…</section>
 <div data-ppl-combo>…</div>
 <button data-ppl-search-open>Buscar</button>
@@ -77,7 +84,16 @@ copiável de cada componente.
 ### API
 
 ```js
-PplCompass.init({ acoes: [{ href, label }] });
+PplCompass.init({ acoes: [{ href, label }] });   // sem `acoes`, a busca herda a navegação
+
+PplCompass.nav({
+  alvo: '#nav',                                  // ou marque o elemento com data-ppl-nav
+  variante: 'lateral' | 'tabbar',                // o mesmo objeto desenha as duas
+  rotaAtiva: '/folha',
+  marca:   { sigla, nome, tag },
+  itens:   [ { label, icone, href, contador? }, { grupo, itens: [ … ] } ],
+  usuario: { iniciais, nome, papel, sair }
+});
 PplCompass.toast.success(msg) / .error(msg, { acao: { label, onClick } }) / .info(msg)
 PplCompass.drawer.abrir(id) / .fechar(id)
 PplCompass.busca.abrir() / .fechar()
@@ -109,6 +125,10 @@ Não são preferências de estilo. Um protótipo que as viola gera retrabalho na
 - **Tema escuro só na landing** — o shell autenticado é claro, como o produto.
 - **Fluxo de efeito jurídico ou financeiro termina em revisão.** O `Wizard` falha fechado:
   sem a etapa `revisao` ele não renderiza e mostra o defeito.
+- **Contador é o número real, com separador de milhar** — nunca `"99+"`.
+- **Tabbar tem no máximo 5 itens.** O sexto não quebra o grid em silêncio: `nav()` falha fechado,
+  como faz com grupo vazio, item sem destino e `rotaAtiva` que não existe no menu. Menu que não
+  sabe onde você está é pior do que menu nenhum, porque mente com confiança.
 
 ### Nomes
 
@@ -138,7 +158,7 @@ gerenciar `tabindex` à mão —, custom properties e Grid. Fora da v1: aninhame
 
 | Referência | Cache | Consequência |
 |---|---|---|
-| `@1.0.0` | 1 ano, imutável | a demo de amanhã é byte a byte a de hoje |
+| `@0.2.0` | 1 ano, imutável | a demo de amanhã é byte a byte a de hoje |
 | `@main` | 12 h no edge | a demo pode mudar sozinha antes da reunião |
 
 **Use o arquivo com SRI, não o `.min`.** O jsDelivr gera `.min.css` automaticamente, mas avisa
@@ -150,14 +170,29 @@ anota o componente React de origem e a regra de acessibilidade que a sustenta.
 
 ## Versionamento
 
-SemVer. **A superfície pública é:** nomes de token, nomes de classe, atributos `data-*` e a API
+SemVer, **e o pacote está em `0.x` de propósito.** Em `0.x` o próprio SemVer dispensa a garantia de
+compatibilidade: um `minor` pode renomear uma classe ou um token. É a promessa honesta enquanto o
+framework ainda está descobrindo os próprios nomes — cada fase encontra receita que faltava, e
+travar a superfície agora só criaria alias legado, que é exatamente o que o §5.4 do plano existe
+para evitar.
+
+**A `1.0.0` volta quando a documentação estiver publicada no GitHub Pages** — antes disso não há
+onde alguém conferir o que a estabilidade estaria prometendo.
+
+> Houve uma `v1.0.0` no fim da Fase 1. Ela saiu antes da hora e **foi apagada em 26/08/2026**,
+> com a confirmação de que ninguém a consumia. Apagar uma tag publicada só é seguro sob essa
+> condição: o jsDelivr serve a tag como imutável, então quem já tivesse apontado para ela veria a
+> URL virar 404. Se você encontrar uma referência a `@1.0.0` em algum lugar, ela está morta —
+> troque pela `0.x`.
+
+**A superfície pública é:** nomes de token, nomes de classe, atributos `data-*` e a API
 `PplCompass.*`.
 
-| Mudança | Bump |
-|---|---|
-| novo componente, novo token, nova variante | minor |
-| ajuste de valor sem trocar nome | patch |
-| renomear ou remover token, classe, `data-*` ou método | **major** |
+| Mudança | Bump em `0.x` | Bump depois da `1.0.0` |
+|---|---|---|
+| novo componente, novo token, nova variante | minor | minor |
+| ajuste de valor sem trocar nome | patch | patch |
+| renomear ou remover token, classe, `data-*` ou método | **minor** | **major** |
 
 ---
 
@@ -166,11 +201,12 @@ SemVer. **A superfície pública é:** nomes de token, nomes de classe, atributo
 Não é um pacote npm e não tem dependência de build. `src/` é legível, `dist/` é o que o CDN serve.
 
 ```bash
-node scripts/build.mjs        # monta dist/ e confere as invariantes
+node scripts/build.mjs        # monta dist/ e confere as invariantes (inclusive nos .html)
+node scripts/preview.mjs      # espelha templates/ em .preview/ apontando para ../dist/
 node scripts/sri.mjs          # tabela de hashes para colar neste README
 node scripts/sri.mjs --html   # as tags prontas, já com a URL do CDN
 
-PPL_TAG=v1.1.0 node scripts/sri.mjs --html
+PPL_TAG=v0.2.0 node scripts/sri.mjs --html
 ```
 
 ### Validar antes de publicar
@@ -180,6 +216,7 @@ PPL_TAG=v1.1.0 node scripts/sri.mjs --html
 | `demo/gallery.html` | `../dist/` | ver todos os componentes do commit aberto |
 | `demo/proof-local.html` | `../dist/` | validar o **conteúdo** antes de publicar |
 | `demo/proof.html` | o CDN | validar a **entrega** depois de publicar |
+| `.preview/*.html` | `../dist/` | ver os templates antes de a tag existir |
 
 Se a local aprova e a do CDN reprova, o problema é entrega. Se a local reprova, é o pacote —
 nem adianta publicar.
@@ -193,9 +230,9 @@ python -m http.server 8777
 
 ```bash
 node scripts/build.mjs
-node scripts/sri.mjs              # cole os hashes aqui e em demo/proof.html
-git add -A && git commit -m "release: v1.0.0"
-git tag v1.0.0 && git push origin main --tags
+node scripts/sri.mjs              # cole os hashes aqui, em demo/proof.html e em templates/*.html
+git add -A && git commit -m "release: v0.2.0"
+git tag v0.2.0 && git push origin main --tags
 ```
 
 O hash cobre o **byte exato** de cada arquivo: qualquer mudança, inclusive num comentário, gera
@@ -205,14 +242,14 @@ um hash novo. Regere **antes** de criar a tag, nunca depois.
 
 ## Hashes SRI
 
-| Arquivo | Tamanho | `integrity` (v1.0.0) |
+| Arquivo | Tamanho | `integrity` (v0.2.0) |
 |---|---|---|
-| `ppl-compass-components.css` | 43.8 KB | `sha384-oZ441bg1N6cRV4ytw6bWJD4zWPXLGlhslfODJh+OSMd5+l5eZwaRjnBdDHfF/i/u` |
+| `ppl-compass-components.css` | 48.7 KB | `sha384-CsCaJMBoewOhYxJy/9ABAHzI34e0ItTfTSacM2cGqNIQMaFxru4brtQd3xQkYv7O` |
 | `ppl-compass-icons.js` | 6.3 KB | `sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx` |
-| `ppl-compass-nofonts.css` | 57.3 KB | `sha384-4evymN0fna0R8UEDZm0l6YQE0+/mW7e77KMm9O7vj39G6dQIrO+IBJNFf/7EBIRu` |
-| `ppl-compass-tokens.css` | 12.6 KB | `sha384-3fyTGfH+NW8HgYJ+fNNdYdIkl6OM5VyyePyxGR1v4czXGyGQXkX1Q3eGsYR19GeM` |
-| `ppl-compass.css` | 59.9 KB | `sha384-gnNykpgFhVW6TBfaNWy6T1ldwqhfUN3E+PYaY8GFggoA13BNNJJl7prnULMptiQB` |
-| `ppl-compass.js` | 23.7 KB | `sha384-IMIGtsjZiQD10er++tBRXDGL3zDqQmMRuO3o6PoV+t5N0qQghwcp/znJ4us18aMO` |
+| `ppl-compass-nofonts.css` | 62.3 KB | `sha384-d1PfJ66/scn9zF6LnpL+9iMqG2yafnZoTvwjlB9qsDmcKc3sYajAamy/zqQaYUhB` |
+| `ppl-compass-tokens.css` | 12.8 KB | `sha384-e9hvrC/d4+ZqAfi200UvHN5OofkTbnN6JmygwRhEOMD21yowqA9oRCNn91Whkssn` |
+| `ppl-compass.css` | 65.0 KB | `sha384-DZwlqNlJtmEknq2/usdX6D4DQTBXNVqftwjE+xt2XQCTpjMS/4dk+Fa3Q8dzsvg9` |
+| `ppl-compass.js` | 36.7 KB | `sha384-yyCdn8gp8pMPh0JSHtSNXE3SeRJJfN2M4LO940mZkTB9d9PuyqoSgkE1aTKUF9V/` |
 
 ---
 

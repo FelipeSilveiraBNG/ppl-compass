@@ -63,6 +63,13 @@
   font-family: var(--ppl-font-display);
   font-style: italic;
 }
+/* Saudação da Home e headline de sucesso: o display no tamanho de abertura. */
+.ppl-display--hero {
+  font-size: var(--ppl-text-display);
+  font-weight: 600;
+  line-height: var(--ppl-leading-tight);
+  color: var(--ppl-ink);
+}
 
 /* Dado de folha e ponto. Obrigatório: matrícula, CPF/CNPJ, NSR, competência e
    todo valor em tabela. `tabular-nums` impede a coluna de "dançar".
@@ -282,6 +289,16 @@
 .ppl-combo__option:hover { background: var(--ppl-surface-sunk); }
 .ppl-combo__hint { display: block; font-size: var(--ppl-text-xs); color: var(--ppl-ink-faint); }
 
+/* A lista da busca global mora DENTRO do diálogo: não flutua, não repete a
+   borda do painel e não empilha uma segunda sombra sobre a dele. */
+.ppl-search__list {
+  position: static;
+  margin-top: var(--ppl-space-2);
+  max-height: 320px;
+  border: none;
+  box-shadow: none;
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
  * 6 · ALERT
  * ═══════════════════════════════════════════════════════════════════════ */
@@ -444,6 +461,17 @@
   color: var(--ppl-on-dark-soft);
 }
 
+/* A estrutura que `PplCompass.nav(json)` desenha. Existe como receita para que
+   a navegação gerada não carregue estilo embutido no JavaScript — o que sai do
+   JSON é a mesma marcação que alguém escreveria à mão. */
+.ppl-nav__id    { min-width: 0; }
+.ppl-nav__menu,
+.ppl-nav__list  { display: flex; flex-direction: column; gap: 2px; }
+.ppl-nav__block { padding-top: 6px; }
+.ppl-nav__count { margin-left: auto; }
+
+.ppl-chevron { display: inline-flex; }
+
 .ppl-nav__group {
   display: flex; width: 100%; align-items: center; gap: var(--ppl-space-2);
   border-radius: var(--ppl-radius-md);
@@ -482,6 +510,19 @@
   border-top: 1px solid rgb(255 255 255 / .12);
   padding-top: var(--ppl-space-3);
 }
+.ppl-nav__who  { min-width: 0; flex: 1; }
+/* O e-mail trunca em vez de quebrar: o rodapé tem 238px e o endereço não
+   pode empurrar o botão de sair para fora da navegação. */
+.ppl-nav__mail {
+  display: block;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: var(--ppl-text-sm); font-weight: 600;
+  color: var(--ppl-on-dark);
+}
+.ppl-nav__role { display: block; font-size: var(--ppl-text-eyebrow); color: var(--ppl-on-dark-soft); }
+.ppl-nav__exit { color: rgb(255 255 255 / .7); }
+.ppl-nav__exit:hover { color: var(--ppl-on-dark); }
+
 .ppl-avatar {
   display: grid; place-items: center; flex: none;
   width: 34px; height: 34px;
@@ -517,6 +558,8 @@
 @media (min-width: 768px) {
   .ppl-page-head { flex-direction: row; align-items: flex-end; justify-content: space-between; }
 }
+/* O bloco de identificação encolhe; as ações, não. */
+.ppl-page-head__id    { min-width: 0; }
 .ppl-page-head__meta  { margin-bottom: var(--ppl-space-2); }
 .ppl-page-head__title { font-size: var(--ppl-text-h1); font-weight: 600;
                         color: var(--ppl-ink); line-height: var(--ppl-leading-tight); }
@@ -736,6 +779,10 @@
   border-radius: var(--ppl-radius-md);
   padding: var(--ppl-space-5);
   text-align: left;
+  /* O gatilho vive dentro de um <h2> por causa do padrão ARIA; sem fixar o
+     tamanho ele herda o do navegador e a seção fica maior que o título da
+     página, invertendo a hierarquia. */
+  font-size: var(--ppl-text-md);
   font-weight: 600;
   color: var(--ppl-ink);
   transition: background-color var(--ppl-fast) ease;
@@ -783,6 +830,14 @@
 }
 .ppl-tabbar__item[aria-current="page"] .ppl-tabbar__pill { background: var(--ppl-blue-100); }
 
+/* Molde do aplicativo: cabeçalho, conteúdo rolável e tabbar colada no rodapé.
+   `dvh` depois de `vh` porque a barra do navegador móvel entra e sai da conta;
+   quem não entende a segunda declaração fica com a primeira, que já serve. */
+.ppl-app       { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+.ppl-app__head { position: sticky; top: 0; z-index: var(--ppl-z-bar); }
+.ppl-app__body { flex: 1; padding: var(--ppl-space-4); }
+.ppl-app__foot { position: sticky; bottom: 0; z-index: var(--ppl-z-bar); }
+
 /* ══════════════════════════════════════════════════════════════════════════
  * 21 · LANDING — a única superfície com vidro e tema escuro
  * ═══════════════════════════════════════════════════════════════════════ */
@@ -822,6 +877,38 @@
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
+/* Dentro da landing, toda receita passa a resolver na paleta pública.
+ *
+ * Sem isto, um componente reusado aqui aparece meio certo: `.ppl-choice__title`
+ * pede `--ppl-ink`, que é o azul-marinho do shell autenticado e NÃO vira no
+ * escuro — título azul-marinho sobre fundo azul-marinho some, e some em
+ * silêncio, que é o pior jeito de sumir.
+ *
+ * O remapeamento cobre tinta, borda e superfície. NÃO cobre `--ppl-primary`
+ * nem `--ppl-primary-fg`: no escuro o azul de marca perde contraste como
+ * TEXTO (é por isso que `--ppl-lp-accent` clareia), mas continua sendo o fundo
+ * certo para texto branco. Trocar os dois juntos consertaria o link e quebraria
+ * o botão sólido. O que é texto é tratado uma linha abaixo, um a um. */
+.ppl-landing {
+  --ppl-ink:           var(--ppl-lp-ink);
+  --ppl-ink-soft:      var(--ppl-lp-ink-soft);
+  --ppl-ink-faint:     var(--ppl-lp-ink-soft);
+  --ppl-border:        var(--ppl-lp-border);
+  --ppl-border-strong: var(--ppl-lp-border-strong);
+  --ppl-surface:       var(--ppl-lp-surface);
+  --ppl-surface-sunk:  var(--ppl-lp-accent-soft);
+  --ppl-surface-mute:  var(--ppl-lp-accent-soft);
+}
+
+/* Os textos que pediam o azul de marca. */
+.ppl-landing .ppl-btn--ghost,
+.ppl-landing .ppl-state__action { color: var(--ppl-lp-accent-strong); }
+.ppl-landing .ppl-btn--ghost:hover:not(:disabled) { background: var(--ppl-lp-accent-soft); }
+.ppl-landing .ppl-btn--secondary:hover:not(:disabled) {
+  border-color: var(--ppl-lp-accent);
+  color: var(--ppl-lp-accent-strong);
+}
+
 .ppl-landing .ppl-card { background: var(--ppl-lp-card); border-color: var(--ppl-lp-border); }
 .ppl-landing .ppl-card:is(a, button):hover {
   border-color: var(--ppl-lp-accent);
@@ -859,6 +946,33 @@
     -webkit-backdrop-filter: none;
   }
 }
+
+/* Barra de vidro do topo público. Não é `.ppl-bar`: aquela é branca a 92% e
+   pertence ao shell autenticado. */
+.ppl-landing__bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--ppl-space-3);
+  border-radius: var(--ppl-radius-card);
+  padding: var(--ppl-space-3) var(--ppl-space-5);
+}
+
+/* Hero: eyebrow em serifa, headline, uma linha de apoio e os CTAs. A largura
+   da linha é limitada em `ch` — medida de leitura, não de viewport. */
+.ppl-hero {
+  display: flex; flex-direction: column; align-items: center;
+  gap: var(--ppl-space-4);
+  padding: var(--ppl-space-8) 0;
+  text-align: center;
+}
+.ppl-hero__title {
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 600;
+  line-height: var(--ppl-leading-tight);
+  color: var(--ppl-lp-ink);
+  text-wrap: balance;                 /* melhoria progressiva; §5.5 */
+}
+.ppl-hero__line { max-width: 56ch; font-size: var(--ppl-text-md); color: var(--ppl-lp-ink-soft); }
+.ppl-hero__cta  { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--ppl-space-3); }
 
 /* Folha de consentimento: quase opaca de propósito — texto jurídico precisa
    manter contraste sobre QUALQUER conteúdo que role por baixo. */

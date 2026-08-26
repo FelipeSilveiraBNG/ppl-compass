@@ -234,10 +234,71 @@
     }
     function fechar() { if (el) el.hidden = true; }
 
+    /* O diálogo é montado aqui, como a região do toast. Antes, toda tela que
+       quisesse busca precisava colar catorze linhas de marcação e manter os
+       `aria-controls` em dia — e marcação copiada é marcação que envelhece
+       diferente em cada cópia. Quem já tem um #ppl-search na página continua
+       mandando: o dele é usado como está. */
+    function garantirEl() {
+      var achado = $('#ppl-search');
+      if (achado) return achado;
+
+      var scrim = document.createElement('div');
+      scrim.className = 'ppl-scrim';
+      scrim.id = 'ppl-search';
+      scrim.hidden = true;
+
+      var painel = document.createElement('div');
+      painel.className = 'ppl-dialog ppl-dialog--wide';
+      painel.setAttribute('role', 'dialog');
+      painel.setAttribute('aria-modal', 'true');
+      painel.setAttribute('aria-label', 'Busca global');
+
+      var cabeca = document.createElement('div');
+      cabeca.className = 'ppl-dialog__head';
+      var titulo = document.createElement('h2');
+      titulo.className = 'ppl-dialog__title';
+      titulo.textContent = 'Busca global';
+      var x = document.createElement('button');
+      x.type = 'button';
+      x.className = 'ppl-btn ppl-btn--icon ppl-btn--secondary';
+      x.setAttribute('aria-label', 'Fechar busca');
+      x.innerHTML = icons.svg('x', 16);
+      x.addEventListener('click', fechar);
+      cabeca.appendChild(titulo);
+      cabeca.appendChild(x);
+
+      var campo = document.createElement('input');
+      campo.className = 'ppl-input';
+      campo.id = 'ppl-search-input';
+      campo.setAttribute('role', 'combobox');
+      campo.setAttribute('aria-expanded', 'true');
+      campo.setAttribute('aria-controls', 'ppl-search-list');
+      campo.setAttribute('aria-autocomplete', 'list');
+      campo.setAttribute('autocomplete', 'off');
+      campo.placeholder = 'Buscar processo, tela ou registro…';
+
+      var ul = document.createElement('ul');
+      ul.className = 'ppl-combo__list ppl-search__list';
+      ul.id = 'ppl-search-list';
+      ul.setAttribute('role', 'listbox');
+
+      painel.appendChild(cabeca);
+      painel.appendChild(campo);
+      painel.appendChild(ul);
+      scrim.appendChild(painel);
+      document.body.appendChild(scrim);
+      return scrim;
+    }
+
     function ligar(config) {
-      acoes = (config && config.acoes) || [];
-      el = $('#ppl-search');
-      if (!el) return;
+      /* Sem lista explícita, a busca herda o que a navegação compôs.
+         Duas listas divergiriam na primeira rota nova. */
+      acoes = (config && config.acoes) || nav.acoes();
+      /* Sem nenhuma ação não existe busca — e um diálogo que abre vazio é pior
+         do que um atalho que não faz nada. */
+      if (!acoes.length) return;
+      el = garantirEl();
       input = $('#ppl-search-input', el);
       lista = $('#ppl-search-list', el);
 
@@ -350,14 +411,228 @@
   };
 
   /* ==========================================================================
-   * 6 · NAV — grupos recolhíveis
+   * 6 · NAV — a navegação inteira a partir de um JSON
    * --------------------------------------------------------------------------
-   * Grupos nascem RECOLHIDOS, exceto o que contém o item com
-   * aria-current="page". Recolher é gesto momentâneo de foco, não
-   * configuração: NÃO persiste.
+   * `PplCompass.nav(cfg)` desenha marca, grupos, itens, ícone, rota ativa,
+   * contador e rodapé de usuário a partir de um objeto. É o que faz um template
+   * virar dez sem copiar marcação: o shell de todas as telas é o mesmo JSON com
+   * uma `rotaAtiva` diferente.
+   *
+   * Duas formas, o mesmo objeto. A declarativa é a que os templates usam: um
+   * <aside class="ppl-nav" data-ppl-nav> com um <script type="application/json">
+   * dentro. init() hidrata sozinho, e quem monta o protótipo continua sem
+   * escrever JavaScript. A imperativa — PplCompass.nav({ alvo: '#nav', … }) —
+   * existe para trocar a navegação depois que a página carregou.
+   *
+   * `variante: "tabbar"` desenha a navegação móvel a partir do MESMO objeto: um
+   * shell e um molde de aplicativo não mantêm duas listas de rotas.
+   *
+   * Os grupos nascem RECOLHIDOS, exceto o que contém a rota ativa. Recolher é
+   * gesto momentâneo de foco, não configuração: não persiste.
+   *
+   * FALHA FECHADO, e é aqui que isso paga. Navegação malformada não aparece
+   * meio certa: ela some e dá lugar a um alerta que diz o defeito. Item sem
+   * rótulo, item sem destino, grupo vazio, contador que não é número (o "99+"
+   * é exatamente o que o badge de contagem proibiu), tabbar com mais de cinco
+   * itens — o teto que o CI do produto verifica — e `rotaAtiva` que não existe
+   * no menu. Esse último é o que mais importa: menu que não sabe onde você está
+   * é pior do que menu nenhum, porque mente com confiança.
    * ======================================================================== */
-  var nav = {
-    _ligar: function () {
+  var nav = (function () {
+    /* O que a navegação oferece vira a lista da busca global. Uma verdade só:
+       declarar as ações de novo criaria duas listas que divergem na primeira
+       rota nova. */
+    var derivadas = [];
+
+    function el(tag, cls, texto) {
+      var n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (texto != null) n.textContent = texto;
+      return n;
+    }
+
+    function comSvg(cls, nome, tam) {
+      var n = el('span', cls);
+      n.innerHTML = icons.svg(nome, tam);
+      return n;
+    }
+
+    /** Todos os itens de link, com os grupos achatados. */
+    function planos(cfg) {
+      var saida = [];
+      (cfg.itens || []).forEach(function (entrada) {
+        if (entrada.grupo) saida = saida.concat(entrada.itens || []);
+        else saida.push(entrada);
+      });
+      return saida;
+    }
+
+    function conferir(raiz, cfg) {
+      var tabbar = cfg.variante === 'tabbar';
+      if (!Array.isArray(cfg.itens) || !cfg.itens.length)
+        return 'A chave "itens" precisa ser uma lista com pelo menos um item.';
+      if (tabbar && raiz.tagName !== 'NAV')
+        return 'A tabbar precisa morar num <nav>: o rótulo dela é o que anuncia a navegação.';
+
+      for (var i = 0; i < cfg.itens.length; i++) {
+        var entrada = cfg.itens[i];
+        if (!entrada.grupo) continue;
+        if (tabbar) return 'A tabbar não tem grupos — "' + entrada.grupo + '" precisa virar item ou sair.';
+        if (!Array.isArray(entrada.itens) || !entrada.itens.length)
+          return 'O grupo "' + entrada.grupo + '" está vazio. Grupo sem item só ocupa espaço.';
+      }
+
+      var lista = planos(cfg);
+      if (tabbar && lista.length > 5)
+        return 'A tabbar aceita no máximo 5 itens e vieram ' + lista.length + '.';
+
+      for (var j = 0; j < lista.length; j++) {
+        var it = lista[j];
+        if (!it.label) return 'Há um item sem "label".';
+        if (!it.href) return 'O item "' + it.label + '" está sem "href".';
+        if ('contador' in it && typeof it.contador !== 'number')
+          return 'O contador de "' + it.label + '" precisa ser número: o badge mostra o total real, com separador de milhar.';
+      }
+
+      if (cfg.rotaAtiva) {
+        var achou = lista.some(function (it) { return it.href === cfg.rotaAtiva; });
+        if (!achou) return 'A rotaAtiva "' + cfg.rotaAtiva + '" não existe neste menu.';
+      }
+      return null;
+    }
+
+    function defeito(raiz, mensagem) {
+      raiz.textContent = '';
+      var alerta = el('div', 'ppl-alert ppl-alert--danger');
+      alerta.setAttribute('role', 'alert');
+      alerta.appendChild(el('strong', null, 'Navegação mal montada — nada foi exibido.'));
+      alerta.append(' ' + mensagem);
+      raiz.appendChild(alerta);
+      return null;
+    }
+
+    function item(it, rotaAtiva) {
+      var a = el('a', 'ppl-nav__item');
+      a.href = it.href;
+      if (it.icone) a.appendChild(comSvg(null, it.icone, 16));
+      a.appendChild(el('span', null, it.label));
+      if (typeof it.contador === 'number') {
+        a.appendChild(el('span', 'ppl-badge ppl-badge--gold ppl-badge--count ppl-nav__count',
+                         fmt.contagem(it.contador)));
+      }
+      if (rotaAtiva && it.href === rotaAtiva) a.setAttribute('aria-current', 'page');
+      return a;
+    }
+
+    function montarLateral(raiz, cfg) {
+      raiz.textContent = '';
+      raiz.classList.add('ppl-nav');
+
+      if (cfg.marca) {
+        var marca = el('div', 'ppl-nav__brand');
+        marca.appendChild(el('span', 'ppl-nav__mark', cfg.marca.sigla || ''));
+        var id = el('span', 'ppl-nav__id');
+        id.appendChild(el('span', 'ppl-nav__name', cfg.marca.nome || ''));
+        if (cfg.marca.tag) id.appendChild(el('span', 'ppl-nav__tag', cfg.marca.tag));
+        marca.appendChild(id);
+        raiz.appendChild(marca);
+      }
+
+      var menu = el('nav', 'ppl-nav__menu');
+      /* O rótulo é o sinal de "shell renderizado" para o teste de ponta a ponta
+         e o de "onde estou" para o leitor de tela. Não é decorativo. */
+      menu.setAttribute('aria-label', cfg.rotulo || 'Navegação principal');
+
+      cfg.itens.forEach(function (entrada, i) {
+        if (!entrada.grupo) { menu.appendChild(item(entrada, cfg.rotaAtiva)); return; }
+
+        var bloco = el('div', 'ppl-nav__block');
+        var idLista = 'ppl-nav-g' + i;
+
+        var botao = el('button', 'ppl-nav__group');
+        botao.type = 'button';
+        botao.setAttribute('aria-controls', idLista);
+        botao.append(entrada.grupo);
+        botao.appendChild(comSvg('ppl-chevron', 'chevron-down', 13));
+
+        var lista = el('div', 'ppl-nav__list');
+        lista.id = idLista;
+        entrada.itens.forEach(function (it) { lista.appendChild(item(it, cfg.rotaAtiva)); });
+
+        bloco.appendChild(botao);
+        bloco.appendChild(lista);
+        menu.appendChild(bloco);
+      });
+      raiz.appendChild(menu);
+      raiz.appendChild(el('div', 'ppl-spacer'));
+
+      if (cfg.usuario) {
+        var u = cfg.usuario;
+        var pe = el('div', 'ppl-nav__foot');
+        pe.appendChild(el('span', 'ppl-avatar', u.iniciais || ''));
+        var quem = el('span', 'ppl-nav__who');
+        quem.appendChild(el('span', 'ppl-nav__mail', u.nome || ''));
+        if (u.papel) quem.appendChild(el('span', 'ppl-nav__role', u.papel));
+        pe.appendChild(quem);
+        if (u.sair) {
+          var sair = el('a', 'ppl-btn ppl-btn--icon ppl-nav__exit');
+          sair.href = u.sair;
+          sair.setAttribute('aria-label', 'Sair');
+          sair.appendChild(comSvg(null, 'log-out', 15));
+          pe.appendChild(sair);
+        }
+        raiz.appendChild(pe);
+      }
+    }
+
+    function montarTabbar(raiz, cfg) {
+      raiz.textContent = '';
+      raiz.classList.add('ppl-tabbar');
+      raiz.setAttribute('aria-label', cfg.rotulo || 'Navegação principal');
+      cfg.itens.forEach(function (it) {
+        /* O alvo de toque é o link inteiro, nunca a pílula de 36px. */
+        var a = el('a', 'ppl-tabbar__item');
+        a.href = it.href;
+        if (it.icone) a.appendChild(comSvg('ppl-tabbar__pill', it.icone, 20));
+        a.append(it.label);
+        if (cfg.rotaAtiva && it.href === cfg.rotaAtiva) a.setAttribute('aria-current', 'page');
+        raiz.appendChild(a);
+      });
+    }
+
+    function montar(alvo, cfg) {
+      var raiz = typeof alvo === 'string' ? $(alvo) : alvo;
+      if (!raiz || !cfg) return null;
+      var erro = conferir(raiz, cfg);
+      if (erro) return defeito(raiz, erro);
+
+      if (cfg.variante === 'tabbar') montarTabbar(raiz, cfg);
+      else montarLateral(raiz, cfg);
+
+      planos(cfg).forEach(function (it) {
+        if (derivadas.some(function (a) { return a.href === it.href; })) return;
+        derivadas.push({ href: it.href, label: it.label });
+      });
+      return raiz;
+    }
+
+    function api(cfg) { return montar(cfg && cfg.alvo, cfg); }
+
+    /** As ações que a navegação compôs — a busca global consome isto. */
+    api.acoes = function () { return derivadas.slice(); };
+
+    api._hidratar = function () {
+      $$('[data-ppl-nav]').forEach(function (raiz) {
+        var fonte = $('script[type="application/json"]', raiz);
+        if (!fonte) return;
+        var cfg;
+        try { cfg = JSON.parse(fonte.textContent); }
+        catch (e) { defeito(raiz, 'O JSON da navegação não pôde ser lido: ' + e.message); return; }
+        montar(raiz, cfg);
+      });
+    };
+
+    api._ligar = function () {
       $$('.ppl-nav__group').forEach(function (btn) {
         var corpo = document.getElementById(btn.getAttribute('aria-controls'));
         var temAtivo = corpo && $('[aria-current="page"]', corpo);
@@ -369,8 +644,10 @@
           if (corpo) corpo.hidden = aberto;
         });
       });
-    }
-  };
+    };
+
+    return api;
+  })();
 
   /* ==========================================================================
    * 7 · WIZARD
@@ -539,6 +816,38 @@
   };
 
   /* ==========================================================================
+   * 10 · ENVIO SEM PERSISTÊNCIA — data-ppl-submit
+   * --------------------------------------------------------------------------
+   * O protótipo não guarda nada: os dados moram no HTML e o formulário apenas
+   * anuncia o que teria acontecido. Sem esta receita, toda tela com formulário
+   * precisaria de um <script> próprio — e aí o protótipo deixa de ser HTML e
+   * vira código, que é exatamente o que este pacote existe para evitar.
+   *
+   *   <form data-ppl-submit="Rubrica 1042 criada na competência 2026-08.">
+   *   <form data-ppl-submit="Não foi possível salvar." data-ppl-submit-tipo="error">
+   *
+   * Fecha o painel que contém o formulário, quando existe. Numa tela real o
+   * drawer some junto com o salvamento; um painel que fica aberto depois do
+   * "salvo" faz o operador salvar duas vezes.
+   *
+   * O limite, dito na cara: o toast é o ÚNICO registro do que aconteceu, e a
+   * tela por baixo não muda. Numa tela de verdade isso seria defeito — a lista
+   * tem que ganhar a linha. Aqui é a consequência aceita de não ter estado.
+   * ======================================================================== */
+  var envio = {
+    _ligar: function () {
+      $$('form[data-ppl-submit]').forEach(function (form) {
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var painel = form.closest('.ppl-drawer');
+          if (painel) drawer.fechar(painel.id);
+          toast.show(form.dataset.pplSubmitTipo || 'success', form.dataset.pplSubmit);
+        });
+      });
+    }
+  };
+
+  /* ==========================================================================
    * ÍCONES — preenchido por ppl-compass-icons.js quando ele estiver na página.
    * Sem ele, `svg()` devolve string vazia e nada quebra.
    * ======================================================================== */
@@ -557,9 +866,13 @@
   function init(config) {
     icons = global.PplCompassIcons || icons;
     hidratarIcones();
+    /* A navegação é desenhada ANTES de qualquer coisa se ligar a ela:
+       _ligar() dos grupos precisa dos botões que nav() acabou de criar. */
+    nav._hidratar();
     drawer._ligar();
     disclosure._ligar();
     combo._ligar();
+    envio._ligar();
     nav._ligar();
     tema._ligar();
     busca._ligar(config || {});

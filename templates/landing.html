@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BNG People — gestão de pessoas para operação de saúde</title>
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.css"
+      integrity="sha384-DZwlqNlJtmEknq2/usdX6D4DQTBXNVqftwjE+xt2XQCTpjMS/4dk+Fa3Q8dzsvg9"
+      crossorigin="anonymous">
+</head>
+<body class="ppl-landing ppl-landing__mesh" data-brand="people">
+
+<!-- LANDING — a ÚNICA superfície com vidro e tema escuro.
+     No produto, o shell autenticado é claro-only; espelhar isso é intencional
+     (decisão Q14). O alternador de tema vale só aqui.
+
+     `prefers-reduced-transparency` remove o vidro sem pedir nada: o efeito é
+     degradação, nunca requisito de leitura. -->
+
+<div class="ppl-main">
+
+  <nav class="ppl-glass ppl-landing__bar" aria-label="Navegação da página">
+    <span class="ppl-row">
+      <span class="ppl-nav__mark">b</span>
+      <strong>BNG People</strong>
+    </span>
+    <span class="ppl-row">
+      <a href="#modulos" class="ppl-btn ppl-btn--ghost ppl-btn--sm">Módulos</a>
+      <a href="#garantias" class="ppl-btn ppl-btn--ghost ppl-btn--sm">Garantias</a>
+      <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" data-ppl-theme-toggle aria-label="Alternar tema">
+        <i data-ppl-icon="moon" data-ppl-size="16"></i>
+      </button>
+      <a href="/" class="ppl-btn ppl-btn--hero ppl-btn--sm">Entrar</a>
+    </span>
+  </nav>
+
+  <header class="ppl-hero">
+    <!-- Na landing o eyebrow vira serifa itálica no azul de marca: é editorial,
+         não rótulo de cromo. -->
+    <p class="ppl-eyebrow">Departamento pessoal para quem opera saúde</p>
+    <h1 class="ppl-hero__title">
+      A folha fecha <span class="ppl-grad-text">no prazo</span> porque o dado nasce certo.
+    </h1>
+    <p class="ppl-hero__line">
+      Admissão, ponto, folha e eSocial no mesmo lugar — com o contexto de CNPJ e competência
+      visível do início ao fim de cada processo.
+    </p>
+    <div class="ppl-hero__cta">
+      <a class="ppl-btn ppl-btn--hero ppl-btn--touch" href="/">Entrar no console</a>
+      <a class="ppl-btn ppl-btn--secondary ppl-btn--touch" href="#modulos">Ver os módulos</a>
+    </div>
+  </header>
+
+  <section id="modulos" class="ppl-stack">
+    <p class="ppl-eyebrow">Módulos</p>
+    <div class="ppl-choice-grid">
+      <article class="ppl-card ppl-choice">
+        <span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="users" data-ppl-size="20"></i></span>
+        <h2 class="ppl-choice__title">Cadastro e admissão</h2>
+        <p class="ppl-choice__line">Contrato, lotação e documentos, com o S-2200 saindo do mesmo fluxo.</p>
+      </article>
+      <article class="ppl-card ppl-choice">
+        <span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="fingerprint" data-ppl-size="20"></i></span>
+        <h2 class="ppl-choice__title">Ponto e escala</h2>
+        <p class="ppl-choice__line">Marcação, tratamento por liderança e espelho fechado sem planilha.</p>
+      </article>
+      <article class="ppl-card ppl-choice">
+        <span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="wallet" data-ppl-size="20"></i></span>
+        <h2 class="ppl-choice__title">Folha e obrigações</h2>
+        <p class="ppl-choice__line">Apuração por CNPJ, conferência de divergências e transmissão do eSocial.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="garantias" class="ppl-sheet ppl-panel" style="border-radius:var(--ppl-radius-card);margin-top:32px">
+    <div class="ppl-choice-grid">
+      <div class="ppl-stack ppl-stack--tight">
+        <span class="ppl-icon-tile"><i data-ppl-icon="shield" data-ppl-size="18"></i></span>
+        <strong>Trilha de auditoria</strong>
+        <p class="ppl-muted">Toda ação de efeito jurídico ou financeiro registra quem, quando e o quê.</p>
+      </div>
+      <div class="ppl-stack ppl-stack--tight">
+        <span class="ppl-icon-tile"><i data-ppl-icon="lock" data-ppl-size="18"></i></span>
+        <strong>Permissão por grupo econômico</strong>
+        <p class="ppl-muted">O operador vê o que pode operar. Nunca listar-e-negar.</p>
+      </div>
+      <div class="ppl-stack ppl-stack--tight">
+        <span class="ppl-icon-tile"><i data-ppl-icon="clipboard" data-ppl-size="18"></i></span>
+        <strong>Conferência antes do envio</strong>
+        <p class="ppl-muted">Nenhum fluxo de efeito jurídico termina sem uma tela de revisão.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="ppl-row" style="margin-top:48px;padding-top:24px;border-top:1px solid var(--ppl-lp-border)">
+    <span class="ppl-muted">BNG People · Grupo Boas Novas</span>
+    <span class="ppl-spacer"></span>
+    <span class="ppl-muted">Protótipo — nenhum dado desta página é real.</span>
+  </footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass-icons.js"
+        integrity="sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.js"
+        integrity="sha384-yyCdn8gp8pMPh0JSHtSNXE3SeRJJfN2M4LO940mZkTB9d9PuyqoSgkE1aTKUF9V/" crossorigin="anonymous"></script>
+<script>addEventListener('DOMContentLoaded', () => PplCompass.init());</script>
+</body>
+</html>

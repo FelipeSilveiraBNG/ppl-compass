@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Espelho de ponto — BNG People</title>
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.css"
+      integrity="sha384-DZwlqNlJtmEknq2/usdX6D4DQTBXNVqftwjE+xt2XQCTpjMS/4dk+Fa3Q8dzsvg9"
+      crossorigin="anonymous">
+</head>
+<body class="ppl-canvas" data-brand="people">
+
+<!-- PWA — o molde do aplicativo do colaborador.
+     A tabbar sai do MESMO `nav(json)` do shell, com `variante: "tabbar"`: um
+     produto não mantém duas listas de rotas. O teto de 5 itens é verificado —
+     inclua um sexto e a navegação some, em vez de quebrar o grid em silêncio.
+
+     O alvo de toque é o link inteiro, ≥ 44px, nunca a pílula de 36px.
+
+     Pendência conhecida (Q17): este molde sai AZUL, e a PWA em produção ainda
+     está em violeta. A divergência é do produto, não do template. -->
+
+<div class="ppl-app">
+
+  <header class="ppl-app__head ppl-bar">
+    <div class="ppl-topbar__row">
+      <span class="ppl-avatar">MS</span>
+      <span class="ppl-page-head__id">
+        <span class="ppl-eyebrow">Gestão Hospitalar Ltda</span>
+        <span class="ppl-nav__mail" style="color:var(--ppl-ink)">Mariana Souza</span>
+      </span>
+      <div class="ppl-topbar__actions">
+        <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Notificações">
+          <i data-ppl-icon="alert-circle" data-ppl-size="16"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="ppl-app__body ppl-stack">
+
+    <div class="ppl-stat-hero">
+      <span class="ppl-stat-hero__label">Banco de horas · 2026-08</span>
+      <span class="ppl-stat-hero__value">+12h 30min</span>
+      <span class="ppl-stat-hero__label">Espelho aberto até 05/09</span>
+    </div>
+
+    <button class="ppl-btn ppl-btn--hero ppl-btn--touch" style="width:100%;justify-content:center">
+      <i data-ppl-icon="fingerprint" data-ppl-size="18"></i>Registrar ponto
+    </button>
+
+    <section class="ppl-stack ppl-stack--tight">
+      <p class="ppl-eyebrow">Últimas marcações</p>
+
+      <div class="ppl-card ppl-panel">
+        <div class="ppl-panel__head" style="margin-bottom:0">
+          <div class="ppl-panel__id">
+            <span class="ppl-icon-tile ppl-icon-tile--sm"><i data-ppl-icon="check" data-ppl-size="15"></i></span>
+            <div>
+              <div class="ppl-panel__title">Segunda, 25/08</div>
+              <div class="ppl-panel__sub ppl-data">07:02 · 12:04 · 13:01 · 19:08</div>
+            </div>
+          </div>
+          <span class="ppl-badge ppl-badge--success">Validada</span>
+        </div>
+      </div>
+
+      <div class="ppl-card ppl-panel">
+        <div class="ppl-panel__head" style="margin-bottom:0">
+          <div class="ppl-panel__id">
+            <span class="ppl-icon-tile ppl-icon-tile--sm"><i data-ppl-icon="clock-dashed" data-ppl-size="15"></i></span>
+            <div>
+              <div class="ppl-panel__title">Terça, 26/08</div>
+              <div class="ppl-panel__sub ppl-data">07:00 · 12:10 · 13:05 · —</div>
+            </div>
+          </div>
+          <span class="ppl-badge ppl-badge--warning">Saída ausente</span>
+        </div>
+      </div>
+
+      <div class="ppl-state ppl-state--empty">
+        <span class="ppl-state__icon"><i data-ppl-icon="calendar" data-ppl-size="24"></i></span>
+        <p>As marcações anteriores a 01/08 estão no espelho fechado.</p>
+        <a class="ppl-state__action" href="/espelho">Abrir o espelho de julho</a>
+      </div>
+    </section>
+  </main>
+
+  <nav class="ppl-app__foot" data-ppl-nav>
+    <script type="application/json">
+    {
+      "variante": "tabbar",
+      "rotaAtiva": "/espelho",
+      "itens": [
+        { "label": "Espelho",  "icone": "calendar",    "href": "/espelho" },
+        { "label": "Ponto",    "icone": "fingerprint", "href": "/ponto" },
+        { "label": "Holerite", "icone": "file",        "href": "/holerite" },
+        { "label": "Férias",   "icone": "palm",        "href": "/ferias" },
+        { "label": "Perfil",   "icone": "user",        "href": "/perfil" }
+      ]
+    }
+    </script>
+  </nav>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass-icons.js"
+        integrity="sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.2.0/dist/ppl-compass.js"
+        integrity="sha384-yyCdn8gp8pMPh0JSHtSNXE3SeRJJfN2M4LO940mZkTB9d9PuyqoSgkE1aTKUF9V/" crossorigin="anonymous"></script>
+<script>addEventListener('DOMContentLoaded', () => PplCompass.init());</script>
+</body>
+</html>

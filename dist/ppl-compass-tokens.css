@@ -17,6 +17,10 @@ html { -webkit-text-size-adjust: 100%; }
 a { color: inherit; text-decoration: none; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; background: none; border: none; }
+/* fieldset/legend são o agrupamento acessível de campos relacionados; a
+   moldura nativa faz o agrupamento CERTO parecer defeito. */
+fieldset { border: none; }
+legend { padding: 0; }
 img, svg { display: block; max-width: 100%; }
 [hidden] { display: none !important; }
 
