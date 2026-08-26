@@ -1,4 +1,4 @@
-﻿# ppl-compass
+# ppl-compass
 
 Framework de prototipação do **BNG People**. CSS + JS, **zero dependência**, servido por CDN.
 
@@ -19,8 +19,8 @@ já correta e as regras de acessibilidade já embutidas.
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/bng-health/ppl-compass@0.1.0/dist/ppl-compass.css"
-        integrity="sha384-Zj2aLH1Cz9C3kNWTw7Exl0i94lJcy6h5VtqtvrXFPwWXlVngHk4p2xhdKA18e33M"
+        href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.1.0/dist/ppl-compass.css"
+        integrity="sha384-oDd/Cbo3oZtMz2uMiSgkMhRNO10x1PvWpOOUICcVXOFgIBfBaiwNmHsMNXqTJZkZ"
         crossorigin="anonymous">
 </head>
 <body data-brand="people">
@@ -32,7 +32,7 @@ já correta e as regras de acessibilidade já embutidas.
 A partir da v1.0.0 entra também:
 
 ```html
-  <script defer src="https://cdn.jsdelivr.net/gh/bng-health/ppl-compass@1.0.0/dist/ppl-compass.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@1.0.0/dist/ppl-compass.js"></script>
   <script>addEventListener('DOMContentLoaded', () => PplCompass.init());</script>
 ```
 
@@ -81,7 +81,7 @@ node scripts/build.mjs        # copia src/ → dist/ e confere as invariantes
 node scripts/sri.mjs          # tabela de hashes SRI para colar neste README
 node scripts/sri.mjs --html   # o <link> pronto, já com a URL do CDN
 
-# org e tag padrão são bng-health e v0.1.0; sobrescreva por variável de ambiente
+# owner e tag padrão são FelipeSilveiraBNG e v0.1.0; sobrescreva por variável de ambiente
 PPL_TAG=v0.2.0 node scripts/sri.mjs --html
 ```
 
@@ -124,7 +124,7 @@ git tag v0.1.0 && git push origin main --tags
 
 | Arquivo | Tamanho | `integrity` (v0.1.0) |
 |---|---|---|
-| `ppl-compass.css` | 1,6 KB | `sha384-Zj2aLH1Cz9C3kNWTw7Exl0i94lJcy6h5VtqtvrXFPwWXlVngHk4p2xhdKA18e33M` |
+| `ppl-compass.css` | 1,6 KB | `sha384-oDd/Cbo3oZtMz2uMiSgkMhRNO10x1PvWpOOUICcVXOFgIBfBaiwNmHsMNXqTJZkZ` |
 
 > O hash cobre o **byte exato** de `dist/ppl-compass.css`. Qualquer mudança no arquivo — inclusive
 > num comentário — gera um hash novo. Regere com `node scripts/sri.mjs` e atualize esta tabela

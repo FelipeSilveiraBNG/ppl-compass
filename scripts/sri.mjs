@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 /**
  * sri.mjs — gera os hashes Subresource Integrity de tudo que está em dist/.
  *
@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url';
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(raiz, 'dist');
 
-const ORG = process.env.PPL_ORG ?? 'bng-health';
+const OWNER = process.env.PPL_OWNER ?? 'FelipeSilveiraBNG';
 const TAG = process.env.PPL_TAG ?? 'v0.1.0';
 const versao = TAG.replace(/^v/, '');
 
@@ -50,7 +50,7 @@ for (const arquivo of lista) {
 if (process.argv.includes('--html')) {
   console.log();
   for (const { arquivo, integrity } of linhas) {
-    const url = `https://cdn.jsdelivr.net/gh/${ORG}/ppl-compass@${versao}/dist/${arquivo}`;
+    const url = `https://cdn.jsdelivr.net/gh/${OWNER}/ppl-compass@${versao}/dist/${arquivo}`;
     console.log(
       arquivo.endsWith('.css')
         ? `<link rel="stylesheet"\n      href="${url}"\n      integrity="${integrity}"\n      crossorigin="anonymous">\n`
