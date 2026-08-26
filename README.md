@@ -180,10 +180,9 @@ para evitar.
 onde alguém conferir o que a estabilidade estaria prometendo.
 
 > Houve uma `v1.0.0` no fim da Fase 1. Ela saiu antes da hora e **foi apagada em 26/08/2026**,
-> com a confirmação de que ninguém a consumia. Apagar uma tag publicada só é seguro sob essa
-> condição: o jsDelivr serve a tag como imutável, então quem já tivesse apontado para ela veria a
-> URL virar 404. Se você encontrar uma referência a `@1.0.0` em algum lugar, ela está morta —
-> troque pela `0.x`.
+> com a confirmação de que ninguém a consumia. Se você encontrar uma referência a `@1.0.0`, troque
+> pela `0.x`: no GitHub a tag já não existe, e o que ainda responde é cache do CDN — que some sem
+> aviso. Apagar tag publicada só é seguro com essa confirmação.
 
 **A superfície pública é:** nomes de token, nomes de classe, atributos `data-*` e a API
 `PplCompass.*`.
