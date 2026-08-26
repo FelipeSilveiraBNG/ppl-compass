@@ -1,0 +1,11 @@
+# Não é um pacote npm — por design. Ver PLANO.md R1/R2.
+node_modules/
+package-lock.json
+
+# SO / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# dist/ NÃO entra aqui: é o que o CDN serve, precisa estar versionado.

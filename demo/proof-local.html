@@ -1,0 +1,128 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ppl-compass v0.1.0 — prova local (dist/)</title>
+
+<!-- ============================================================================
+     VARIANTE LOCAL da prova — aponta para ../dist/, não para o CDN.
+
+     Serve para validar o conteúdo ANTES de publicar a tag: se aqui reprovar,
+     o problema é o CSS; se aqui aprovar e o proof.html reprovar, o problema
+     é o caminho de entrega (org, tag, SRI, CDN).
+
+     Rode servido por HTTP, não por file://.
+     ============================================================================ -->
+<link rel="stylesheet" href="../dist/ppl-compass.css">
+
+<style>
+  /* Cromo só da página de prova — não faz parte do framework.
+     Deliberadamente independente do CSS testado: se o CDN falhar, esta página
+     ainda precisa ser legível o suficiente para dizer o que falhou. */
+  body { font: 15px/1.5 system-ui, sans-serif; color: #132c63; background: #f2f5fc;
+         margin: 0; padding: 40px 24px; }
+  main { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: #5a6486; margin: 0 0 28px; }
+
+  /* Sem opinião nenhuma sobre a aparência: quem pinta é o CSS do CDN.
+     A moldura de falha é aplicada por JS, e só quando a falha for MEDIDA —
+     nunca inferida da presença de uma classe. */
+  .alvo { min-height: 160px; display: grid; place-items: center; }
+  .alvo.falhou { border: 3px dashed #c0392b; border-radius: 16px;
+                 color: #c0392b; font-weight: 600; }
+
+  table { border-collapse: collapse; width: 100%; margin-top: 28px; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e2e8f4; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: #5a6486; }
+  td.v { font-family: ui-monospace, "JetBrains Mono", monospace; font-size: 13px; }
+  .ok { color: #0e8a4f; font-weight: 600; }
+  .fail { color: #c0392b; font-weight: 600; }
+  .info { color: #5a6486; }
+</style>
+</head>
+<body>
+<main>
+  <h1>ppl-compass v0.1.0</h1>
+  <p class="sub">Prova <strong>local</strong> — valida <code>dist/</code> antes de publicar.</p>
+
+  <div class="alvo ppl-proof"></div>
+
+  <table>
+    <thead><tr><th>Verificação</th><th>Resultado</th></tr></thead>
+    <tbody id="diag"></tbody>
+  </table>
+</main>
+
+<script>
+/**
+ * Diagnóstico honesto: mede e mostra o que mediu.
+ *
+ * A ÚNICA fonte de verdade é o estilo COMPUTADO do alvo. A presença do <link>
+ * no DOM não prova nada — um <link> que falhou continua sendo um nó; e
+ * `document.styleSheets` pode listar a folha mesmo sem ela ter aplicado regra
+ * nenhuma. A primeira versão desta página caiu exatamente nessa: reportou
+ * "folha carregada: sim" em verde com o CSS visivelmente ausente.
+ */
+const AZUL = 'rgb(47, 90, 208)';
+const alvo = document.querySelector('.alvo');
+const linhas = [];
+
+/* Escapa o valor antes de injetar na tabela: URL com `<` truncaria a exibição. */
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function add(nome, valor, estado) {
+  const classe = estado === 'ok' ? 'ok' : estado === 'fail' ? 'fail' : 'info';
+  linhas.push(`<tr><td>${nome}</td><td class="v ${classe}">${esc(valor)}</td></tr>`);
+}
+
+/* 1. O token chegou? */
+const token = getComputedStyle(document.documentElement)
+  .getPropertyValue('--color-people-primary').trim();
+add('Token <code>--color-people-primary</code>', token || '(vazio)',
+    token === '#2f5ad0' ? 'ok' : 'fail');
+
+/* 2. A classe pintou? — este é o teste que decide. */
+const cor = getComputedStyle(alvo).backgroundColor;
+const pintou = cor === AZUL;
+add('Fundo computado de <code>.ppl-proof</code>', cor, pintou ? 'ok' : 'fail');
+
+/* 3. Contexto — informativo, nunca veredito.
+      Cuidado: `cssRules` lança SecurityError em folha cross-origin, e isso
+      acontece TANTO quando ela carregou quanto quando falhou. O erro não
+      distingue os dois casos, então esta linha não pode afirmar sucesso —
+      quem decide é o passo 2, que mede o pixel. */
+const link = document.querySelector('link[href*="ppl-compass"]');
+const folha = [...document.styleSheets].find(s => (s.href || '').includes('ppl-compass'));
+let situacao;
+if (!folha) {
+  situacao = 'nenhuma folha do CDN no documento';
+} else {
+  try {
+    situacao = folha.cssRules.length > 0
+      ? `${folha.cssRules.length} regra(s) legível(is)`
+      : 'presente no documento, ZERO regras';
+  } catch {
+    situacao = 'presente no documento; conteúdo não inspecionável (cross-origin)';
+  }
+}
+add('Folha do CDN', situacao);
+add('URL', link ? link.getAttribute('href') : '—');
+
+/* 4. Veredito — só o que foi medido no passo 2. */
+add('<strong>Veredito</strong>',
+    pintou ? 'APROVADA — o conteúdo de dist/ está correto'
+           : 'REPROVADA — o CSS de dist/ não aplicou',
+    pintou ? 'ok' : 'fail');
+
+if (!pintou) {
+  alvo.classList.add('falhou');
+  alvo.textContent = 'CSS de dist/ não carregou';
+}
+
+document.getElementById('diag').innerHTML = linhas.join('');
+</script>
+</body>
+</html>

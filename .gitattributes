@@ -1,0 +1,16 @@
+# Fim de linha travado em LF — isto NÃO é preferência de estilo.
+#
+# O SRI do README cobre o byte exato de dist/ppl-compass.css. O jsDelivr serve
+# o blob do Git, que é sempre LF. Se o `core.autocrlf` do Windows converter a
+# cópia de trabalho para CRLF, `node scripts/sri.mjs` passa a gerar um hash
+# DIFERENTE do que o CDN entrega — e a página do consumidor para de carregar,
+# com um erro de integridade que não aponta para a causa.
+#
+# Travar em LF faz cópia de trabalho e blob coincidirem em qualquer máquina.
+* text=auto eol=lf
+
+# Binários que não podem ser normalizados de jeito nenhum.
+*.woff2 binary
+*.png   binary
+*.jpg   binary
+*.pdf   binary
