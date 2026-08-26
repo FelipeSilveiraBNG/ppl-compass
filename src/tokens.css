@@ -1,0 +1,255 @@
+/*!
+ * ppl-compass — tokens
+ * Identidade v5 do BNG People: azul royal + acento dourado.
+ *
+ * Trocar ESTE arquivo troca a marca inteira. As receitas de componente não
+ * conhecem nenhum valor: só referenciam token.
+ *
+ * Nomes desenhados do zero (nada herdado). Vocabulário:
+ *   ink      texto        surface  fundo        border   linha
+ *   blue-*   escala de marca       gold-*   acento quente (raro)
+ */
+
+/* ── Reset mínimo ────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: none; }
+img, svg { display: block; max-width: 100%; }
+[hidden] { display: none !important; }
+
+:root,
+[data-brand="people"] {
+  /* ══ Marca ══════════════════════════════════════════════════════════════ */
+  --ppl-blue-50:  #f0f4fc;   /* hover de linha, fundo de chip                */
+  --ppl-blue-100: #e6edfc;   /* seleção, badge frio, tile de ícone           */
+  --ppl-blue-200: #d2dbec;
+  --ppl-blue-300: #a9bff2;
+  --ppl-blue-400: #6c93ec;   /* azul-céu: avatar, gradiente de destaque      */
+  --ppl-blue-500: #2f5ad0;   /* PRIMÁRIA                                     */
+  --ppl-blue-600: #254bb4;   /* hover da primária                            */
+  --ppl-blue-700: #1e4193;   /* topo do degradê da navegação                 */
+  --ppl-blue-800: #12305f;
+  --ppl-blue-900: #0d2551;   /* base do degradê                              */
+
+  --ppl-primary:       var(--ppl-blue-500);
+  --ppl-primary-hover: var(--ppl-blue-600);
+  --ppl-primary-fg:    #ffffff;
+
+  /* ══ Acento quente — NO MÁXIMO UM ELEMENTO DOURADO POR TELA ════════════ */
+  --ppl-gold:      #f3c63f;
+  --ppl-gold-deep: #e4b52c;
+  --ppl-gold-soft: #fbefbe;
+
+  /* ══ Neutros (viés azul) ═══════════════════════════════════════════════ */
+  --ppl-ink:            #132c63;  /* título e ênfase                        */
+  --ppl-ink-soft:       #5a6486;  /* texto secundário — o mais usado        */
+  --ppl-ink-faint:      #8492b2;  /* rótulo, placeholder, metadado          */
+  --ppl-surface:        #ffffff;  /* superfície dominante                   */
+  --ppl-surface-sunk:   #f2f5fc;  /* fundo de página, cabeçalho de tabela   */
+  --ppl-surface-mute:   #eef1fa;  /* painel, linha alternada                */
+  --ppl-surface-head:   #e7edf8;
+  --ppl-border:         #e2e8f4;
+  --ppl-border-strong:  #d2dbec;
+
+  /* ══ Semânticas ════════════════════════════════════════════════════════ */
+  --ppl-success:      #0e8a4f;
+  --ppl-warning:      #b5892c;   /* atenção                                 */
+  --ppl-warning-soft: #f7edd4;
+  --ppl-danger:       #c0392b;   /* SÓ erro e ação destrutiva               */
+  --ppl-info:         #3c6fe0;   /* link e anel de foco                     */
+
+  /* ══ Texto sobre superfície azul ═══════════════════════════════════════ */
+  --ppl-on-dark:      #ffffff;
+  --ppl-on-dark-soft: #aec2ec;
+
+  /* ══ Gradientes — lista fechada ════════════════════════════════════════
+   * Permitidos só em: navegação/hero, botão de destaque, marca e selo.
+   * Em nenhum outro lugar.
+   * ─────────────────────────────────────────────────────────────────────── */
+  --ppl-grad-nav:     linear-gradient(180deg, #1e4193 0%, #12305f 55%, #0d2551 100%);
+  --ppl-grad-primary: linear-gradient(135deg, #3560d9 0%, #2a4ebb 100%);
+  --ppl-grad-gold:    linear-gradient(135deg, #f7d451 0%, #efc02c 100%);
+  --ppl-grad-seal:    radial-gradient(circle at 40% 35%, #fdf3cc 0%, #f6de86 100%);
+
+  /* ══ Sombras — profundidade por sombra difusa + hairline, nunca borda pesada */
+  --ppl-shadow-color: 19 44 99;
+  --ppl-shadow-sm: 0 1px 2px rgb(var(--ppl-shadow-color) / .06),
+                   0 1px 3px rgb(var(--ppl-shadow-color) / .05);
+  --ppl-shadow-lg: 0 12px 34px rgb(var(--ppl-shadow-color) / .12),
+                   0 3px 8px  rgb(var(--ppl-shadow-color) / .06);
+
+  /* ══ Tipografia ════════════════════════════════════════════════════════
+   * sans    = toda a interface
+   * display = superfície humana: saudação, sucesso, hero. NUNCA formulário,
+   *           tabela ou chrome operacional.
+   * data    = TODO dado de folha e ponto, com tabular-nums.
+   * ─────────────────────────────────────────────────────────────────────── */
+  --ppl-font-sans:    "Urbanist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ppl-font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --ppl-font-data:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --ppl-text-eyebrow: 11px;    /* caixa alta, 700, tracking .15em            */
+  --ppl-text-xs:      12px;
+  --ppl-text-sm:      12.5px;
+  --ppl-text-base:    14px;
+  --ppl-text-md:      15px;
+  --ppl-text-lg:      18px;
+  --ppl-text-h1:      24px;
+  --ppl-text-display: 28px;
+  --ppl-leading-tight: 1.15;
+  --ppl-leading-body:  1.5;
+
+  /* ══ Forma ═════════════════════════════════════════════════════════════ */
+  --ppl-radius-sm:      4px;
+  --ppl-radius-md:      8px;
+  --ppl-radius-control: 12px;   /* input, botão, tile                       */
+  --ppl-radius-card:    16px;
+  --ppl-radius-card-lg: 18px;
+  --ppl-radius-pill:    999px;
+
+  /* ══ Espaço ════════════════════════════════════════════════════════════ */
+  --ppl-space-1: 4px;
+  --ppl-space-2: 8px;
+  --ppl-space-3: 12px;
+  --ppl-space-4: 16px;
+  --ppl-space-5: 20px;
+  --ppl-space-6: 24px;
+  --ppl-space-8: 32px;
+
+  /* ══ Movimento ═════════════════════════════════════════════════════════ */
+  --ppl-fast: 120ms;
+  --ppl-base: 180ms;
+  --ppl-slow: 300ms;
+  --ppl-ease:       cubic-bezier(.16, 1, .3, 1);
+  --ppl-ease-inout: cubic-bezier(.65, 0, .35, 1);
+
+  /* ══ Camadas ═══════════════════════════════════════════════════════════ */
+  --ppl-z-bar:     40;
+  --ppl-z-overlay: 50;
+  --ppl-z-drawer:  150;
+  --ppl-z-toast:   200;
+
+  /* ══ Acessibilidade — requisito, não preferência ═══════════════════════ */
+  --ppl-touch: 44px;              /* alvo mínimo em toque (WCAG 2.5.5)      */
+  --ppl-focus-ring: var(--ppl-info);
+
+  /* ══ Layout ════════════════════════════════════════════════════════════ */
+  --ppl-nav-w:       238px;
+  --ppl-content-max: 1152px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Landing pública — o ÚNICO lugar com tema escuro.
+ *
+ * Conjunto separado (`--ppl-lp-*`) de propósito: assim o `prefers-color-scheme`
+ * não re-tematiza o shell autenticado, que é claro-only.
+ * ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  --ppl-lp-bg:            #f4f7fd;
+  --ppl-lp-surface:       #ffffff;
+  --ppl-lp-border:        #e2e8f4;
+  --ppl-lp-border-strong: #d2dbec;
+  --ppl-lp-ink:           #132c63;
+  --ppl-lp-ink-soft:      #5a6486;
+  --ppl-lp-accent:        #2f5ad0;
+  --ppl-lp-accent-strong: #1e4193;
+  --ppl-lp-accent-soft:   #e6edfc;
+  --ppl-lp-on-accent:     #ffffff;
+  --ppl-lp-glass:         rgb(255 255 255 / .72);
+  --ppl-lp-glass-border:  rgb(255 255 255 / .62);
+  --ppl-lp-glass-shadow:  0 24px 60px -24px rgb(19 44 99 / .28);
+  --ppl-lp-card:          rgb(255 255 255 / .78);
+  --ppl-lp-sheet:         rgb(255 255 255 / .97);
+  --ppl-lp-mesh-1:        rgb(47 90 208 / .14);
+  --ppl-lp-mesh-2:        rgb(108 147 236 / .14);
+  --ppl-lp-mesh-3:        rgb(30 65 147 / .10);
+  --ppl-lp-dot:           rgb(47 90 208 / .08);
+  --ppl-lp-grad:          linear-gradient(135deg, #2f5ad0 0%, #0d2551 100%);
+}
+
+/* Escuro por preferência do sistema, a menos que o usuário force claro.
+ *
+ * O azul royal #2F5AD0 NÃO atinge AA como texto sobre fundo escuro — por isso
+ * o escuro usa #6C93EC para superfície e #A9C4F5 para texto. Pares verificados:
+ *   #E9EEF9 sobre #0B1830 = 14,8:1   ·   #A9B6D3 sobre #122448 = 7,1:1
+ *   #0B1830 sobre #6C93EC =  5,7:1   ·   #A9C4F5 sobre #0B1830 = 9,5:1
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ppl-lp-bg:            #0b1830;
+    --ppl-lp-surface:       #122448;
+    --ppl-lp-border:        rgb(255 255 255 / .12);
+    --ppl-lp-border-strong: rgb(255 255 255 / .24);
+    --ppl-lp-ink:           #e9eef9;
+    --ppl-lp-ink-soft:      #a9b6d3;
+    --ppl-lp-accent:        #6c93ec;
+    --ppl-lp-accent-strong: #a9c4f5;
+    --ppl-lp-accent-soft:   rgb(108 147 236 / .18);
+    --ppl-lp-on-accent:     #0b1830;
+    --ppl-lp-glass:         rgb(18 36 72 / .72);
+    --ppl-lp-glass-border:  rgb(255 255 255 / .10);
+    --ppl-lp-glass-shadow:  0 24px 60px -24px rgb(0 0 0 / .6);
+    --ppl-lp-card:          rgb(24 48 94 / .72);
+    --ppl-lp-sheet:         rgb(18 36 72 / .97);
+    --ppl-lp-mesh-1:        rgb(47 90 208 / .35);
+    --ppl-lp-mesh-2:        rgb(108 147 236 / .24);
+    --ppl-lp-mesh-3:        rgb(13 37 81 / .40);
+    --ppl-lp-dot:           rgb(169 196 245 / .10);
+    --ppl-lp-grad:          linear-gradient(135deg, #6c93ec 0%, #1e4193 100%);
+  }
+}
+
+/* Escolha explícita do usuário vence a do sistema nos dois sentidos. */
+:root[data-theme="dark"] {
+  --ppl-lp-bg:            #0b1830;
+  --ppl-lp-surface:       #122448;
+  --ppl-lp-border:        rgb(255 255 255 / .12);
+  --ppl-lp-border-strong: rgb(255 255 255 / .24);
+  --ppl-lp-ink:           #e9eef9;
+  --ppl-lp-ink-soft:      #a9b6d3;
+  --ppl-lp-accent:        #6c93ec;
+  --ppl-lp-accent-strong: #a9c4f5;
+  --ppl-lp-accent-soft:   rgb(108 147 236 / .18);
+  --ppl-lp-on-accent:     #0b1830;
+  --ppl-lp-glass:         rgb(18 36 72 / .72);
+  --ppl-lp-glass-border:  rgb(255 255 255 / .10);
+  --ppl-lp-glass-shadow:  0 24px 60px -24px rgb(0 0 0 / .6);
+  --ppl-lp-card:          rgb(24 48 94 / .72);
+  --ppl-lp-sheet:         rgb(18 36 72 / .97);
+  --ppl-lp-mesh-1:        rgb(47 90 208 / .35);
+  --ppl-lp-mesh-2:        rgb(108 147 236 / .24);
+  --ppl-lp-mesh-3:        rgb(13 37 81 / .40);
+  --ppl-lp-dot:           rgb(169 196 245 / .10);
+  --ppl-lp-grad:          linear-gradient(135deg, #6c93ec 0%, #1e4193 100%);
+}
+
+/* ══ Base do documento ═════════════════════════════════════════════════ */
+body {
+  font-family: var(--ppl-font-sans);
+  font-size: var(--ppl-text-base);
+  line-height: var(--ppl-leading-body);
+  color: var(--ppl-ink);
+  background: var(--ppl-surface-sunk);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Foco visível global (WCAG 2.4.7). Nunca remover sem substituto. */
+*:focus-visible {
+  outline: 2px solid var(--ppl-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--ppl-radius-sm);
+}
+
+.ppl-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

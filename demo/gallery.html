@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ppl-compass — galeria de componentes</title>
+
+<!-- Aponta para ../dist/ e NÃO para o CDN de propósito: a galeria é artefato
+     de validação do repositório, então precisa refletir o commit que está
+     aberto, não a última tag publicada. Quem valida a entrega pelo CDN é
+     demo/proof.html. -->
+<link rel="stylesheet" href="../dist/ppl-compass.css">
+
+<style>
+  /* Cromo só da galeria — não faz parte do framework. */
+  .g { padding: 32px 40px 80px; max-width: 1180px; margin: 0 auto; }
+  .g h2 { font-size: 20px; font-weight: 700; color: var(--ppl-ink);
+          margin: 48px 0 4px; padding-top: 24px; border-top: 1px solid var(--ppl-border); }
+  .g h2:first-of-type { border-top: none; padding-top: 0; margin-top: 24px; }
+  .g h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+          color: var(--ppl-ink-faint); margin: 28px 0 12px; }
+  .g p.lead { color: var(--ppl-ink-soft); max-width: 62ch; margin-bottom: 8px; }
+  .g code { font-family: var(--ppl-font-data); font-size: 12px; background: var(--ppl-blue-50);
+            padding: 1px 5px; border-radius: 4px; color: var(--ppl-blue-700); }
+  .sw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px,1fr)); gap: 12px; }
+  .sw { border: 1px solid var(--ppl-border); border-radius: var(--ppl-radius-control);
+        overflow: hidden; background: var(--ppl-surface); }
+  .sw i { display: block; height: 56px; }
+  .sw div { padding: 8px 10px; }
+  .sw b { display: block; font-size: 11px; color: var(--ppl-ink); }
+  .sw span { font-family: var(--ppl-font-data); font-size: 10.5px; color: var(--ppl-ink-soft); }
+  .demo { border: 1px dashed var(--ppl-border-strong); border-radius: var(--ppl-radius-control);
+          padding: 20px; background: var(--ppl-surface); }
+  .demo + .demo { margin-top: 12px; }
+  .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .shell-demo { border: 1px solid var(--ppl-border); border-radius: var(--ppl-radius-card);
+                overflow: hidden; height: 520px; display: flex; background: var(--ppl-surface); }
+  .shell-demo .ppl-nav { height: 100%; position: static; }
+</style>
+</head>
+<body data-brand="people">
+<div class="g">
+
+  <p class="ppl-eyebrow">ppl-compass · identidade v5</p>
+  <h1 class="ppl-display" style="font-size:34px;font-weight:600;color:var(--ppl-ink);margin:4px 0 8px">
+    Galeria de componentes
+  </h1>
+  <p class="lead">
+    Cada bloco é uma receita de <code>dist/ppl-compass.css</code>. Nomes desenhados do zero,
+    prefixo <code>ppl-</code>: nada foi herdado do console. Comportamentos em
+    <code>ppl-compass.js</code>, ícones em <code>ppl-compass-icons.js</code>.
+  </p>
+
+  <!-- ============================================================ -->
+  <h2>1 · Cor</h2>
+  <h3>Azul — marca e interação</h3>
+  <div class="sw-grid">
+    <div class="sw"><i style="background:#f0f4fc"></i><div><b>blue-50</b><span>#F0F4FC</span></div></div>
+    <div class="sw"><i style="background:#e6edfc"></i><div><b>blue-100</b><span>#E6EDFC</span></div></div>
+    <div class="sw"><i style="background:#d2dbec"></i><div><b>blue-200</b><span>#D2DBEC</span></div></div>
+    <div class="sw"><i style="background:#a9bff2"></i><div><b>blue-300</b><span>#A9BFF2</span></div></div>
+    <div class="sw"><i style="background:#6c93ec"></i><div><b>blue-400 · céu</b><span>#6C93EC</span></div></div>
+    <div class="sw"><i style="background:#2f5ad0"></i><div><b>blue-500 · primária</b><span>#2F5AD0</span></div></div>
+    <div class="sw"><i style="background:#254bb4"></i><div><b>blue-600 · hover</b><span>#254BB4</span></div></div>
+    <div class="sw"><i style="background:#1e4193"></i><div><b>blue-700</b><span>#1E4193</span></div></div>
+    <div class="sw"><i style="background:#12305f"></i><div><b>blue-800</b><span>#12305F</span></div></div>
+    <div class="sw"><i style="background:#0d2551"></i><div><b>blue-900</b><span>#0D2551</span></div></div>
+  </div>
+
+  <h3>Dourado — acento quente, no máximo um elemento por tela</h3>
+  <div class="sw-grid">
+    <div class="sw"><i style="background:#f3c63f"></i><div><b>gold</b><span>#F3C63F</span></div></div>
+    <div class="sw"><i style="background:#e4b52c"></i><div><b>gold-deep</b><span>#E4B52C</span></div></div>
+    <div class="sw"><i style="background:#fbefbe"></i><div><b>gold-soft</b><span>#FBEFBE</span></div></div>
+  </div>
+
+  <h3>Neutros e semânticas</h3>
+  <div class="sw-grid">
+    <div class="sw"><i style="background:#132c63"></i><div><b>ink</b><span>#132C63</span></div></div>
+    <div class="sw"><i style="background:#5a6486"></i><div><b>ink-soft</b><span>#5A6486</span></div></div>
+    <div class="sw"><i style="background:#8492b2"></i><div><b>ink-faint</b><span>#8492B2</span></div></div>
+    <div class="sw"><i style="background:#e2e8f4"></i><div><b>border</b><span>#E2E8F4</span></div></div>
+    <div class="sw"><i style="background:#f2f5fc"></i><div><b>surface-sunk</b><span>#F2F5FC</span></div></div>
+    <div class="sw"><i style="background:#0e8a4f"></i><div><b>success</b><span>#0E8A4F</span></div></div>
+    <div class="sw"><i style="background:#b5892c"></i><div><b>warning</b><span>#B5892C</span></div></div>
+    <div class="sw"><i style="background:#c0392b"></i><div><b>danger</b><span>#C0392B</span></div></div>
+    <div class="sw"><i style="background:#3c6fe0"></i><div><b>info · foco</b><span>#3C6FE0</span></div></div>
+  </div>
+
+  <h3>Gradientes — lista fechada</h3>
+  <div class="sw-grid">
+    <div class="sw"><i style="background:var(--ppl-grad-nav)"></i><div><b>grad-nav</b><span>navegação</span></div></div>
+    <div class="sw"><i style="background:var(--ppl-grad-primary)"></i><div><b>grad-primary</b><span>CTA destaque</span></div></div>
+    <div class="sw"><i style="background:var(--ppl-grad-gold)"></i><div><b>grad-gold</b><span>marca</span></div></div>
+    <div class="sw"><i style="background:var(--ppl-grad-seal)"></i><div><b>grad-seal</b><span>conquista</span></div></div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>2 · Tipografia</h2>
+  <div class="demo ppl-stack">
+    <div>
+      <p class="ppl-eyebrow">Eyebrow · 11 / 700 / .15em</p>
+      <p class="ppl-display" style="font-size:28px;font-weight:600;color:var(--ppl-ink)">Boa tarde, Felipe</p>
+      <p class="lead" style="font-size:12.5px"><code>.ppl-display</code> — só boas-vindas, sucesso e hero. Nunca em formulário, tabela ou chrome.</p>
+    </div>
+    <div style="border-top:1px solid var(--ppl-border);padding-top:12px">
+      <p style="font-size:24px;font-weight:600;color:var(--ppl-ink)">Título de página · 24 / 600</p>
+      <p style="font-size:18px;font-weight:600;color:var(--ppl-ink)">Título de drawer · 18 / 600</p>
+      <p style="font-size:15px;font-weight:700;color:var(--ppl-ink)">Título de card · 15 / 700</p>
+      <p>Corpo · 14 / 400</p>
+      <p style="font-size:12.5px;color:var(--ppl-ink-soft)">Linha de apoio · 12,5 / ink-soft</p>
+    </div>
+    <div style="border-top:1px solid var(--ppl-border);padding-top:12px">
+      <p class="ppl-eyebrow" style="margin-bottom:6px"><code>.ppl-data</code> — obrigatório em folha e ponto</p>
+      <div class="ppl-table-wrap"><table class="ppl-table" style="min-width:0"><tbody>
+        <tr><td class="ppl-td-mute">Matrícula</td><td class="ppl-td-data">2026-0042</td></tr>
+        <tr><td class="ppl-td-mute">CPF</td><td class="ppl-td-data">111.222.333-44</td></tr>
+        <tr><td class="ppl-td-mute">CNPJ</td><td class="ppl-td-data">12.345.678/0001-90</td></tr>
+        <tr><td class="ppl-td-mute">Competência</td><td class="ppl-td-data">2026-08</td></tr>
+        <tr><td class="ppl-td-mute">Líquido</td><td class="ppl-td-num">R$ 4.812,37</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>3 · Superfícies</h2>
+  <div class="ppl-cols-2">
+    <div class="ppl-card ppl-card--interactive" style="padding:20px">
+      <p class="ppl-eyebrow">.ppl-card</p>
+      <p style="font-size:15px;font-weight:700;color:var(--ppl-ink);margin-top:6px">Card</p>
+      <p class="lead" style="font-size:12.5px">Só levanta no hover o que é clicável.</p>
+    </div>
+    <div class="ppl-bar" style="padding:20px;border-radius:var(--ppl-radius-card)">
+      <p class="ppl-eyebrow">.ppl-bar</p>
+      <p style="font-size:15px;font-weight:700;color:var(--ppl-ink);margin-top:6px">Barra de topo</p>
+      <p class="lead" style="font-size:12.5px">Branco a 92% com hairline — de vidro não tem nada.</p>
+    </div>
+  </div>
+  <div class="ppl-canvas" style="margin-top:12px;padding:28px;border-radius:var(--ppl-radius-card)">
+    <p class="ppl-eyebrow">.ppl-canvas</p>
+    <p style="font-size:15px;font-weight:700;color:var(--ppl-ink);margin-top:6px">Fundo do shell</p>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>4 · Botões</h2>
+  <div class="demo">
+    <div class="wrap">
+      <button class="ppl-btn ppl-btn--primary">Concluir admissão</button>
+      <button class="ppl-btn ppl-btn--hero">CTA de destaque</button>
+      <button class="ppl-btn ppl-btn--secondary">Cancelar</button>
+      <button class="ppl-btn ppl-btn--ghost">Ver detalhes</button>
+      <button class="ppl-btn ppl-btn--danger">Excluir dependente</button>
+      <button class="ppl-btn ppl-btn--gold">Emitir certificado</button>
+      <button class="ppl-btn ppl-btn--primary" disabled>Desabilitado</button>
+      <button class="ppl-btn ppl-btn--secondary ppl-btn--sm"><i data-ppl-icon="plus" data-ppl-size="13"></i>Nova rubrica</button>
+      <button class="ppl-btn ppl-btn--primary ppl-btn--touch">Alvo de toque 44px</button>
+    </div>
+    <p class="lead" style="margin-top:12px;font-size:12.5px">Um CTA primário sólido por tela. Rótulo verbo-primeiro, nunca "OK".</p>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>5 · Badges</h2>
+  <div class="demo wrap">
+    <span class="ppl-badge ppl-badge--info"><i data-ppl-icon="check-circle" data-ppl-size="12"></i>Calculado</span>
+    <span class="ppl-badge ppl-badge--success"><i data-ppl-icon="check-circle" data-ppl-size="12"></i>Validado pelo RH</span>
+    <span class="ppl-badge ppl-badge--warning"><i data-ppl-icon="alert-circle" data-ppl-size="12"></i>Em análise</span>
+    <span class="ppl-badge ppl-badge--danger"><i data-ppl-icon="x-circle" data-ppl-size="12"></i>Rejeitado</span>
+    <span class="ppl-badge"><i data-ppl-icon="clock-dashed" data-ppl-size="12"></i>Proposto</span>
+    <span class="ppl-badge ppl-badge--muted"><i data-ppl-icon="slash" data-ppl-size="12"></i>Cancelado</span>
+    <span class="ppl-badge ppl-badge--gold"><i data-ppl-icon="star" data-ppl-size="12"></i>Homologada</span>
+    <span class="ppl-badge ppl-badge--gold ppl-badge--count">184.368</span>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>6 · Tiles e ícones</h2>
+  <div class="demo">
+    <div class="wrap" style="margin-bottom:16px">
+      <span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="wallet" data-ppl-size="22"></i></span>
+      <span class="ppl-icon-tile"><i data-ppl-icon="calendar" data-ppl-size="18"></i></span>
+      <span class="ppl-icon-tile ppl-icon-tile--sm"><i data-ppl-icon="clock" data-ppl-size="15"></i></span>
+      <span class="ppl-icon-tile ppl-icon-tile--lg ppl-icon-tile--gold"><i data-ppl-icon="star" data-ppl-size="22"></i></span>
+    </div>
+    <p class="ppl-eyebrow" style="margin-bottom:10px">Catálogo</p>
+    <div class="wrap" id="catalogo-icones" style="gap:14px;color:var(--ppl-ink-soft)"></div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>7 · Formulário</h2>
+  <div class="demo">
+    <form class="ppl-stack" onsubmit="return false">
+      <div class="ppl-field">
+        <label class="ppl-field__label" for="f-nome">Nome</label>
+        <input class="ppl-input" id="f-nome" value="Mariana Souza">
+      </div>
+      <div class="ppl-cols-2">
+        <div class="ppl-field">
+          <label class="ppl-field__label" for="f-cpf">CPF <span class="ppl-optional">(obrigatório para dedução de IRRF)</span></label>
+          <input class="ppl-input ppl-input--data" id="f-cpf" value="111.222.333-44">
+        </div>
+        <div class="ppl-field">
+          <label class="ppl-field__label" for="f-nasc">Nascimento</label>
+          <input class="ppl-input" id="f-nasc" type="date" value="2014-03-02">
+        </div>
+      </div>
+      <div class="ppl-field">
+        <label class="ppl-field__label" for="f-par">Parentesco</label>
+        <select class="ppl-select" id="f-par"><option>Filho(a)</option><option>Cônjuge</option></select>
+      </div>
+
+      <div class="ppl-field" data-ppl-combo>
+        <label class="ppl-field__label" for="f-emp">Empresa — combobox com busca</label>
+        <div class="ppl-combo">
+          <input class="ppl-input ppl-combo__input" id="f-emp" role="combobox" aria-expanded="false"
+                 aria-controls="f-emp-list" aria-autocomplete="list" autocomplete="off" placeholder="Digite para filtrar…">
+          <span class="ppl-combo__chevron"><i data-ppl-icon="chevron-updown" data-ppl-size="15"></i></span>
+          <ul class="ppl-combo__list" id="f-emp-list" role="listbox" hidden>
+            <li role="option"><button type="button" class="ppl-combo__option"><span><span>Gestão Hospitalar Ltda</span><span class="ppl-combo__hint">12.345.678/0001-90</span></span></button></li>
+            <li role="option"><button type="button" class="ppl-combo__option"><span><span>Clínica A</span><span class="ppl-combo__hint">98.765.432/0001-10</span></span></button></li>
+            <li role="option"><button type="button" class="ppl-combo__option"><span><span>Clínica B</span><span class="ppl-combo__hint">45.111.222/0001-33</span></span></button></li>
+            <li class="ppl-combo__empty" hidden><span class="ppl-combo__option ppl-faint">Nada encontrado</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ppl-stack ppl-stack--tight">
+        <label class="ppl-check"><input type="checkbox" checked> Dependente para IRRF</label>
+        <label class="ppl-check"><input type="checkbox"> Incluído no convênio médico</label>
+      </div>
+
+      <div class="ppl-alert ppl-alert--danger" role="alert">
+        <i data-ppl-icon="alert" data-ppl-size="16"></i>
+        A Receita exige o CPF de todo dependente deduzido no IRRF (IN RFB 1.500/2014, art. 90).
+      </div>
+
+      <div class="ppl-row ppl-row--end">
+        <button type="button" class="ppl-btn ppl-btn--secondary">Cancelar</button>
+        <button type="submit" class="ppl-btn ppl-btn--primary">Adicionar dependente</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>8 · Alerts</h2>
+  <div class="demo ppl-stack ppl-stack--tight">
+    <div class="ppl-alert ppl-alert--info"><i data-ppl-icon="info" data-ppl-size="16"></i>Competência 2026-08 em aberto.</div>
+    <div class="ppl-alert ppl-alert--success"><i data-ppl-icon="check-circle" data-ppl-size="16"></i>Admissão concluída. Matrícula <span class="ppl-data">2026-0042</span>.</div>
+    <div class="ppl-alert ppl-alert--warning"><i data-ppl-icon="alert-circle" data-ppl-size="16"></i>3 ASOs vencem nos próximos 30 dias.</div>
+    <div class="ppl-alert ppl-alert--danger"><i data-ppl-icon="alert" data-ppl-size="16"></i>Não foi possível transmitir o lote S-1200.</div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>9 · Choice cards</h2>
+  <p class="lead">Decisão de caminho em cards grandes, não dropdown escondido. Só um card recebe o dourado.</p>
+  <div class="ppl-choice-grid" style="margin-top:12px">
+    <a class="ppl-card ppl-card--interactive ppl-choice ppl-choice--wide" href="#">
+      <span class="ppl-icon-tile ppl-icon-tile--lg ppl-icon-tile--gold"><i data-ppl-icon="clipboard" data-ppl-size="22"></i></span>
+      <span class="ppl-choice__title">Validar correções de ponto</span>
+      <span class="ppl-choice__line">12 propostas aguardando o seu aceite.</span>
+      <span class="ppl-choice__foot">2 de 3 interações previstas</span>
+    </a>
+    <a class="ppl-card ppl-card--interactive ppl-choice" href="#">
+      <span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="calendar" data-ppl-size="22"></i></span>
+      <span class="ppl-choice__title">Escalas e jornadas</span>
+      <span class="ppl-choice__line">Escala vigente, rodízio e feriados do CNPJ.</span>
+      <span class="ppl-choice__foot">3 de 3 interações previstas</span>
+    </a>
+    <a class="ppl-card ppl-card--interactive ppl-choice" href="#">
+      <span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="building" data-ppl-size="22"></i></span>
+      <span class="ppl-choice__title">Empresas e estrutura</span>
+      <span class="ppl-choice__line">CNPJs, estabelecimentos e lotações.</span>
+      <span class="ppl-choice__foot">2 de 3 interações previstas</span>
+    </a>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>10 · Stats</h2>
+  <div class="ppl-stack" style="gap:12px">
+    <div class="ppl-stat-hero">
+      <span class="ppl-icon-tile ppl-icon-tile--dark"><i data-ppl-icon="banknote" data-ppl-size="17"></i></span>
+      <span class="ppl-stat-hero__value">R$ 1.284.930,55</span>
+      <span class="ppl-stat-hero__label">Líquido</span>
+    </div>
+    <div class="ppl-stat-grid">
+      <div class="ppl-card ppl-stat"><span class="ppl-icon-tile ppl-icon-tile--sm"><i data-ppl-icon="trend-up" data-ppl-size="15"></i></span><span class="ppl-stat__value">R$ 1.610.220,10</span><span class="ppl-stat__label">Proventos</span></div>
+      <div class="ppl-card ppl-stat"><span class="ppl-icon-tile ppl-icon-tile--sm"><i data-ppl-icon="trend-down" data-ppl-size="15"></i></span><span class="ppl-stat__value">R$ 325.289,55</span><span class="ppl-stat__label">Descontos</span></div>
+      <div class="ppl-card ppl-stat"><span class="ppl-icon-tile ppl-icon-tile--sm"><i data-ppl-icon="shield" data-ppl-size="15"></i></span><span class="ppl-stat__value">R$ 178.440,02</span><span class="ppl-stat__label">INSS</span></div>
+      <div class="ppl-card ppl-stat"><span class="ppl-icon-tile ppl-icon-tile--sm"><i data-ppl-icon="receipt" data-ppl-size="15"></i></span><span class="ppl-stat__value">R$ 96.113,74</span><span class="ppl-stat__label">IRRF</span></div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>11 · Painel com tabela</h2>
+  <div class="ppl-card ppl-panel">
+    <div class="ppl-panel__head">
+      <div class="ppl-panel__id">
+        <span class="ppl-icon-tile"><i data-ppl-icon="list" data-ppl-size="16"></i></span>
+        <div>
+          <div class="ppl-panel__title">Catálogo de rubricas</div>
+          <div class="ppl-panel__sub">Incidência vigente na competência selecionada.</div>
+        </div>
+      </div>
+      <button class="ppl-btn ppl-btn--sm ppl-btn--secondary" data-ppl-drawer-open="d-rubrica">
+        <i data-ppl-icon="plus" data-ppl-size="13"></i>Nova rubrica
+      </button>
+    </div>
+    <div class="ppl-table-wrap">
+      <table class="ppl-table">
+        <thead><tr><th>Código</th><th>Descrição</th><th>Natureza</th><th>CP / FGTS / IRRF</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="ppl-td-data">1001</td><td>Salário base</td><td class="ppl-td-mute">Provento</td><td class="ppl-td-mute">Normal · Base · Tributável</td><td><span class="ppl-badge ppl-badge--success"><i data-ppl-icon="check-circle" data-ppl-size="12"></i>Homologada</span></td></tr>
+          <tr><td class="ppl-td-data">1030</td><td>Horas extras 50%</td><td class="ppl-td-mute">Provento</td><td class="ppl-td-mute">Normal · Base · Tributável</td><td><span class="ppl-badge ppl-badge--success"><i data-ppl-icon="check-circle" data-ppl-size="12"></i>Homologada</span></td></tr>
+          <tr><td class="ppl-td-data">3010</td><td>INSS</td><td class="ppl-td-mute">Desconto</td><td class="ppl-td-mute">Não incide · Não · Dedução</td><td><span class="ppl-badge ppl-badge--warning"><i data-ppl-icon="alert-circle" data-ppl-size="12"></i>Em análise</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h3>Os quatro estados que toda lista repete</h3>
+  <div class="ppl-cols-2">
+    <div class="demo">
+      <p class="ppl-eyebrow" style="margin-bottom:10px">Carregando</p>
+      <div class="ppl-stack ppl-stack--tight"><div class="ppl-skeleton"></div><div class="ppl-skeleton"></div><div class="ppl-skeleton"></div></div>
+    </div>
+    <div class="demo">
+      <p class="ppl-eyebrow" style="margin-bottom:10px">Erro · com recuperação</p>
+      <div class="ppl-state">
+        <span class="ppl-state__icon"><i data-ppl-icon="alert" data-ppl-size="20"></i></span>
+        <p>Não foi possível carregar as rubricas.</p>
+        <button class="ppl-state__action">Tentar novamente</button>
+      </div>
+    </div>
+    <div class="demo">
+      <p class="ppl-eyebrow" style="margin-bottom:10px">Vazio</p>
+      <div class="ppl-state ppl-state--empty">Nenhuma rubrica nesta competência.</div>
+    </div>
+    <div class="demo">
+      <p class="ppl-eyebrow" style="margin-bottom:10px">Progresso determinado</p>
+      <div class="ppl-stack ppl-stack--tight">
+        <div class="ppl-progress"><div class="ppl-progress__bar" style="width:34.5%"></div></div>
+        <p class="ppl-muted ppl-data" style="font-size:12px">428 de 1.240 marcações apuradas</p>
+        <div class="ppl-row"><span class="ppl-spinner ppl-spinner--sm"></span><span class="ppl-muted">Spinner só inline.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>12 · Wizard</h2>
+  <p class="lead">Uma decisão por etapa · avançar sempre valida · voltar é direito do operador · fluxo de efeito jurídico termina em revisão, ou não renderiza.</p>
+  <div class="demo" id="wizard" style="margin-top:12px"></div>
+
+  <h3>Conclusão — ID em mono e UM próximo passo</h3>
+  <div class="ppl-card ppl-panel" style="max-width:420px">
+    <div class="ppl-row" style="margin-bottom:12px">
+      <span class="ppl-icon-tile ppl-icon-tile--sm" style="border-radius:var(--ppl-radius-pill)"><i data-ppl-icon="check" data-ppl-size="16"></i></span>
+      <h4 class="ppl-display" style="font-size:17px;font-weight:600;color:var(--ppl-ink)">Admissão concluída</h4>
+    </div>
+    <dl class="ppl-review" style="margin-bottom:14px">
+      <div class="ppl-review__row"><dt class="ppl-review__key">Matrícula</dt><dd class="ppl-review__val ppl-review__val--data">2026-0042</dd></div>
+      <div class="ppl-review__row"><dt class="ppl-review__key">Evento eSocial</dt><dd class="ppl-review__val ppl-review__val--data">S-2200 enfileirado</dd></div>
+    </dl>
+    <a class="ppl-btn ppl-btn--primary ppl-btn--touch" href="#">Configurar jornada</a>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>13 · Disclosure</h2>
+  <div class="ppl-card" data-ppl-disclosure>
+    <h3 style="margin:0">
+      <button class="ppl-disclosure__btn" aria-expanded="true" aria-controls="disc-1">
+        <span class="ppl-row" style="gap:8px">
+          <i data-ppl-icon="send" data-ppl-size="16"></i>
+          Lotes transmitidos
+          <span class="ppl-disclosure__count">(14)</span>
+        </span>
+        <span class="ppl-row" style="gap:12px">
+          <span class="ppl-badge ppl-badge--warning"><i data-ppl-icon="clock" data-ppl-size="12"></i>1 em curso</span>
+          <span class="ppl-chevron"><i data-ppl-icon="chevron-down" data-ppl-size="16"></i></span>
+        </span>
+      </button>
+    </h3>
+    <div class="ppl-disclosure__body" id="disc-1">
+      <p class="ppl-muted">Fechado, o cabeçalho continua dizendo o que importa: contagem e resumo vivo.</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>14 · Drawer e Toast</h2>
+  <div class="demo wrap">
+    <button class="ppl-btn ppl-btn--primary" data-ppl-drawer-open="d-rubrica">Abrir drawer</button>
+    <button class="ppl-btn ppl-btn--secondary" onclick="PplCompass.toast.success('Rubrica criada.')">Sucesso</button>
+    <button class="ppl-btn ppl-btn--secondary" onclick="PplCompass.toast.error('Falha de rede ao salvar.',{acao:{label:'Tentar novamente',onClick(){}}})">Erro (persistente)</button>
+    <button class="ppl-btn ppl-btn--secondary" onclick="PplCompass.toast.success('Correção aprovada.',{acao:{label:'Desfazer',onClick(){}}})">Sucesso com Desfazer</button>
+  </div>
+
+  <div class="ppl-drawer" id="d-rubrica" data-open="false" aria-hidden="true">
+    <div class="ppl-drawer__scrim"></div>
+    <div class="ppl-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="d-rubrica-t">
+      <div class="ppl-drawer__head">
+        <div>
+          <h2 class="ppl-drawer__title" id="d-rubrica-t">Nova rubrica</h2>
+          <p class="ppl-drawer__desc">Código, descrição e incidência na competência.</p>
+        </div>
+        <button class="ppl-btn ppl-btn--icon ppl-btn--ghost" data-ppl-drawer-close aria-label="Fechar painel">
+          <i data-ppl-icon="x" data-ppl-size="18"></i>
+        </button>
+      </div>
+      <div class="ppl-drawer__body">
+        <form class="ppl-stack" onsubmit="return false">
+          <div class="ppl-field"><label class="ppl-field__label" for="d-cod">Código</label><input class="ppl-input ppl-input--data" id="d-cod" placeholder="1001"></div>
+          <div class="ppl-field"><label class="ppl-field__label" for="d-desc">Descrição</label><input class="ppl-input" id="d-desc" placeholder="Salário base"></div>
+          <div class="ppl-drawer__foot">
+            <button type="button" class="ppl-btn ppl-btn--secondary" data-ppl-drawer-close>Cancelar</button>
+            <button type="button" class="ppl-btn ppl-btn--primary"
+                    onclick="PplCompass.toast.success('Rubrica criada.');PplCompass.drawer.fechar('d-rubrica')">Criar rubrica</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>15 · Dialog de risco R3</h2>
+  <p class="lead">Rescisão, fechamento definitivo, lote retificador: o operador digita um texto exato, <code>Esc</code> e clique fora não confirmam, e a ação gera evento de auditoria.</p>
+  <div class="ppl-dialog" style="margin-top:12px">
+    <div class="ppl-dialog__head"><h3 class="ppl-dialog__title">Fechar a competência definitivamente</h3></div>
+    <p class="ppl-muted" style="margin-bottom:12px">Depois do fechamento, lançamentos só mudam por reabertura registrada em auditoria.</p>
+    <dl class="ppl-review" style="margin-bottom:14px">
+      <div class="ppl-review__row"><dt class="ppl-review__key">Empresa</dt><dd class="ppl-review__val">Gestão Hospitalar Ltda</dd></div>
+      <div class="ppl-review__row"><dt class="ppl-review__key">Competência</dt><dd class="ppl-review__val ppl-review__val--data">2026-08</dd></div>
+      <div class="ppl-review__row"><dt class="ppl-review__key">Colaboradores</dt><dd class="ppl-review__val ppl-review__val--data">1.240</dd></div>
+    </dl>
+    <div class="ppl-field" style="margin-bottom:14px">
+      <label class="ppl-field__label" for="r3">Digite <span class="ppl-dialog__phrase">2026-08</span> para confirmar</label>
+      <input class="ppl-input ppl-input--data" id="r3" placeholder="AAAA-MM">
+    </div>
+    <div class="ppl-row ppl-row--end">
+      <button class="ppl-btn ppl-btn--secondary">Cancelar</button>
+      <button class="ppl-btn ppl-btn--danger" disabled>Confirmar fechamento</button>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>16 · Busca global</h2>
+  <div class="demo wrap">
+    <button class="ppl-btn ppl-btn--secondary" data-ppl-search-open><i data-ppl-icon="search" data-ppl-size="16"></i>Abrir busca</button>
+    <span class="ppl-kbd">Ctrl</span><span class="ppl-kbd">K</span>
+    <span class="ppl-muted" style="font-size:12.5px">— atalho desativado em toque; lá a porta é o botão.</span>
+  </div>
+
+  <div class="ppl-scrim" id="ppl-search" hidden>
+    <div class="ppl-dialog ppl-dialog--wide" role="dialog" aria-modal="true" aria-label="Busca global">
+      <div class="ppl-dialog__head">
+        <h2 class="ppl-dialog__title">Busca global</h2>
+        <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" onclick="PplCompass.busca.fechar()" aria-label="Fechar">
+          <i data-ppl-icon="x" data-ppl-size="16"></i>
+        </button>
+      </div>
+      <input class="ppl-input" id="ppl-search-input" role="combobox" aria-expanded="true"
+             aria-controls="ppl-search-list" aria-autocomplete="list" autocomplete="off"
+             placeholder="Buscar processo, tela ou registro…">
+      <ul class="ppl-combo__list" id="ppl-search-list" role="listbox"
+          style="position:static;box-shadow:none;border:none;margin-top:8px;max-height:320px"></ul>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>17 · Shell</h2>
+  <div class="shell-demo">
+    <aside class="ppl-nav">
+      <div class="ppl-nav__brand">
+        <span class="ppl-nav__mark">b</span>
+        <span style="min-width:0">
+          <span class="ppl-nav__name">BNG People</span>
+          <span class="ppl-nav__tag">Depto. Pessoal</span>
+        </span>
+      </div>
+      <nav aria-label="Navegação principal" style="display:flex;flex-direction:column;gap:2px">
+        <a class="ppl-nav__item" href="#"><i data-ppl-icon="home" data-ppl-size="16"></i><span>Início</span></a>
+        <a class="ppl-nav__item" href="#"><i data-ppl-icon="alert-circle" data-ppl-size="16"></i><span>Pendências</span>
+          <span class="ppl-badge ppl-badge--gold ppl-badge--count" style="margin-left:auto">184.368</span></a>
+        <div style="padding-top:6px">
+          <button class="ppl-nav__group" aria-controls="g-estrutura">Estrutura
+            <span class="ppl-chevron"><i data-ppl-icon="chevron-down" data-ppl-size="13"></i></span>
+          </button>
+          <div id="g-estrutura" style="display:flex;flex-direction:column;gap:2px">
+            <a class="ppl-nav__item" href="#"><i data-ppl-icon="building" data-ppl-size="16"></i><span>Empresas</span></a>
+            <a class="ppl-nav__item" href="#"><i data-ppl-icon="users" data-ppl-size="16"></i><span>Colaboradores</span></a>
+          </div>
+        </div>
+        <div style="padding-top:6px">
+          <button class="ppl-nav__group" aria-controls="g-folha">Folha
+            <span class="ppl-chevron"><i data-ppl-icon="chevron-down" data-ppl-size="13"></i></span>
+          </button>
+          <div id="g-folha" style="display:flex;flex-direction:column;gap:2px">
+            <a class="ppl-nav__item" href="#"><i data-ppl-icon="list" data-ppl-size="16"></i><span>Rubricas</span></a>
+            <a class="ppl-nav__item" href="#" aria-current="page"><i data-ppl-icon="wallet" data-ppl-size="16"></i><span>Folha</span></a>
+            <a class="ppl-nav__item" href="#"><i data-ppl-icon="palm" data-ppl-size="16"></i><span>Férias</span></a>
+          </div>
+        </div>
+      </nav>
+      <div class="ppl-spacer"></div>
+      <div class="ppl-nav__foot">
+        <span class="ppl-avatar">FS</span>
+        <span style="min-width:0;flex:1">
+          <span style="display:block;font-size:12.5px;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">felipe.silveira@…</span>
+          <span style="display:block;font-size:11px;color:var(--ppl-on-dark-soft)">Console RH</span>
+        </span>
+        <button class="ppl-btn ppl-btn--icon" style="color:rgb(255 255 255 / .7)" aria-label="Sair"><i data-ppl-icon="log-out" data-ppl-size="15"></i></button>
+      </div>
+    </aside>
+
+    <div class="ppl-shell__col ppl-canvas" style="display:flex;flex-direction:column">
+      <header class="ppl-topbar ppl-bar">
+        <div class="ppl-topbar__row">
+          <button class="ppl-btn ppl-btn--secondary ppl-btn--sm" style="color:var(--ppl-primary)"><i data-ppl-icon="menu" data-ppl-size="16"></i>Menu</button>
+          <span class="ppl-eyebrow">Grupo Boas Novas</span>
+          <span class="ppl-topbar__crumb"><i data-ppl-icon="wallet" data-ppl-size="15"></i>Folha</span>
+          <div class="ppl-topbar__actions">
+            <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Produtos"><i data-ppl-icon="grid" data-ppl-size="16"></i></button>
+            <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Buscar" data-ppl-search-open><i data-ppl-icon="search" data-ppl-size="16"></i></button>
+          </div>
+        </div>
+      </header>
+      <main style="padding:24px;overflow:auto">
+        <div class="ppl-page-head">
+          <div style="min-width:0">
+            <div class="ppl-page-head__meta ppl-eyebrow">Competência 2026-08 · Gestão Hospitalar Ltda</div>
+            <h1 class="ppl-page-head__title">Folha da competência</h1>
+            <p class="ppl-page-head__desc">Apuração, conferência e fechamento por CNPJ.</p>
+          </div>
+          <div class="ppl-page-head__actions">
+            <button class="ppl-btn ppl-btn--secondary ppl-btn--sm">Exportar CSV</button>
+            <button class="ppl-btn ppl-btn--primary ppl-btn--sm">Calcular folha</button>
+          </div>
+        </div>
+        <div class="ppl-stat-grid">
+          <div class="ppl-card ppl-stat"><span class="ppl-stat__value">R$ 1.610.220,10</span><span class="ppl-stat__label">Proventos</span></div>
+          <div class="ppl-card ppl-stat"><span class="ppl-stat__value">R$ 325.289,55</span><span class="ppl-stat__label">Descontos</span></div>
+          <div class="ppl-card ppl-stat"><span class="ppl-stat__value">1.240</span><span class="ppl-stat__label">Colaboradores</span></div>
+          <div class="ppl-card ppl-stat"><span class="ppl-stat__value">R$ 1.284.930,55</span><span class="ppl-stat__label">Líquido</span></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>18 · Tabbar (mobile)</h2>
+  <p class="lead">Máximo 5 itens. O alvo de toque é o link inteiro, ≥ 44px — não a pílula. O grid é dirigido pela contagem.</p>
+  <div style="max-width:420px;border:1px solid var(--ppl-border);border-radius:var(--ppl-radius-card);overflow:hidden;margin-top:12px">
+    <nav class="ppl-tabbar" aria-label="Navegação principal">
+      <a class="ppl-tabbar__item" href="#" aria-current="page"><span class="ppl-tabbar__pill"><i data-ppl-icon="calendar" data-ppl-size="20"></i></span>Espelho</a>
+      <a class="ppl-tabbar__item" href="#"><span class="ppl-tabbar__pill"><i data-ppl-icon="fingerprint" data-ppl-size="20"></i></span>Bater ponto</a>
+      <a class="ppl-tabbar__item" href="#"><span class="ppl-tabbar__pill"><i data-ppl-icon="file" data-ppl-size="20"></i></span>Holerite</a>
+    </nav>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2>19 · Landing — a única superfície com vidro e tema escuro</h2>
+  <div class="ppl-landing ppl-landing__mesh" style="border-radius:var(--ppl-radius-card);padding:24px;min-height:auto">
+    <nav class="ppl-glass" style="display:flex;align-items:center;justify-content:space-between;gap:12px;border-radius:var(--ppl-radius-card);padding:12px 20px">
+      <strong style="color:var(--ppl-lp-ink)">BNG People</strong>
+      <div class="ppl-row">
+        <a href="#" style="color:var(--ppl-lp-ink-soft);font-size:14px">Módulos</a>
+        <button class="ppl-btn ppl-btn--icon" data-ppl-theme-toggle aria-label="Alternar tema"
+                style="border:1px solid var(--ppl-lp-border-strong);color:var(--ppl-lp-ink)">
+          <i data-ppl-icon="moon" data-ppl-size="18"></i>
+        </button>
+        <a class="ppl-btn" href="#" style="background:var(--ppl-lp-accent);color:var(--ppl-lp-on-accent)">Entrar<i data-ppl-icon="arrow-right" data-ppl-size="16"></i></a>
+      </div>
+    </nav>
+    <div style="padding:40px 8px 24px;max-width:640px">
+      <p class="ppl-eyebrow" style="font-size:15px">Folha, ponto e eSocial do grupo</p>
+      <h2 class="ppl-grad-text" style="font-size:40px;font-weight:700;line-height:1.1;margin:8px 0 12px;border:none;padding:0">Um só lugar para o departamento pessoal inteiro.</h2>
+      <p style="color:var(--ppl-lp-ink-soft);max-width:52ch">Admissão, ponto, folha, benefícios, férias e eSocial — multi-CNPJ, com trilha de auditoria em tudo.</p>
+    </div>
+  </div>
+
+</div>
+
+<script src="../dist/ppl-compass-icons.js"></script>
+<script src="../dist/ppl-compass.js"></script>
+<script>
+  PplCompass.init({
+    acoes: [
+      { href: '/colaboradores/novo', label: '1 · Admitir colaborador' },
+      { href: '/correcoes',  label: '2 · Corrigir marcação de ponto' },
+      { href: '/fechamento', label: '3 · Fechar folha da competência' },
+      { href: '/ferias',     label: '4 · Programar férias' },
+      { href: '/rescisoes',  label: '5 · Rescindir contrato' },
+      { href: '/esocial',    label: '7 · Transmitir eSocial' },
+      { href: '/rubricas',   label: 'Rubricas' },
+      { href: '/empresas',   label: 'Empresas' }
+    ]
+  });
+
+  /* Catálogo de ícones — provado a partir do próprio pacote, não de uma lista à mão. */
+  document.getElementById('catalogo-icones').innerHTML = PplCompassIcons.nomes().map(function (n) {
+    return '<span title="' + n + '" style="display:grid;place-items:center;width:34px;height:34px;'
+         + 'border:1px solid var(--ppl-border);border-radius:8px">' + PplCompassIcons.svg(n, 18) + '</span>';
+  }).join('');
+
+  new PplCompass.Wizard({
+    raiz: document.getElementById('wizard'),
+    efeito: 'juridico',
+    rotuloConfirmar: 'Concluir admissão',
+    passos: [
+      { id: 'pessoais', label: 'Dados pessoais' },
+      { id: 'contrato', label: 'Contrato' },
+      { id: 'jornada',  label: 'Jornada' },
+      { id: 'revisao',  label: 'Revisão' }
+    ],
+    aoRenderizar: function (passo, corpo) {
+      if (passo.id === 'revisao') {
+        corpo.innerHTML =
+          '<h4 style="font-size:14px;font-weight:600;color:var(--ppl-ink);margin-bottom:10px">Revise antes de enviar</h4>' +
+          '<dl class="ppl-review">' +
+          '<div class="ppl-review__row"><dt class="ppl-review__key">Colaborador</dt><dd class="ppl-review__val">Mariana Souza</dd></div>' +
+          '<div class="ppl-review__row"><dt class="ppl-review__key">CPF</dt><dd class="ppl-review__val ppl-review__val--data">111.222.333-44</dd></div>' +
+          '<div class="ppl-review__row"><dt class="ppl-review__key">Admissão</dt><dd class="ppl-review__val">01/09/2026</dd></div></dl>';
+      } else {
+        corpo.innerHTML =
+          '<p class="ppl-eyebrow" style="margin-bottom:8px">Etapa: ' + passo.label + '</p>' +
+          '<p class="ppl-muted">Uma decisão por etapa. O conteúdo real do passo entra aqui.</p>';
+      }
+    },
+    onConcluir: function () { PplCompass.toast.success('Admissão concluída — matrícula 2026-0042 criada.'); }
+  });
+</script>
+</body>
+</html>
