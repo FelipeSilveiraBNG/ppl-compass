@@ -2,7 +2,7 @@
   "name": "ppl-compass",
   "private": true,
   "type": "module",
-  "description": "Framework de prototipacao do BNG People. NAO e publicado no npm — este package.json existe apenas para o playwright-core do smoke de teclado no CI. O que o consumidor recebe sao dois arquivos do CDN, sem build e sem dependencia.",
+  "description": "Framework de prototipacao do BNG People. NAO e publicado no npm — este package.json existe apenas para as duas devDependencies de BUILD: playwright-core (smoke de teclado no CI) e lucide-static (dados dos icones, embutidos na geracao). Nenhuma das duas chega ao navegador: o que o consumidor recebe sao dois arquivos do CDN, sem build e sem dependencia de runtime.",
   "scripts": {
     "build": "node scripts/build.mjs",
     "lint": "node scripts/lint.mjs",
@@ -10,9 +10,12 @@
     "smoke": "node scripts/smoke.mjs",
     "preview": "node scripts/preview.mjs",
     "sri": "node scripts/sri.mjs",
-    "check": "npm run lint:autoteste && npm run build && npm run lint && npm run smoke"
+    "icones": "node scripts/gerar-icones.mjs",
+    "icones:conferir": "node scripts/gerar-icones.mjs --conferir",
+    "check": "npm run lint:autoteste && npm run icones:conferir && npm run build && npm run lint && npm run smoke"
   },
   "devDependencies": {
+    "lucide-static": "^0.575.0",
     "playwright-core": "^1.49.1"
   }
 }

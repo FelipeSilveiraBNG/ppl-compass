@@ -1243,7 +1243,7 @@
    * ÍCONES — preenchido por ppl-compass-icons.js quando ele estiver na página.
    * Sem ele, `svg()` devolve string vazia e nada quebra.
    * ======================================================================== */
-  var icons = global.PplCompassIcons || { paths: {}, svg: function () { return ''; } };
+  var icons = global.PplCompassIcons || { desenhos: {}, svg: function () { return ''; } };
 
   function hidratarIcones() {
     $$('[data-ppl-icon]').forEach(function (el) {

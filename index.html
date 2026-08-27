@@ -243,7 +243,7 @@
          pessoa veio consultar. São rótulos, e ponto. -->
     <nav aria-label="Navegação da documentação" class="ppl-nav__menu">
       <p class="doc-nav__secao">Guia</p>
-      <a class="ppl-nav__item" href="#/home"><i data-ppl-icon="home" data-ppl-size="15"></i><span>Início</span></a>
+      <a class="ppl-nav__item" href="#/home"><i data-ppl-icon="house" data-ppl-size="15"></i><span>Início</span></a>
       <a class="ppl-nav__item" href="#/cdn"><i data-ppl-icon="send" data-ppl-size="15"></i><span>Uso via CDN</span></a>
       <a class="ppl-nav__item" href="#/templates"><i data-ppl-icon="layers" data-ppl-size="15"></i><span>Templates de tela</span></a>
       <a class="ppl-nav__item" href="#/regras"><i data-ppl-icon="shield" data-ppl-size="15"></i><span>Regras embutidas</span></a>
@@ -272,7 +272,7 @@
       <a class="ppl-nav__item" href="#/atributos"><span>Atributos data-ppl-*</span></a>
     </nav>
 
-    <div class="doc-nav__versao" id="doc-versao">v0.4.0</div>
+    <div class="doc-nav__versao" id="doc-versao">v0.4.1</div>
   </aside>
 
   <div class="ppl-shell__col ppl-canvas">
@@ -331,7 +331,7 @@
   <div class="cards">
     <a href="#/tokens"><strong>98 design tokens</strong><small>trocar isto troca a marca inteira</small></a>
     <a href="#/superficies"><strong>187 classes</strong><small>em 23 grupos de receita</small></a>
-    <a href="#/icones"><strong>46 ícones</strong><small>desenhos próprios, sem licença de terceiro</small></a>
+    <a href="#/icones"><strong>136 ícones</strong><small>lucide embutido, sem carregar o pacote</small></a>
     <a href="#/atributos"><strong>22 atributos</strong><small>comportamento sem escrever JavaScript</small></a>
   </div>
 
@@ -401,7 +401,7 @@
     <table class="ppl-table">
       <thead><tr><th>Referência</th><th>Cache</th><th>Consequência</th></tr></thead>
       <tbody>
-        <tr><td class="ppl-td-data" data-versao-tag>@0.4.0</td><td>1 ano, imutável</td><td>a demo de amanhã é byte a byte a de hoje</td></tr>
+        <tr><td class="ppl-td-data" data-versao-tag>@0.4.1</td><td>1 ano, imutável</td><td>a demo de amanhã é byte a byte a de hoje</td></tr>
         <tr><td class="ppl-td-data">@main</td><td>12 h no edge</td><td>a demo pode mudar sozinha antes da reunião</td></tr>
       </tbody>
     </table>
@@ -426,7 +426,7 @@
         <tr><td><code>ppl-compass-tokens.css</code></td><td>só as custom properties — trocar isto troca a marca</td></tr>
         <tr><td><code>ppl-compass-components.css</code></td><td>só as receitas (exige um tokens)</td></tr>
         <tr><td><code>ppl-compass.js</code></td><td>os comportamentos</td></tr>
-        <tr><td><code>ppl-compass-icons.js</code></td><td>os 46 ícones</td></tr>
+        <tr><td><code>ppl-compass-icons.js</code></td><td>os 136 ícones</td></tr>
         <tr><td><code>fonts/*.woff2</code></td><td>Urbanist, Playfair Display itálica, JetBrains Mono — subset latin</td></tr>
       </tbody>
     </table>
@@ -584,7 +584,7 @@
     <code>.ppl-disclosure</code> é o padrão ARIA que ele implementa.
   </p>
   <div class="ppl-alert ppl-alert--warning">
-    <i data-ppl-icon="alert" data-ppl-size="16"></i>
+    <i data-ppl-icon="triangle-alert" data-ppl-size="16"></i>
     <span>O build <strong>reprova</strong> se um nome aposentado voltar ao fonte — inclusive na
     documentação, de onde ele volta para o código pela mão de quem copiou o exemplo.</span>
   </div>
@@ -764,14 +764,22 @@
 <section class="doc-pagina" id="p-icones">
   <h2>Ícones <span class="doc-tag">data-ppl-icon</span></h2>
   <p>
-    São <strong>46</strong>, desenhados para o pacote — sem licença de terceiro e sem requisição
-    externa. Marque um <code>&lt;i&gt;</code> e o <code>init()</code> troca pelo SVG.
+    São <strong>136</strong>, vindos do <strong>lucide</strong> — a biblioteca única do design
+    system (DS-03), a mesma que o console e a PWA renderizam via <code>lucide-react</code>. A
+    geometria é <em>embutida</em> no arquivo: o pacote não é carregado em runtime e não há
+    requisição externa. Marque um <code>&lt;i&gt;</code> e o <code>init()</code> troca pelo SVG.
+  </p>
+  <p>
+    Os nomes são os <strong>canônicos do lucide</strong>. Alias depreciado do
+    <code>lucide-react</code> resolve para o canônico — <code>AlertTriangle</code> vira
+    <code>triangle-alert</code>, mesma geometria, nome que sobrevive. Não há alias antigo do
+    ppl-compass: nome que não existe devolve vazio, e é assim que o erro aparece.
   </p>
   <div class="exemplo">
     <template>
       <i data-ppl-icon="wallet" data-ppl-size="24"></i>
-      <i data-ppl-icon="fingerprint" data-ppl-size="24"></i>
-      <i data-ppl-icon="palm" data-ppl-size="24"></i>
+      <i data-ppl-icon="fingerprint-pattern" data-ppl-size="24"></i>
+      <i data-ppl-icon="tree-palm" data-ppl-size="24"></i>
       <i data-ppl-icon="shield" data-ppl-size="24"></i>
     </template>
   </div>
@@ -780,7 +788,7 @@
   <div class="exemplo">
     <template data-so-codigo>
 PplCompass.icon('wallet', 18)   // devolve a string do &lt;svg&gt;
-PplCompassIcons.nomes()         // a lista dos 46
+PplCompassIcons.nomes()         // a lista dos 136
     </template>
   </div>
 
@@ -877,8 +885,8 @@ PplCompassIcons.nomes()         // a lista dos 46
   <div class="exemplo">
     <template>
       <span class="ppl-badge ppl-badge--success"><i data-ppl-icon="check" data-ppl-size="12"></i>Conferida</span>
-      <span class="ppl-badge ppl-badge--warning"><i data-ppl-icon="alert" data-ppl-size="12"></i>Divergência</span>
-      <span class="ppl-badge ppl-badge--danger"><i data-ppl-icon="x-circle" data-ppl-size="12"></i>Rejeitada</span>
+      <span class="ppl-badge ppl-badge--warning"><i data-ppl-icon="triangle-alert" data-ppl-size="12"></i>Divergência</span>
+      <span class="ppl-badge ppl-badge--danger"><i data-ppl-icon="circle-x" data-ppl-size="12"></i>Rejeitada</span>
       <span class="ppl-badge ppl-badge--muted"><i data-ppl-icon="clock" data-ppl-size="12"></i>Em apuração</span>
       <span class="ppl-badge ppl-badge--info">Provento</span>
     </template>
@@ -913,7 +921,7 @@ PplCompassIcons.nomes()         // a lista dos 46
 <section class="doc-pagina" id="p-formulario">
   <h2>Formulário <span class="doc-tag">.ppl-field .ppl-input .ppl-combo</span></h2>
   <div class="ppl-alert ppl-alert--warning">
-    <i data-ppl-icon="alert" data-ppl-size="16"></i>
+    <i data-ppl-icon="triangle-alert" data-ppl-size="16"></i>
     <span>Validação de tela é <strong>espelho, não autoridade</strong> — quem recusa de verdade é o
     backend. <code>min</code>/<code>max</code> em campo de data é conveniência: digitação e colagem
     furam.</span>
@@ -987,7 +995,7 @@ PplCompassIcons.nomes()         // a lista dos 46
           <input class="ppl-input ppl-combo__input" role="combobox" aria-expanded="false"
                  aria-controls="doc-lista-lotacao" aria-autocomplete="list" autocomplete="off"
                  placeholder="Todas as lotações">
-          <span class="ppl-combo__chevron"><i data-ppl-icon="chevron-updown" data-ppl-size="15"></i></span>
+          <span class="ppl-combo__chevron"><i data-ppl-icon="chevrons-up-down" data-ppl-size="15"></i></span>
           <ul class="ppl-combo__list" id="doc-lista-lotacao" role="listbox" hidden>
             <li role="option" aria-selected="false"><span class="ppl-combo__option"><span><span>UTI Adulto</span><span class="ppl-combo__hint">42 contratos</span></span></span></li>
             <li role="option" aria-selected="false"><span class="ppl-combo__option"><span><span>Pronto-socorro</span><span class="ppl-combo__hint">88 contratos</span></span></span></li>
@@ -1028,9 +1036,9 @@ PplCompassIcons.nomes()         // a lista dos 46
     <template>
       <div class="ppl-stack" style="width:100%">
         <div class="ppl-alert ppl-alert--info"><i data-ppl-icon="info" data-ppl-size="16"></i><span>A rubrica passa a valer a partir da competência aberta.</span></div>
-        <div class="ppl-alert ppl-alert--success"><i data-ppl-icon="check-circle" data-ppl-size="16"></i><span>Competência 2026-07 fechada e transmitida.</span></div>
-        <div class="ppl-alert ppl-alert--warning"><i data-ppl-icon="alert" data-ppl-size="16"></i><span>184.368 pendências aguardam tratamento.</span></div>
-        <div class="ppl-alert ppl-alert--danger" role="alert"><i data-ppl-icon="x-circle" data-ppl-size="16"></i><span>Não foi possível transmitir o lote — o certificado expirou.</span></div>
+        <div class="ppl-alert ppl-alert--success"><i data-ppl-icon="circle-check" data-ppl-size="16"></i><span>Competência 2026-07 fechada e transmitida.</span></div>
+        <div class="ppl-alert ppl-alert--warning"><i data-ppl-icon="triangle-alert" data-ppl-size="16"></i><span>184.368 pendências aguardam tratamento.</span></div>
+        <div class="ppl-alert ppl-alert--danger" role="alert"><i data-ppl-icon="circle-x" data-ppl-size="16"></i><span>Não foi possível transmitir o lote — o certificado expirou.</span></div>
       </div>
     </template>
   </div>
@@ -1067,7 +1075,7 @@ PplCompassIcons.nomes()         // a lista dos 46
           <button class="ppl-btn ppl-btn--secondary ppl-btn--sm">Calcular folha</button>
         </div>
         <div class="ppl-state">
-          <span class="ppl-state__icon"><i data-ppl-icon="x-circle" data-ppl-size="28"></i></span>
+          <span class="ppl-state__icon"><i data-ppl-icon="circle-x" data-ppl-size="28"></i></span>
           <p>Não foi possível carregar a apuração.</p>
           <button class="ppl-btn ppl-btn--secondary ppl-btn--sm">Tentar de novo</button>
         </div>
@@ -1140,7 +1148,7 @@ PplCompassIcons.nomes()         // a lista dos 46
           </div>
 
           <div class="ppl-state" data-ppl-when="erro">
-            <span class="ppl-state__icon"><i data-ppl-icon="x-circle" data-ppl-size="28"></i></span>
+            <span class="ppl-state__icon"><i data-ppl-icon="circle-x" data-ppl-size="28"></i></span>
             <p>Não foi possível carregar as rubricas.</p>
             <button class="ppl-btn ppl-btn--secondary ppl-btn--sm">Tentar de novo</button>
           </div>
@@ -1433,7 +1441,7 @@ PplCompass.painel('painel-folha', 'carregando');
           <span class="ppl-eyebrow">Grupo Boas Novas</span>
           <span class="ppl-topbar__crumb"><i data-ppl-icon="wallet" data-ppl-size="15"></i>Folha</span>
           <div class="ppl-topbar__actions">
-            <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Produtos"><i data-ppl-icon="grid" data-ppl-size="16"></i></button>
+            <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Produtos"><i data-ppl-icon="layout-grid" data-ppl-size="16"></i></button>
             <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Buscar" data-ppl-search-open><i data-ppl-icon="search" data-ppl-size="16"></i></button>
           </div>
         </div>
@@ -1479,7 +1487,7 @@ PplCompass.painel('painel-folha', 'carregando');
     <li>o resto da página fica <code>inert</code> enquanto ele está aberto.</li>
   </ul>
   <div class="ppl-alert ppl-alert--warning">
-    <i data-ppl-icon="alert" data-ppl-size="16"></i>
+    <i data-ppl-icon="triangle-alert" data-ppl-size="16"></i>
     <span><strong>Um modal por vez.</strong> O foco é preso marcando os irmãos de cada nível como
     <code>inert</code>, então um segundo modal nasceria inerte — desenhado na tela e invisível para o
     teclado e para o leitor de tela. Empilhar ali não degrada, apaga. Quem tenta abrir o segundo é
@@ -1886,7 +1894,7 @@ PplCompass.fmt.competencia('2026-08')    // agosto/2026
     </template>
   </div>
   <div class="ppl-alert ppl-alert--warning">
-    <i data-ppl-icon="alert" data-ppl-size="16"></i>
+    <i data-ppl-icon="triangle-alert" data-ppl-size="16"></i>
     <span>Valor monetário é <strong>string decimal</strong> no domínio: formate só na exibição.
     Converter para <code>Number</code> no caminho do dado perde precisão em folha. E competência é
     data civil <code>AAAA-MM</code> — <code>Date</code> arrasta fuso.</span>
@@ -2022,7 +2030,7 @@ new PplCompass.Wizard({ raiz, efeito, rotuloConfirmar, passos,
 (function () {
   'use strict';
 
-  var VERSAO = '0.4.0';
+  var VERSAO = '0.4.1';
   var $  = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
@@ -2094,8 +2102,8 @@ new PplCompass.Wizard({ raiz, efeito, rotuloConfirmar, passos,
     c.textContent = c.textContent
       .replace(/VERSAO/g, VERSAO)
       .replace(/SRI_CSS/g, 'sha384-E/qBbSGDbYr5hi+Q+4F1wUy5uXO+0q56bzlXkG86ngrjw1upmDRUvA3d1m/MBjhT')
-      .replace(/SRI_ICONS/g, 'sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx')
-      .replace(/SRI_JS/g, 'sha384-R6iJmhsWlAOh23kVKR1HujiFnIJjwWF+2Yvs227SM25jKcx8Yive8Q/Wqz+ZxBi4');
+      .replace(/SRI_ICONS/g, 'sha384-K7HJQ+0th6kgYPtM02Ac4GpT4x/2JVA8oI33rClJ/XEdNIkGmSK+Z4IkMfyJqcHb')
+      .replace(/SRI_JS/g, 'sha384-eJhMCyv17Hx5PMkBjZdtZEJxyDdsLjU4a9qKfqP7Z1L0Tpve8sVHqxVNWiHC07rq');
   });
 
   /* ── 3 · O catálogo de ícones sai do pacote, não de uma lista à mão ──── */
@@ -2235,7 +2243,7 @@ new PplCompass.Wizard({ raiz, efeito, rotuloConfirmar, passos,
       onConcluir: function () {
         raizWizard.innerHTML =
           '<div class="ppl-state">' +
-          '<span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="check-circle" data-ppl-size="22"></i></span>' +
+          '<span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="circle-check" data-ppl-size="22"></i></span>' +
           '<p class="ppl-display ppl-display--hero">Admissão concluída</p>' +
           '<p>Matrícula <span class="ppl-data">2026-0042</span> criada. O S-2200 entrou na fila do eSocial.</p>' +
           '</div>';

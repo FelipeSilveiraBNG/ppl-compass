@@ -26,24 +26,37 @@ não é necessário para subsetting.
 
 ---
 
-## Ícones — a partir da v1.0.0, se forem reusados em vez de redesenhados
+## Ícones — em vigor desde a adoção do lucide (27/08/2026)
 
-O design system do BNG People usa **lucide** como biblioteca única de ícones (DS-03).
-O framework proíbe carregar o pacote em runtime (zero dependência), mas o **lucide é ISC**, que
-permite reusar os dados de path com atribuição.
+O design system do BNG People usa **lucide** como biblioteca única de ícones (DS-03), e a produção
+(console + PWA) o consome via `lucide-react`. O framework **proíbe carregar o pacote em runtime**
+(zero dependência) — mas o **lucide é ISC**, que permite reusar os dados de geometria com
+atribuição. É o que este pacote faz.
 
 | Item | Licença | Como entra aqui |
 |---|---|---|
-| **lucide** | ISC | dados de `path` embutidos em `ppl-compass-icons.js`, sem carregar o pacote |
+| **lucide** | ISC | geometria de 136 ícones embutida em `ppl-compass-icons.js`, sem carregar o pacote |
 
-Se os ícones forem redesenhados do zero em vez de reusados, esta seção sai.
+O texto integral da licença ISC acompanha os arquivos em **`dist/LICENSE-lucide.txt`** — é a
+condição que o ISC põe, e por isso o arquivo é copiado do próprio pacote pelo gerador, nunca
+transcrito à mão.
 
-O texto integral da licença ISC do lucide acompanha o arquivo de ícones quando ele existir.
+Como funciona, para não haver dúvida sobre o que chega ao navegador:
+
+- `lucide-static@0.575.0` é **devDependency de build** — a mesma minor que o `lucide-react` da
+  produção, para que protótipo e produto desenhem o mesmo traço;
+- `scripts/gerar-icones.mjs` lê a geometria e emite `src/ppl-compass-icons.js` com os dados
+  embutidos, no traço 2 e na grade 24×24 do lucide;
+- o `dist/` não contém nenhuma referência ao pacote, e o navegador nunca pede nada ao npm.
+
+Os nomes usados são os **canônicos** do lucide. Alias depreciado do `lucide-react` (`AlertTriangle`)
+resolve para o canônico (`triangle-alert`): geometria idêntica, nome que sobrevive.
 
 ---
 
 ## Nada além disto
 
-Não há dependência de runtime: sem React, Vue, jQuery, Tailwind, Bootstrap, Alpine.
-Se este arquivo crescer, a promessa de zero dependência foi quebrada — vale investigar antes de
-adicionar a linha.
+Não há dependência de **runtime**: sem React, Vue, jQuery, Tailwind, Bootstrap, Alpine. As duas
+devDependencies (`lucide-static`, `playwright-core`) são de build e de CI — não chegam ao navegador.
+Se a lista de runtime deste arquivo crescer, a promessa de zero dependência foi quebrada — vale
+investigar antes de adicionar a linha.

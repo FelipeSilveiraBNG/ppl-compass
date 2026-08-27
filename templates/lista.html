@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Folha da competência — BNG People</title>
 <link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.0/dist/ppl-compass.css"
+      href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.1/dist/ppl-compass.css"
       integrity="sha384-E/qBbSGDbYr5hi+Q+4F1wUy5uXO+0q56bzlXkG86ngrjw1upmDRUvA3d1m/MBjhT"
       crossorigin="anonymous">
 </head>
@@ -65,7 +65,7 @@
         <span class="ppl-topbar__crumb"><i data-ppl-icon="wallet" data-ppl-size="15"></i>Folha</span>
         <div class="ppl-topbar__actions">
           <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Produtos">
-            <i data-ppl-icon="grid" data-ppl-size="16"></i>
+            <i data-ppl-icon="layout-grid" data-ppl-size="16"></i>
           </button>
           <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Buscar" data-ppl-search-open>
             <i data-ppl-icon="search" data-ppl-size="16"></i>
@@ -133,7 +133,7 @@
                   <td class="ppl-td-data">2025-0918</td><td>Carlos Menezes</td><td class="ppl-td-mute">Pronto-socorro</td>
                   <td class="ppl-td-num">R$ 4.980,00</td><td class="ppl-td-num">R$ 1.012,44</td>
                   <td class="ppl-td-num">R$ 3.967,56</td>
-                  <td><span class="ppl-badge ppl-badge--warning"><i data-ppl-icon="alert" data-ppl-size="12"></i>Divergência</span></td>
+                  <td><span class="ppl-badge ppl-badge--warning"><i data-ppl-icon="triangle-alert" data-ppl-size="12"></i>Divergência</span></td>
                 </tr>
                 <tr>
                   <td class="ppl-td-data">2024-0311</td><td>Juliana Prado</td><td class="ppl-td-mute">Centro cirúrgico</td>
@@ -178,7 +178,7 @@
           <!-- Erro traz a saída, não só o diagnóstico: quem lê precisa saber
                o que fazer agora. -->
           <div class="ppl-state" data-ppl-when="erro">
-            <span class="ppl-state__icon"><i data-ppl-icon="x-circle" data-ppl-size="28"></i></span>
+            <span class="ppl-state__icon"><i data-ppl-icon="circle-x" data-ppl-size="28"></i></span>
             <p>Não foi possível carregar a apuração desta competência.</p>
             <button class="ppl-btn ppl-btn--secondary ppl-btn--sm">Tentar de novo</button>
           </div>
@@ -190,10 +190,10 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.0/dist/ppl-compass-icons.js"
-        integrity="sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.0/dist/ppl-compass.js"
-        integrity="sha384-R6iJmhsWlAOh23kVKR1HujiFnIJjwWF+2Yvs227SM25jKcx8Yive8Q/Wqz+ZxBi4" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.1/dist/ppl-compass-icons.js"
+        integrity="sha384-K7HJQ+0th6kgYPtM02Ac4GpT4x/2JVA8oI33rClJ/XEdNIkGmSK+Z4IkMfyJqcHb" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.1/dist/ppl-compass.js"
+        integrity="sha384-eJhMCyv17Hx5PMkBjZdtZEJxyDdsLjU4a9qKfqP7Z1L0Tpve8sVHqxVNWiHC07rq" crossorigin="anonymous"></script>
 <script>addEventListener('DOMContentLoaded', () => PplCompass.init());</script>
 </body>
 </html>

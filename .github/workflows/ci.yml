@@ -32,12 +32,18 @@ jobs:
           node-version: 20
           cache: npm
 
-      # Só o playwright-core (~3 MB). Nenhum navegador é baixado: o smoke usa o
-      # Chrome que já vem no runner.
+      # Duas devDependencies de build: playwright-core (~3 MB) e lucide-static
+      # (dados dos ícones). Nenhum navegador é baixado — o smoke usa o Chrome que
+      # já vem no runner —, e nada disso chega ao navegador de quem consome.
       - run: npm ci
 
       - name: As checagens ainda mordem
         run: npm run lint:autoteste
+
+      # Antes do build: se alguém editou o arquivo de ícones à mão, a próxima
+      # geração reverteria a edição em silêncio. Aqui isso reprova alto.
+      - name: Ícones em sincronia com scripts/icones.txt
+        run: npm run icones:conferir
 
       - name: Build e invariantes do fonte
         run: npm run build

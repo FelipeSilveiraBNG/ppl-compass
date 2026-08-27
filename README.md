@@ -16,7 +16,7 @@ já correta e as regras de acessibilidade já embutidas.
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.0/dist/ppl-compass.css"
+        href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.1/dist/ppl-compass.css"
         integrity="sha384-E/qBbSGDbYr5hi+Q+4F1wUy5uXO+0q56bzlXkG86ngrjw1upmDRUvA3d1m/MBjhT"
         crossorigin="anonymous">
 </head>
@@ -24,10 +24,10 @@ já correta e as regras de acessibilidade já embutidas.
 
   <button class="ppl-btn ppl-btn--primary">Concluir admissão</button>
 
-  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.0/dist/ppl-compass-icons.js"
-          integrity="sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.0/dist/ppl-compass.js"
-          integrity="sha384-R6iJmhsWlAOh23kVKR1HujiFnIJjwWF+2Yvs227SM25jKcx8Yive8Q/Wqz+ZxBi4" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.1/dist/ppl-compass-icons.js"
+          integrity="sha384-K7HJQ+0th6kgYPtM02Ac4GpT4x/2JVA8oI33rClJ/XEdNIkGmSK+Z4IkMfyJqcHb" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.1/dist/ppl-compass.js"
+          integrity="sha384-eJhMCyv17Hx5PMkBjZdtZEJxyDdsLjU4a9qKfqP7Z1L0Tpve8sVHqxVNWiHC07rq" crossorigin="anonymous"></script>
   <script>addEventListener('DOMContentLoaded', () => PplCompass.init());</script>
 </body>
 </html>
@@ -53,8 +53,9 @@ soltos, sem a navegação da documentação em volta.
 | `ppl-compass-tokens.css` | só as custom properties — trocar isto troca a marca |
 | `ppl-compass-components.css` | só as receitas (exige um tokens) |
 | `ppl-compass.js` | os comportamentos |
-| `ppl-compass-icons.js` | 46 ícones |
+| `ppl-compass-icons.js` | 136 ícones do **lucide**, geometria embutida (ISC) |
 | `fonts/*.woff2` | Urbanist, Playfair Display itálica, JetBrains Mono — subset latin |
+| `LICENSE-lucide.txt` | a licença ISC do lucide — viaja junto por exigência dela |
 
 ---
 
@@ -191,7 +192,7 @@ gerenciar `tabindex` à mão —, custom properties e Grid. Fora da v1: aninhame
 
 | Referência | Cache | Consequência |
 |---|---|---|
-| `@0.4.0` | 1 ano, imutável | a demo de amanhã é byte a byte a de hoje |
+| `@0.4.1` | 1 ano, imutável | a demo de amanhã é byte a byte a de hoje |
 | `@main` | 12 h no edge | a demo pode mudar sozinha antes da reunião |
 
 **Use o arquivo com SRI, não o `.min`.** O jsDelivr gera `.min.css` automaticamente, mas avisa
@@ -231,11 +232,15 @@ onde alguém conferir o que a estabilidade estaria prometendo.
 ## Desenvolvimento
 
 `src/` é legível, `dist/` é o que o CDN serve, e **o consumidor não instala nada** — dois arquivos
-do CDN e a página funciona. O `package.json` existe só para o `playwright-core` do smoke de
-teclado; o pacote não é publicado no npm.
+do CDN e a página funciona. O `package.json` existe só para as duas devDependencies de build —
+`playwright-core` (smoke de teclado) e `lucide-static` (geometria dos ícones, embutida na geração);
+o pacote não é publicado no npm e nenhuma das duas chega ao navegador.
 
 ```bash
-npm run check                 # o que o CI roda: autoteste, build, lint e smoke
+npm run check                 # o que o CI roda: autoteste, ícones, build, lint e smoke
+
+npm run icones                # regera src/ppl-compass-icons.js a partir de scripts/icones.txt
+npm run icones:conferir       # reprova se o arquivo gerado derivou da lista
 
 node scripts/build.mjs        # monta dist/ e confere as invariantes (inclusive nos .html)
 node scripts/lint.mjs         # token órfão, CTA duplicado, dourado repetido, contraste
@@ -245,7 +250,7 @@ node scripts/preview.mjs      # espelha templates/ em .preview/ apontando para .
 node scripts/sri.mjs          # tabela de hashes para colar neste README
 node scripts/sri.mjs --html   # as tags prontas, já com a URL do CDN
 
-PPL_TAG=v0.4.0 node scripts/sri.mjs --html
+PPL_TAG=v0.4.1 node scripts/sri.mjs --html
 ```
 
 ### O que o CI reprova
@@ -261,6 +266,7 @@ navegador baixa.
 | **um dourado** | acento repetido deixa de acentuar |
 | **contraste** | os pares versionados recalculados a partir do `tokens.css` de hoje, claro e escuro. A dívida conhecida é nomeada e **não pode piorar** |
 | **nome aposentado** | um nome do console de volta, em qualquer arquivo — inclusive na documentação, de onde ele volta para o código pela mão de quem copiou o exemplo |
+| **ícones em sincronia** | `src/ppl-compass-icons.js` editado à mão — a próxima geração reverteria a edição em silêncio |
 | **smoke de teclado** | `Tab` sem armadilha, foco preso no modal, `Esc` que fecha sem confirmar, foco de volta no gatilho |
 | **dist/ e SRI** | `dist/` que não é o que o fonte gera, ou hash documentado que não bate — a página de quem consome pararia de carregar |
 
@@ -295,8 +301,8 @@ python -m http.server 8777
 ```bash
 node scripts/build.mjs
 node scripts/sri.mjs              # cole os hashes aqui, em demo/proof.html e em templates/*.html
-git add -A && git commit -m "release: v0.4.0"
-git tag v0.4.0 && git push origin main --tags
+git add -A && git commit -m "release: v0.4.1"
+git tag v0.4.1 && git push origin main --tags
 ```
 
 O hash cobre o **byte exato** de cada arquivo: qualquer mudança, inclusive num comentário, gera
@@ -306,14 +312,14 @@ um hash novo. Regere **antes** de criar a tag, nunca depois.
 
 ## Hashes SRI
 
-| Arquivo | Tamanho | `integrity` (v0.4.0) |
+| Arquivo | Tamanho | `integrity` (v0.4.1) |
 |---|---|---|
 | `ppl-compass-components.css` | 52.6 KB | `sha384-rblKGhGSAqP+I5ktX6NVKEe38OV1BCbqM/48XsK697iZ8lXvo+DVbBwjH4GOPobk` |
-| `ppl-compass-icons.js` | 6.3 KB | `sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx` |
+| `ppl-compass-icons.js` | 6.3 KB | `sha384-K7HJQ+0th6kgYPtM02Ac4GpT4x/2JVA8oI33rClJ/XEdNIkGmSK+Z4IkMfyJqcHb` |
 | `ppl-compass-nofonts.css` | 66.2 KB | `sha384-2Yjt1p6csRAkxNtFsbk7kM/ngmCeReS5SVO60/Y2IXgIfh7j7g6+yDIf9l8Qbw6o` |
 | `ppl-compass-tokens.css` | 12.8 KB | `sha384-e9hvrC/d4+ZqAfi200UvHN5OofkTbnN6JmygwRhEOMD21yowqA9oRCNn91Whkssn` |
 | `ppl-compass.css` | 68.8 KB | `sha384-E/qBbSGDbYr5hi+Q+4F1wUy5uXO+0q56bzlXkG86ngrjw1upmDRUvA3d1m/MBjhT` |
-| `ppl-compass.js` | 53.0 KB | `sha384-R6iJmhsWlAOh23kVKR1HujiFnIJjwWF+2Yvs227SM25jKcx8Yive8Q/Wqz+ZxBi4` |
+| `ppl-compass.js` | 53.0 KB | `sha384-eJhMCyv17Hx5PMkBjZdtZEJxyDdsLjU4a9qKfqP7Z1L0Tpve8sVHqxVNWiHC07rq` |
 
 ---
 
