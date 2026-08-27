@@ -16,7 +16,7 @@ já correta e as regras de acessibilidade já embutidas.
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.1/dist/ppl-compass.css"
+        href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.2/dist/ppl-compass.css"
         integrity="sha384-E/qBbSGDbYr5hi+Q+4F1wUy5uXO+0q56bzlXkG86ngrjw1upmDRUvA3d1m/MBjhT"
         crossorigin="anonymous">
 </head>
@@ -24,10 +24,10 @@ já correta e as regras de acessibilidade já embutidas.
 
   <button class="ppl-btn ppl-btn--primary">Concluir admissão</button>
 
-  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.1/dist/ppl-compass-icons.js"
+  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.2/dist/ppl-compass-icons.js"
           integrity="sha384-K7HJQ+0th6kgYPtM02Ac4GpT4x/2JVA8oI33rClJ/XEdNIkGmSK+Z4IkMfyJqcHb" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.1/dist/ppl-compass.js"
-          integrity="sha384-eJhMCyv17Hx5PMkBjZdtZEJxyDdsLjU4a9qKfqP7Z1L0Tpve8sVHqxVNWiHC07rq" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@0.4.2/dist/ppl-compass.js"
+          integrity="sha384-1F/GpCbAI2O7OJGomGl1FNHYcFgTr+QVb7zhhngOvDhVGWieyhUBoYN6wRzUpTBT" crossorigin="anonymous"></script>
   <script>addEventListener('DOMContentLoaded', () => PplCompass.init());</script>
 </body>
 </html>
@@ -192,7 +192,7 @@ gerenciar `tabindex` à mão —, custom properties e Grid. Fora da v1: aninhame
 
 | Referência | Cache | Consequência |
 |---|---|---|
-| `@0.4.1` | 1 ano, imutável | a demo de amanhã é byte a byte a de hoje |
+| `@0.4.2` | 1 ano, imutável | a demo de amanhã é byte a byte a de hoje |
 | `@main` | 12 h no edge | a demo pode mudar sozinha antes da reunião |
 
 **Use o arquivo com SRI, não o `.min`.** O jsDelivr gera `.min.css` automaticamente, mas avisa
@@ -250,7 +250,7 @@ node scripts/preview.mjs      # espelha templates/ em .preview/ apontando para .
 node scripts/sri.mjs          # tabela de hashes para colar neste README
 node scripts/sri.mjs --html   # as tags prontas, já com a URL do CDN
 
-PPL_TAG=v0.4.1 node scripts/sri.mjs --html
+PPL_TAG=v0.4.2 node scripts/sri.mjs --html
 ```
 
 ### O que o CI reprova
@@ -301,8 +301,8 @@ python -m http.server 8777
 ```bash
 node scripts/build.mjs
 node scripts/sri.mjs              # cole os hashes aqui, em demo/proof.html e em templates/*.html
-git add -A && git commit -m "release: v0.4.1"
-git tag v0.4.1 && git push origin main --tags
+git add -A && git commit -m "release: v0.4.2"
+git tag v0.4.2 && git push origin main --tags
 ```
 
 O hash cobre o **byte exato** de cada arquivo: qualquer mudança, inclusive num comentário, gera
@@ -312,14 +312,14 @@ um hash novo. Regere **antes** de criar a tag, nunca depois.
 
 ## Hashes SRI
 
-| Arquivo | Tamanho | `integrity` (v0.4.1) |
+| Arquivo | Tamanho | `integrity` (v0.4.2) |
 |---|---|---|
 | `ppl-compass-components.css` | 52.6 KB | `sha384-rblKGhGSAqP+I5ktX6NVKEe38OV1BCbqM/48XsK697iZ8lXvo+DVbBwjH4GOPobk` |
 | `ppl-compass-icons.js` | 6.3 KB | `sha384-K7HJQ+0th6kgYPtM02Ac4GpT4x/2JVA8oI33rClJ/XEdNIkGmSK+Z4IkMfyJqcHb` |
 | `ppl-compass-nofonts.css` | 66.2 KB | `sha384-2Yjt1p6csRAkxNtFsbk7kM/ngmCeReS5SVO60/Y2IXgIfh7j7g6+yDIf9l8Qbw6o` |
 | `ppl-compass-tokens.css` | 12.8 KB | `sha384-e9hvrC/d4+ZqAfi200UvHN5OofkTbnN6JmygwRhEOMD21yowqA9oRCNn91Whkssn` |
 | `ppl-compass.css` | 68.8 KB | `sha384-E/qBbSGDbYr5hi+Q+4F1wUy5uXO+0q56bzlXkG86ngrjw1upmDRUvA3d1m/MBjhT` |
-| `ppl-compass.js` | 53.0 KB | `sha384-eJhMCyv17Hx5PMkBjZdtZEJxyDdsLjU4a9qKfqP7Z1L0Tpve8sVHqxVNWiHC07rq` |
+| `ppl-compass.js` | 53.0 KB | `sha384-1F/GpCbAI2O7OJGomGl1FNHYcFgTr+QVb7zhhngOvDhVGWieyhUBoYN6wRzUpTBT` |
 
 ---
 

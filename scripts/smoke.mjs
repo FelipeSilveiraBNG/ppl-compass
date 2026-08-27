@@ -178,6 +178,93 @@ caso('Ctrl+K abre a busca e Esc fecha', async (pagina) => {
   return 'abre com o foco no campo e fecha no Esc';
 });
 
+caso('init() duas vezes nao liga duas vezes', async (pagina) => {
+  /* O PERCURSO QUE FALTAVA. `init()` é feito para ser rechamado — é como HTML
+     injetado ganha comportamento, e é o que o `aoRenderizar` do wizard faz a
+     cada etapa (o construtor já renderiza o primeiro passo, então acontece no
+     load). Cada chamada empilhava outro listener no mesmo elemento, e o dano
+     variava com a natureza do efeito: alternância travava, acumulador andava
+     dobrado, produtor duplicava DOM. Nenhuma outra checagem chamava `init()`
+     duas vezes, e era a única condição que revelava a classe inteira. */
+  const r = await pagina.evaluate(async () => {
+    const espera = (ms) => new Promise((res) => setTimeout(res, ms));
+
+    /* O form é injetado ANTES dos dois init para que AMBOS o vejam — é assim
+       que o listener duplicava. Injetar depois testaria outra coisa. */
+    const caixa = document.createElement('div');
+    caixa.innerHTML = '<form data-ppl-submit="Rubrica criada." id="ppl-smoke-form">' +
+                      '<button type="submit">Salvar</button></form>';
+    document.body.appendChild(caixa);
+
+    PplCompass.init();
+    PplCompass.init();
+
+    const out = {};
+
+    /* 1 · ALTERNÂNCIA — com dois listeners o clique alternava duas vezes e o
+           controle não se movia. */
+    const disc = document.querySelector('[data-ppl-disclosure] .ppl-disclosure__btn');
+    const antesDisc = disc.getAttribute('aria-expanded');
+    disc.click();
+    out.disclosure = antesDisc + '->' + disc.getAttribute('aria-expanded');
+
+    const grupo = document.querySelector('.ppl-nav__group');
+    if (grupo) {
+      const antesG = grupo.getAttribute('aria-expanded');
+      grupo.click();
+      out.grupoNav = antesG + '->' + grupo.getAttribute('aria-expanded');
+    }
+
+    /* 2 · PRODUTOR — um submit dava dois toasts. */
+    document.querySelectorAll('.ppl-toast').forEach((t) => t.remove());
+    document.querySelector('#ppl-smoke-form button').click();
+    await espera(120);
+    out.toasts = document.querySelectorAll('.ppl-toast').length;
+    document.querySelectorAll('.ppl-toast').forEach((t) => t.remove());
+
+    /* 3 · PRODUTOR, o caso grave — um clique em confirmação de risco abria um
+           diálogo por listener, e sobravam scrims órfãos ao fechar. */
+    document.querySelector('[data-ppl-confirm]').click();
+    await espera(120);
+    out.dialogos = document.querySelectorAll('.ppl-dialog[role="alertdialog"]').length;
+    document.querySelectorAll('.ppl-dialog[role="alertdialog"]').forEach((d) => {
+      const c = [...d.querySelectorAll('button')].find((b) => /cancelar/i.test(b.textContent));
+      if (c) c.click();
+    });
+    await espera(120);
+    out.scrimsOrfaos = document.querySelectorAll('.ppl-scrim:not([hidden])').length;
+
+    /* 4 · ACUMULADOR — `ativo` é do módulo, e dois handlers incrementavam a
+           MESMA variável: um ArrowDown pulava do índice 0 para o 2. */
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }));
+    await espera(150);
+    const idx = () => [...document.querySelectorAll('#ppl-search li[role="option"]')]
+      .findIndex((li) => li.getAttribute('aria-selected') === 'true');
+    const i0 = idx();
+    document.querySelector('#ppl-search-input')
+      .dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+    await espera(80);
+    out.passoDaBusca = idx() - i0;
+
+    return out;
+  });
+
+  const falhas = [];
+  if (r.disclosure === 'true->true' || r.disclosure === 'false->false') {
+    falhas.push(`o disclosure não alternou (${r.disclosure}) — listener duplicado`);
+  }
+  if (r.grupoNav && (r.grupoNav === 'true->true' || r.grupoNav === 'false->false')) {
+    falhas.push(`o grupo do menu não alternou (${r.grupoNav}) — listener duplicado`);
+  }
+  if (r.toasts !== 1) falhas.push(`um submit gerou ${r.toasts} toast(s), e devia gerar 1`);
+  if (r.dialogos !== 1) falhas.push(`um clique abriu ${r.dialogos} diálogo(s) de confirmação, e devia abrir 1`);
+  if (r.scrimsOrfaos !== 0) falhas.push(`${r.scrimsOrfaos} scrim(s) sobraram no DOM depois de fechar`);
+  if (r.passoDaBusca !== 1) falhas.push(`um ArrowDown na busca andou ${r.passoDaBusca} item(ns), e devia andar 1`);
+
+  if (falhas.length) throw new Error(falhas.join(' · '));
+  return `disclosure ${r.disclosure}${r.grupoNav ? ` · grupo ${r.grupoNav}` : ''} · 1 toast · 1 diálogo · 0 scrim órfão · busca +1`;
+});
+
 /* ══════════════════════════════════════════════════════════════════════════ */
 const { servidor, porta } = await servir();
 

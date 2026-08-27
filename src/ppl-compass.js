@@ -16,6 +16,49 @@
   var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
 
   /* ==========================================================================
+   * LIGAR DUAS VEZES NAO PODE LIGAR DUAS VEZES
+   * --------------------------------------------------------------------------
+   * `init()` É FEITO para ser chamado de novo: é assim que HTML injetado depois
+   * do load ganha comportamento, e é o que o `aoRenderizar` do wizard faz a cada
+   * etapa — o construtor já renderiza o primeiro passo, então acontece no load,
+   * sem interação nenhuma.
+   *
+   * O problema é que `addEventListener` só ignora o repetido quando a REFERÊNCIA
+   * é a mesma. Closure anônima nova é referência nova, então cada `init()`
+   * empilhava outro listener no mesmo elemento — e o dano dependia da natureza
+   * do efeito, o que fazia cada componente falhar de um jeito diferente:
+   *
+   *   alternância (`aria-expanded = !aberto`)  par de listeners = movimento ZERO
+   *                                            (o chevron do menu e o botão do
+   *                                            disclosure ficavam mortos)
+   *   acumulador (`ativo = ativo + 1`)         ArrowDown andava dois itens
+   *   produtor (cria DOM)                      um submit dava dois toasts; um
+   *                                            clique em "reabrir competência"
+   *                                            abria QUATRO diálogos e deixava
+   *                                            scrims órfãos sobre a página
+   *   escrita idempotente / guarda de estado   inofensivo (painel, drawer)
+   *
+   * O `tema` nunca teve o defeito, e por acidente: ele passa `alternar`, função
+   * NOMEADA, então a referência repetia e o navegador descartava. A diferença
+   * entre imune e quebrado era ter dado nome à função.
+   *
+   * `umaVez` marca o elemento e responde se é a PRIMEIRA vez. A guarda protege o
+   * corpo inteiro de cada ligação, não só o `addEventListener`: reprocessar o
+   * estado inicial jogaria fora o que a pessoa abriu ou fechou desde o load.
+   * Elemento novo (injetado, ou recriado por `nav()`) chega sem marca e é ligado
+   * normalmente — que é justamente o serviço que o `init()` presta.
+   *
+   * Ligação DELEGADA no `document` não usa isto: ela precisa existir uma vez na
+   * vida e não pertence a elemento nenhum, então quem a guarda é um booleano de
+   * módulo. Marca em elemento ali seria mentira sobre o que está sendo protegido.
+   * ======================================================================== */
+  function umaVez(el, marca) {
+    if (!el || el.dataset[marca]) return false;
+    el.dataset[marca] = '1';
+    return true;
+  }
+
+  /* ==========================================================================
    * 0 · MODAL — o que drawer e diálogo compartilham
    * --------------------------------------------------------------------------
    * UM MODAL POR VEZ, e isso não é preferência estética. O foco é preso
@@ -108,7 +151,16 @@
       modal.fechar(el);
     }
 
+    /* Delegação no `document`: precisa existir UMA vez na vida e não pertence a
+       elemento nenhum, então o guarda é um booleano — não uma marca em elemento.
+       (O drawer nunca sofreu com a duplicação porque `abrir` recusa painel já
+       aberto e recusa segundo modal; mesmo assim, listener empilhado a cada
+       `init()` é lixo que cresce.) */
+    var ligado = false;
     function ligar() {
+      if (ligado) return;
+      ligado = true;
+
       document.addEventListener('click', function (e) {
         var abre = e.target.closest('[data-ppl-drawer-open]');
         if (abre) { abrir(abre.dataset.pplDrawerOpen, abre); return; }
@@ -162,7 +214,7 @@
 
       var icone = document.createElement('span');
       icone.innerHTML = icons.svg(
-        tipo === 'success' ? 'check-circle' : tipo === 'error' ? 'x-circle' : 'info', 18
+        tipo === 'success' ? 'circle-check' : tipo === 'error' ? 'circle-x' : 'info', 18
       );
 
       var corpo = document.createElement('span');
@@ -360,6 +412,14 @@
       input = $('#ppl-search-input', el);
       lista = $('#ppl-search-list', el);
 
+      /* O `acoes` acima é REPROCESSADO a cada `init()` de propósito: rota nova
+         precisa entrar na busca. Só a ligação é que não pode repetir — e aqui
+         ela não podia mesmo: `garantirEl()` REUSA o `#ppl-search` que já existe,
+         então o mesmo `input` recebia outro `keydown` por init, e como `ativo` é
+         uma variável de módulo os dois handlers incrementavam a MESMA: um toque
+         de ArrowDown pulava do índice 0 para o 2. */
+      if (!umaVez(el, 'pplLigadoBusca')) return;
+
       input.addEventListener('input', function () { ativo = 0; render(); });
       el.addEventListener('mousedown', function (e) { if (e.target === el) fechar(); });
 
@@ -399,6 +459,7 @@
   var disclosure = {
     _ligar: function () {
       $$('[data-ppl-disclosure] .ppl-disclosure__btn').forEach(function (btn) {
+        if (!umaVez(btn, 'pplLigadoDisclosure')) return;
         btn.addEventListener('click', function () {
           var aberto = btn.getAttribute('aria-expanded') === 'true';
           btn.setAttribute('aria-expanded', String(!aberto));
@@ -418,6 +479,7 @@
   var combo = {
     _ligar: function () {
       $$('[data-ppl-combo]').forEach(function (raiz) {
+        if (!umaVez(raiz, 'pplLigadoCombo')) return;
         var input = $('input[role="combobox"]', raiz);
         var lista = $('.ppl-combo__list', raiz);
         if (!input || !lista) return;
@@ -699,8 +761,14 @@
       });
     };
 
+    /* A guarda é a do `umaVez` no topo do arquivo — sem ela o clique alternava
+     * duas vezes e o grupo não se movia, com o chevron desenhado girando nada.
+     * Menu montado por `nav()` é reconstruído do zero e chega sem marca, então
+     * grupo novo ganha estado e listener normalmente. */
     api._ligar = function () {
       $$('.ppl-nav__group').forEach(function (btn) {
+        if (!umaVez(btn, 'pplLigadoGrupo')) return;
+
         var corpo = document.getElementById(btn.getAttribute('aria-controls'));
         var temAtivo = corpo && $('[aria-current="page"]', corpo);
         btn.setAttribute('aria-expanded', temAtivo ? 'true' : 'false');
@@ -906,6 +974,7 @@
   var envio = {
     _ligar: function () {
       $$('form[data-ppl-submit]').forEach(function (form) {
+        if (!umaVez(form, 'pplLigadoEnvio')) return;
         form.addEventListener('submit', function (e) {
           e.preventDefault();
           var painel = form.closest('.ppl-drawer');
@@ -950,6 +1019,7 @@
 
     _ligar: function () {
       $$('[data-ppl-state-set]').forEach(function (b) {
+        if (!umaVez(b, 'pplLigadoEstado')) return;
         var partes = b.dataset.pplStateSet.split(':');
         b.addEventListener('click', function () { painel.trocar(partes[0], partes[1]); });
       });
@@ -1094,6 +1164,7 @@
       var problema = conferir(cfg);
       if (problema) return defeito(problema);
 
+
       var nivel = NIVEIS[cfg.risco];
       var idTitulo = 'ppl-confirm-t';
 
@@ -1216,6 +1287,12 @@
 
     function ligar() {
       $$('[data-ppl-confirm]').forEach(function (b) {
+        /* O gatilho de ação destrutiva é onde a duplicação doía mais: cada
+           `init()` somava um listener, e um clique em "reabrir competência"
+           abria um diálogo POR listener — quatro empilhados numa página que
+           chamara `init()` três vezes, com scrims sobrando no DOM depois de
+           fechar. Confirmação é o controle de maior consequência do pacote. */
+        if (!umaVez(b, 'pplLigadoConfirm')) return;
         b.addEventListener('click', function (e) {
           e.preventDefault();
           var d = b.dataset;

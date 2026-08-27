@@ -37,15 +37,18 @@
 
   /* ── Navegação ─────────────────────────────────────────────────────── */
   .doc-nav { gap: 2px; }
-  .doc-nav__secao {
-    margin-top: var(--ppl-space-4);
-    padding: 0 var(--ppl-space-3) 6px;
-    font-size: 10.5px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: .12em;
-    color: var(--ppl-on-dark-soft);
+  /* O RECUO E O SEPARADOR — e por que ele nao e um icone.
+     No console, seção e item se separam por quatro dispositivos: tipografia,
+     chevron à direita, colapso e ícone. O ícone faz dois trabalhos, e o
+     estrutural é o SEGUNDO: `gap:10px` depois de um glifo de 16px empurra todo
+     rótulo de item 26px à direita do rótulo da seção. Aqui não há ícone por
+     componente — nem faria sentido inventar 21 —, mas o recuo não depende do
+     glifo. Reservar a medida entrega a subordinação sem um desenho por item, e
+     sem nome novo: é a mesma geometria de `.ppl-nav__item` com ícone. */
+  .doc-nav .ppl-nav__item {
+    font-size: 12.5px;
+    padding-left: calc(var(--ppl-space-3) + 16px + 10px);
   }
-  .doc-nav__secao:first-of-type { margin-top: var(--ppl-space-2); }
-  .doc-nav .ppl-nav__item { font-size: 12.5px; }
   .doc-nav__versao {
     margin-top: auto;
     border-top: 1px solid rgb(255 255 255 / .12);
@@ -238,41 +241,71 @@
       </span>
     </div>
 
-    <!-- Os grupos aqui NÃO usam `.ppl-nav__group`: aquele é um botão que
-         recolhe, e numa documentação recolher esconde justamente o mapa que a
-         pessoa veio consultar. São rótulos, e ponto. -->
+    <!-- OS QUATRO DISPOSITIVOS QUE SEPARAM SEÇÃO DE ITEM
+         Antes esta navegação usava rótulos `<p>` e trazia só o primeiro dos
+         quatro sinais que o console usa — tipografia. Os outros três (chevron à
+         direita, colapso, e o recuo que o ícone reserva) tinham caído, e na
+         lista de componentes, que não tem ícone, o rótulo da seção e o do item
+         começavam no MESMO pixel. Sobrava contraste de tipo e nada de estrutura.
+
+         Agora são `.ppl-nav__group` de verdade — a receita publicada, não uma
+         classe local que duplicava a tipografia dela.
+
+         O QUE MUDOU EM RELAÇÃO À DECISÃO ANTERIOR: o comentário que morava aqui
+         recusava `.ppl-nav__group` porque "numa documentação recolher esconde o
+         mapa que a pessoa veio consultar". A objeção era certa e continua de pé
+         — a resposta é que o dispositivo é o chevron, e o padrão é ABERTO. Todos
+         os grupos nascem expandidos (ver o `init` no rodapé), então nada se
+         esconde; quem quiser fechar um grupo, fecha. O chevron passa a dizer a
+         verdade em vez de não existir. -->
     <nav aria-label="Navegação da documentação" class="ppl-nav__menu">
-      <p class="doc-nav__secao">Guia</p>
-      <a class="ppl-nav__item" href="#/home"><i data-ppl-icon="house" data-ppl-size="15"></i><span>Início</span></a>
-      <a class="ppl-nav__item" href="#/cdn"><i data-ppl-icon="send" data-ppl-size="15"></i><span>Uso via CDN</span></a>
-      <a class="ppl-nav__item" href="#/templates"><i data-ppl-icon="layers" data-ppl-size="15"></i><span>Templates de tela</span></a>
-      <a class="ppl-nav__item" href="#/regras"><i data-ppl-icon="shield" data-ppl-size="15"></i><span>Regras embutidas</span></a>
+      <div class="ppl-nav__block">
+        <button type="button" class="ppl-nav__group" aria-controls="doc-g-guia">Guia<span class="ppl-chevron"><i data-ppl-icon="chevron-down" data-ppl-size="13"></i></span></button>
+        <div class="ppl-nav__list" id="doc-g-guia">
+          <a class="ppl-nav__item" href="#/home"><span>Início</span></a>
+          <a class="ppl-nav__item" href="#/cdn"><span>Uso via CDN</span></a>
+          <a class="ppl-nav__item" href="#/templates"><span>Templates de tela</span></a>
+          <a class="ppl-nav__item" href="#/regras"><span>Regras embutidas</span></a>
+        </div>
+      </div>
 
-      <p class="doc-nav__secao">Fundamentos</p>
-      <a class="ppl-nav__item" href="#/tokens"><span>Design tokens</span></a>
-      <a class="ppl-nav__item" href="#/superficies"><span>Superfícies e texto</span></a>
-      <a class="ppl-nav__item" href="#/icones"><span>Ícones</span></a>
+      <div class="ppl-nav__block">
+        <button type="button" class="ppl-nav__group" aria-controls="doc-g-fundamentos">Fundamentos<span class="ppl-chevron"><i data-ppl-icon="chevron-down" data-ppl-size="13"></i></span></button>
+        <div class="ppl-nav__list" id="doc-g-fundamentos">
+          <a class="ppl-nav__item" href="#/tokens"><span>Design tokens</span></a>
+          <a class="ppl-nav__item" href="#/superficies"><span>Superfícies e texto</span></a>
+          <a class="ppl-nav__item" href="#/icones"><span>Ícones</span></a>
+        </div>
+      </div>
 
-      <p class="doc-nav__secao">Componentes</p>
-      <a class="ppl-nav__item" href="#/botoes"><span>Botões</span></a>
-      <a class="ppl-nav__item" href="#/badges"><span>Badges e tiles</span></a>
-      <a class="ppl-nav__item" href="#/formulario"><span>Formulário</span></a>
-      <a class="ppl-nav__item" href="#/feedback"><span>Alert, toast e estados</span></a>
-      <a class="ppl-nav__item" href="#/dados"><span>Tabela e painel de dados</span></a>
-      <a class="ppl-nav__item" href="#/conteudo"><span>Painel, choice e stat</span></a>
-      <a class="ppl-nav__item" href="#/navegação"><span>Navegação e busca</span></a>
-      <a class="ppl-nav__item" href="#/sobreposicao"><span>Drawer e diálogo</span></a>
-      <a class="ppl-nav__item" href="#/confirmacao"><span>Confirmação por risco</span></a>
-      <a class="ppl-nav__item" href="#/wizard"><span>Wizard</span></a>
-      <a class="ppl-nav__item" href="#/landing"><span>Landing</span></a>
-      <a class="ppl-nav__item" href="#/layout"><span>Layout</span></a>
+      <div class="ppl-nav__block">
+        <button type="button" class="ppl-nav__group" aria-controls="doc-g-componentes">Componentes<span class="ppl-chevron"><i data-ppl-icon="chevron-down" data-ppl-size="13"></i></span></button>
+        <div class="ppl-nav__list" id="doc-g-componentes">
+          <a class="ppl-nav__item" href="#/botoes"><span>Botões</span></a>
+          <a class="ppl-nav__item" href="#/badges"><span>Badges e tiles</span></a>
+          <a class="ppl-nav__item" href="#/formulario"><span>Formulário</span></a>
+          <a class="ppl-nav__item" href="#/feedback"><span>Alert, toast e estados</span></a>
+          <a class="ppl-nav__item" href="#/dados"><span>Tabela e painel de dados</span></a>
+          <a class="ppl-nav__item" href="#/conteudo"><span>Painel, choice e stat</span></a>
+          <a class="ppl-nav__item" href="#/navegação"><span>Navegação e busca</span></a>
+          <a class="ppl-nav__item" href="#/sobreposicao"><span>Drawer e diálogo</span></a>
+          <a class="ppl-nav__item" href="#/confirmacao"><span>Confirmação por risco</span></a>
+          <a class="ppl-nav__item" href="#/wizard"><span>Wizard</span></a>
+          <a class="ppl-nav__item" href="#/landing"><span>Landing</span></a>
+          <a class="ppl-nav__item" href="#/layout"><span>Layout</span></a>
+        </div>
+      </div>
 
-      <p class="doc-nav__secao">Referência</p>
-      <a class="ppl-nav__item" href="#/api"><span>API JavaScript</span></a>
-      <a class="ppl-nav__item" href="#/atributos"><span>Atributos data-ppl-*</span></a>
+      <div class="ppl-nav__block">
+        <button type="button" class="ppl-nav__group" aria-controls="doc-g-referencia">Referência<span class="ppl-chevron"><i data-ppl-icon="chevron-down" data-ppl-size="13"></i></span></button>
+        <div class="ppl-nav__list" id="doc-g-referencia">
+          <a class="ppl-nav__item" href="#/api"><span>API JavaScript</span></a>
+          <a class="ppl-nav__item" href="#/atributos"><span>Atributos data-ppl-*</span></a>
+        </div>
+      </div>
     </nav>
 
-    <div class="doc-nav__versao" id="doc-versao">v0.4.1</div>
+    <div class="doc-nav__versao" id="doc-versao">v0.4.2</div>
   </aside>
 
   <div class="ppl-shell__col ppl-canvas">
@@ -401,7 +434,7 @@
     <table class="ppl-table">
       <thead><tr><th>Referência</th><th>Cache</th><th>Consequência</th></tr></thead>
       <tbody>
-        <tr><td class="ppl-td-data" data-versao-tag>@0.4.1</td><td>1 ano, imutável</td><td>a demo de amanhã é byte a byte a de hoje</td></tr>
+        <tr><td class="ppl-td-data" data-versao-tag>@0.4.2</td><td>1 ano, imutável</td><td>a demo de amanhã é byte a byte a de hoje</td></tr>
         <tr><td class="ppl-td-data">@main</td><td>12 h no edge</td><td>a demo pode mudar sozinha antes da reunião</td></tr>
       </tbody>
     </table>
@@ -1334,8 +1367,8 @@ PplCompass.painel('painel-folha', 'carregando');
     "rotaAtiva": "/folha",
     "marca":  { "sigla": "b", "nome": "BNG People", "tag": "Depto. Pessoal" },
     "itens": [
-      { "label": "Início",     "icone": "home",         "href": "/" },
-      { "label": "Pendências", "icone": "alert-circle", "href": "/pendencias", "contador": 184368 },
+      { "label": "Início",     "icone": "house",         "href": "/" },
+      { "label": "Pendências", "icone": "circle-alert", "href": "/pendencias", "contador": 184368 },
       { "grupo": "Folha", "itens": [
         { "label": "Rubricas", "icone": "list",   "href": "/rubricas" },
         { "label": "Folha",    "icone": "wallet", "href": "/folha" }
@@ -1355,8 +1388,8 @@ PplCompass.painel('painel-folha', 'carregando');
         "rotaAtiva": "/folha",
         "marca":  { "sigla": "b", "nome": "BNG People", "tag": "Depto. Pessoal" },
         "itens": [
-          { "label": "Início",     "icone": "home",         "href": "/" },
-          { "label": "Pendências", "icone": "alert-circle", "href": "/pendencias", "contador": 184368 },
+          { "label": "Início",     "icone": "house",         "href": "/" },
+          { "label": "Pendências", "icone": "circle-alert", "href": "/pendencias", "contador": 184368 },
           { "grupo": "Estrutura", "itens": [
             { "label": "Empresas",      "icone": "building", "href": "/empresas" },
             { "label": "Colaboradores", "icone": "users",    "href": "/colaboradores" }
@@ -1364,7 +1397,7 @@ PplCompass.painel('painel-folha', 'carregando');
           { "grupo": "Folha", "itens": [
             { "label": "Rubricas", "icone": "list",       "href": "/rubricas" },
             { "label": "Folha",    "icone": "wallet",     "href": "/folha" },
-            { "label": "Férias",   "icone": "palm",       "href": "/ferias" }
+            { "label": "Férias",   "icone": "tree-palm",       "href": "/ferias" }
           ]}
         ],
         "usuario": { "iniciais": "AR", "nome": "ana.ribeiro@gestaohospitalar.com.br",
@@ -1422,7 +1455,7 @@ PplCompass.painel('painel-folha', 'carregando');
             "rotaAtiva": "/espelho",
             "itens": [
               { "label": "Espelho",  "icone": "calendar",    "href": "/espelho" },
-              { "label": "Ponto",    "icone": "fingerprint", "href": "/ponto" },
+              { "label": "Ponto",    "icone": "fingerprint-pattern", "href": "/ponto" },
               { "label": "Holerite", "icone": "file",        "href": "/holerite" }
             ]
           }
@@ -2030,7 +2063,7 @@ new PplCompass.Wizard({ raiz, efeito, rotuloConfirmar, passos,
 (function () {
   'use strict';
 
-  var VERSAO = '0.4.1';
+  var VERSAO = '0.4.2';
   var $  = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
@@ -2103,7 +2136,7 @@ new PplCompass.Wizard({ raiz, efeito, rotuloConfirmar, passos,
       .replace(/VERSAO/g, VERSAO)
       .replace(/SRI_CSS/g, 'sha384-E/qBbSGDbYr5hi+Q+4F1wUy5uXO+0q56bzlXkG86ngrjw1upmDRUvA3d1m/MBjhT')
       .replace(/SRI_ICONS/g, 'sha384-K7HJQ+0th6kgYPtM02Ac4GpT4x/2JVA8oI33rClJ/XEdNIkGmSK+Z4IkMfyJqcHb')
-      .replace(/SRI_JS/g, 'sha384-eJhMCyv17Hx5PMkBjZdtZEJxyDdsLjU4a9qKfqP7Z1L0Tpve8sVHqxVNWiHC07rq');
+      .replace(/SRI_JS/g, 'sha384-1F/GpCbAI2O7OJGomGl1FNHYcFgTr+QVb7zhhngOvDhVGWieyhUBoYN6wRzUpTBT');
   });
 
   /* ── 3 · O catálogo de ícones sai do pacote, não de uma lista à mão ──── */
@@ -2138,6 +2171,17 @@ new PplCompass.Wizard({ raiz, efeito, rotuloConfirmar, passos,
       if (a.getAttribute('href') === '#/' + nome) a.setAttribute('aria-current', 'page');
       else a.removeAttribute('aria-current');
     });
+    /* Se quem lê fechou um grupo e depois caiu numa rota de dentro dele — por
+       busca, por link, pelo histórico —, a página abre com a marca dourada
+       invisível. Reabrir o grupo do item atual evita "estou aqui" apontando
+       para dentro de uma gaveta fechada. Os outros ficam como a pessoa deixou. */
+    var atual = $('#doc-nav .ppl-nav__item[aria-current="page"]');
+    var caixa = atual && atual.closest('.ppl-nav__list');
+    if (caixa) {
+      caixa.hidden = false;
+      var gatilho = $('.ppl-nav__group[aria-controls="' + caixa.id + '"]', caixa.parentNode);
+      if (gatilho) gatilho.setAttribute('aria-expanded', 'true');
+    }
     /* O título da aba acompanha a rota: quem deixa a documentação aberta em
        três abas precisa distinguir as três. */
     /* O nome da rota vem do título SEM a etiqueta da classe: "Navegação e
@@ -2196,6 +2240,19 @@ new PplCompass.Wizard({ raiz, efeito, rotuloConfirmar, passos,
       return { href: a.getAttribute('href'), label: a.textContent.trim() };
     })
   });
+
+  /* O `nav._ligar()` do pacote abre SÓ o grupo que contém a rota ativa e fecha
+     os outros — é o comportamento certo num app de folha, onde se trabalha
+     dentro de um grupo. Numa documentação, não: o menu É o índice, e chegar com
+     três de quatro grupos fechados esconde o que a pessoa veio consultar. Então
+     a doc reabre todos DEPOIS do init. O chevron continua funcionando — fechar
+     é escolha de quem lê, não estado inicial imposto. */
+  function abrirGrupo(btn) {
+    var corpo = document.getElementById(btn.getAttribute('aria-controls'));
+    btn.setAttribute('aria-expanded', 'true');
+    if (corpo) corpo.hidden = false;
+  }
+  $$('#doc-nav .ppl-nav__group').forEach(abrirGrupo);
 
   /* ── 8 · O wizard da página de fluxo ────────────────────────────────── */
   var raizWizard = $('#doc-wizard');

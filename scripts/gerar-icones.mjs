@@ -205,6 +205,106 @@ const licencaOrigem = path.join(PACOTE, 'LICENSE');
 const licencaDestino = path.join(RAIZ, 'src/LICENSE-lucide.txt');
 const licenca = fs.readFileSync(licencaOrigem, 'utf8');
 
+/* ── nome referenciado que não existe ────────────────────────────────────
+ *
+ * O DEFEITO QUE ISTO EXISTE PARA PEGAR, e ele já aconteceu: a adoção do lucide
+ * renomeou 39 ícones, a migração cobriu `data-ppl-icon="…"` e `.icon('…')`, e
+ * deixou de fora `"icone": "…"` — a chave que o JSON do `data-ppl-nav` usa — e
+ * os literais dentro de `icons.svg(…)` no próprio ppl-compass.js. Resultado: os
+ * ícones do menu e os do toast desapareceram em 37 referências.
+ *
+ * E desapareceram EM SILÊNCIO, que é o que torna isto indispensável: `svg()`
+ * devolve '' para nome desconhecido, e quem consome faz `innerHTML = ''`. Não
+ * sobra `<i data-ppl-icon>` para conferir nem `<svg>` vazio para contar — nada
+ * no DOM registra que um ícone deveria estar ali. Nenhuma inspeção de página
+ * pega; só a conferência estática do nome pega.
+ * ─────────────────────────────────────────────────────────────────────── */
+
+/** Onde um nome de ícone pode aparecer declarado. */
+const REFERENCIAS = [
+  { re: /data-ppl-icon="([a-z0-9-]+)"/g, rotulo: 'data-ppl-icon' },
+  { re: /"icone"\s*:\s*"([a-z0-9-]+)"/g, rotulo: 'JSON "icone"' },
+];
+
+/* Chamadas cujos ARGUMENTOS carregam nome de ícone. Regex de argumento único
+ * não serve: o toast passa um ternário (`tipo === 'success' ? 'circle-check' :
+ * …`), e foi exatamente ali que um nome morto sobreviveu. Então lemos a lista de
+ * argumentos inteira, equilibrando parênteses, e conferimos TODO literal que
+ * tenha forma de nome de ícone. */
+const CHAMADAS = ['icons.svg(', 'PplCompassIcons.svg(', '.icon(', 'comSvg('];
+
+/* `comSvg(classe, nome, tamanho)` passa uma CLASSE no 1º argumento, e
+ * 'ppl-chevron' tem forma de nome de ícone. Nome de ícone nunca começa com
+ * `ppl-` — é o prefixo das classes deste pacote —, então a exclusão é segura e
+ * não precisa saber a posição de cada argumento de cada função. */
+const ehNomePlausivel = (s) => /^[a-z][a-z0-9-]*$/.test(s) && !s.startsWith('ppl-');
+
+function literaisDeChamadas(texto) {
+  const achados = [];
+  for (const chamada of CHAMADAS) {
+    let i = 0;
+    while ((i = texto.indexOf(chamada, i)) !== -1) {
+      let profundidade = 1;
+      let j = i + chamada.length;
+      const inicio = j;
+      while (j < texto.length && profundidade > 0) {
+        if (texto[j] === '(') profundidade++;
+        else if (texto[j] === ')') profundidade--;
+        j++;
+      }
+      /* Literal COMPARADO não é argumento. No toast o nome sai de
+       * `tipo === 'success' ? 'circle-check' : …` — sem esta poda, 'success' e
+       * 'error' seriam acusados de ícone inexistente a cada execução, e uma
+       * checagem que acusa o que está certo é uma checagem que se aprende a
+       * ignorar. Some-se o operando; sobra só o que de fato vira ícone. */
+      const args = texto.slice(inicio, j - 1).replace(/[!=]==?\s*(['"])[^'"]*\1/g, '');
+      for (const m of args.matchAll(/['"]([^'"]+)['"]/g)) {
+        if (ehNomePlausivel(m[1])) achados.push({ nome: m[1], rotulo: chamada.replace('(', '()') });
+      }
+      i = j;
+    }
+  }
+  return achados;
+}
+
+/* Nome vindo de variável (`comSvg(null, it.icone, 16)`) não é conferível aqui —
+ * é por isso que a chave `"icone"` do JSON é conferida à parte: ela é a fonte
+ * estática de onde aquele valor dinâmico sai. */
+function conferirReferencias() {
+  const arquivos = [
+    'index.html',
+    'src/ppl-compass.js',
+    ...['templates', 'demo'].flatMap((pasta) => {
+      const dir = path.join(RAIZ, pasta);
+      if (!fs.existsSync(dir)) return [];
+      return fs.readdirSync(dir).filter((f) => f.endsWith('.html')).map((f) => `${pasta}/${f}`);
+    }),
+  ];
+
+  const quebradas = [];
+  let examinadas = 0;
+
+  for (const rel of arquivos) {
+    const abs = path.join(RAIZ, rel);
+    if (!fs.existsSync(abs)) continue;
+    const texto = fs.readFileSync(abs, 'utf8');
+
+    const refs = [
+      ...REFERENCIAS.flatMap(({ re, rotulo }) =>
+        [...texto.matchAll(re)].map((m) => ({ nome: m[1], rotulo })),
+      ),
+      ...literaisDeChamadas(texto),
+    ];
+
+    for (const { nome, rotulo } of refs) {
+      examinadas++;
+      if (!nós[nome]) quebradas.push(`${rel}  ${nome}  (${rotulo})`);
+    }
+  }
+
+  return { quebradas, examinadas };
+}
+
 /* ── `--conferir`: o guard de deriva ──────────────────────────────────────
  *
  * O arquivo de ícones é GERADO e VERSIONADO. Versionar a saída é deliberado —
@@ -228,8 +328,20 @@ if (process.argv.includes('--conferir')) {
         `\n\n        Rode \`npm run icones\` e versione o resultado.`,
     );
   }
+
+  const { quebradas, examinadas } = conferirReferencias();
+  if (quebradas.length) {
+    morrer(
+      `${quebradas.length} referência(s) a ícone que NÃO existe no conjunto — ` +
+        `renderizam vazio sem deixar vestígio no DOM:\n` +
+        quebradas.map((q) => `        ${q}`).join('\n') +
+        `\n\n        Ou o nome está errado, ou o ícone falta em scripts/icones.txt.`,
+    );
+  }
+
   process.stdout.write(
-    `  ✓ ícones em sincronia  (${contagem.total} de scripts/icones.txt, lucide-static@${versao})\n`,
+    `  ✓ ícones em sincronia  (${contagem.total} de scripts/icones.txt, lucide-static@${versao})\n` +
+      `  ✓ nome referenciado existe  (${examinadas} referências em uso)\n`,
   );
   process.exit(0);
 }
