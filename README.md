@@ -33,9 +33,9 @@ já correta e as regras de acessibilidade já embutidas.
 </html>
 ```
 
-**Comece pela documentação:** [`index.html`](index.html) — 21 páginas com o exemplo vivo e o
-código copiável de cada receita, as regras que o pacote embute e a referência da API. Sirva a raiz
-do repositório e abra na porta escolhida.
+**Comece pela documentação:** <https://felipesilveirabng.github.io/ppl-compass/> — 21 páginas com
+o exemplo vivo e o código copiável de cada receita, as regras que o pacote embute e a referência da
+API. É o [`index.html`](index.html) da raiz, servido pelo GitHub Pages a partir do `main`.
 
 **Para montar uma tela:** [`templates/`](templates/README.md) traz oito arquétipos prontos —
 lista, lista com drawer de edição, wizard, home, detalhe, landing, molde móvel e a casca vazia.
