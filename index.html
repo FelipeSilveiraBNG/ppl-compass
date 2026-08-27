@@ -1,0 +1,2253 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ppl-compass — documentação</title>
+<meta name="description" content="Framework de prototipação do BNG People. CSS + JS, zero dependência, servido por CDN.">
+
+<!--
+  A documentação é servida pelo PRÓPRIO pacote.
+
+  Ela aponta para `dist/` local e não para o CDN, de propósito: o que você lê
+  aqui é o commit aberto, não a última tag publicada. Quem valida a entrega pelo
+  CDN é `demo/proof.html`.
+
+  Quase tudo nesta página é receita do ppl-compass — a navegação é `.ppl-nav`, os
+  exemplos usam `.ppl-card`, os avisos usam `.ppl-alert`. O que sobra de cromo
+  próprio vive nos tokens `--doc-*` abaixo, e é só isto: coluna de leitura,
+  cartão de exemplo e painel de código. Se a documentação precisasse de muito
+  mais que isso para ficar de pé, faltaria componente no pacote.
+-->
+<link rel="stylesheet" href="dist/ppl-compass.css">
+
+<style>
+  /* ══════════════════════════════════════════════════════════════════════
+   * Cromo da documentação. Nada aqui faz parte do pacote.
+   * ═══════════════════════════════════════════════════════════════════ */
+  :root {
+    --doc-coluna: 74rem;
+    --doc-prosa: 68ch;
+    --doc-codigo-fundo: #0d2551;
+    --doc-codigo-tinta: #cfdcf7;
+    --doc-topo: 0px;
+  }
+
+  body { background: var(--ppl-surface-sunk); }
+
+  /* ── Navegação ─────────────────────────────────────────────────────── */
+  .doc-nav { gap: 2px; }
+  .doc-nav__secao {
+    margin-top: var(--ppl-space-4);
+    padding: 0 var(--ppl-space-3) 6px;
+    font-size: 10.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .12em;
+    color: var(--ppl-on-dark-soft);
+  }
+  .doc-nav__secao:first-of-type { margin-top: var(--ppl-space-2); }
+  .doc-nav .ppl-nav__item { font-size: 12.5px; }
+  .doc-nav__versao {
+    margin-top: auto;
+    border-top: 1px solid rgb(255 255 255 / .12);
+    padding-top: var(--ppl-space-3);
+    font-family: var(--ppl-font-data);
+    font-size: var(--ppl-text-eyebrow);
+    color: var(--ppl-on-dark-soft);
+  }
+
+  /* ── Coluna de leitura ─────────────────────────────────────────────── */
+  .doc-main {
+    max-width: var(--doc-coluna);
+    margin: 0 auto;
+    padding: var(--ppl-space-8) clamp(var(--ppl-space-4), 3vw, var(--ppl-space-8)) 6rem;
+  }
+  /* Quem limita a leitura é a COLUNA. A prosa ganha um teto próprio só onde a
+     linha longa cansa — parágrafo corrido —, nunca em tabela, exemplo ou grade. */
+  .doc-main > p, .doc-main section > p, .doc-main section > ul { max-width: var(--doc-prosa); }
+
+  .doc-h1 { font-size: 30px; font-weight: 600; line-height: var(--ppl-leading-tight); color: var(--ppl-ink); }
+  .doc-sub { margin-top: var(--ppl-space-2); font-size: var(--ppl-text-md); color: var(--ppl-ink-soft); max-width: var(--doc-prosa); }
+
+  .doc-main h2 {
+    margin: 0 0 var(--ppl-space-2);
+    padding-bottom: var(--ppl-space-2);
+    border-bottom: 1px solid var(--ppl-border);
+    font-size: var(--ppl-text-h1); font-weight: 600; color: var(--ppl-ink);
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--ppl-space-3);
+  }
+  .doc-main h3 {
+    margin: var(--ppl-space-8) 0 var(--ppl-space-2);
+    font-size: var(--ppl-text-md); font-weight: 700; color: var(--ppl-ink);
+  }
+  .doc-main h4 {
+    margin: var(--ppl-space-5) 0 var(--ppl-space-1);
+    font-size: var(--ppl-text-base); font-weight: 600; color: var(--ppl-ink-soft);
+  }
+  .doc-main p { color: var(--ppl-ink-soft); margin-top: var(--ppl-space-2); }
+  .doc-main ul { margin: var(--ppl-space-2) 0 0 var(--ppl-space-5); color: var(--ppl-ink-soft); }
+  .doc-main li { margin-top: 4px; }
+  /* Link de PROSA, e só de prosa. Uma regra em `.doc-main a` alcançaria os
+     links que vivem DENTRO das demos — item de navegação, card de escolha,
+     botão-link — e sublinharia componentes que o pacote desenha sem sublinhado.
+     A demo passaria a mostrar algo que o produto não faz. */
+  .doc-main p a, .doc-main li a, .doc-main td a, .doc-main h3 a, .doc-main .doc-sub a {
+    color: var(--ppl-primary); text-decoration: underline;
+    text-decoration-thickness: 1px; text-underline-offset: 3px;
+  }
+  .doc-main p a:hover, .doc-main li a:hover, .doc-main td a:hover { text-decoration-thickness: 2px; }
+  .doc-main strong { color: var(--ppl-ink); font-weight: 600; }
+
+  /* Código no meio da frase. */
+  .doc-main :not(pre) > code {
+    font-family: var(--ppl-font-data); font-size: 12px;
+    background: var(--ppl-blue-50); color: var(--ppl-blue-700);
+    padding: 1px 5px; border-radius: var(--ppl-radius-sm);
+  }
+
+  /* A etiqueta ao lado do título: a classe ou a chamada que a página documenta. */
+  .doc-tag {
+    font-family: var(--ppl-font-data); font-size: var(--ppl-text-sm);
+    font-weight: 400; color: var(--ppl-ink-faint);
+  }
+
+  /* ── Cartão de exemplo: a demo é a figura, o código é a legenda ─────── */
+  .exemplo {
+    margin-top: var(--ppl-space-4);
+    border: 1px solid var(--ppl-border);
+    border-radius: var(--ppl-radius-card);
+    background: var(--ppl-surface);
+    overflow: hidden;
+    box-shadow: var(--ppl-shadow-sm);
+  }
+  .exemplo .preview {
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: var(--ppl-space-3);
+    padding: var(--ppl-space-5);
+  }
+  .exemplo .preview--bloco { display: block; }
+  .exemplo .preview--escuro { background: var(--ppl-blue-900); }
+  .exemplo .codigo { position: relative; }
+  .exemplo pre {
+    margin: 0; padding: var(--ppl-space-4) var(--ppl-space-5);
+    background: var(--doc-codigo-fundo); overflow-x: auto;
+  }
+  .exemplo code {
+    font-family: var(--ppl-font-data); font-size: 12px; line-height: 1.6;
+    color: var(--doc-codigo-tinta); white-space: pre;
+  }
+  /* O botão de copiar flutua sobre o canto e tem caixa desenhada em REPOUSO:
+     sem a caixa, o olho mede o glifo e o alinhamento nunca fecha. */
+  .copiar {
+    position: absolute; top: 10px; right: 10px;
+    border: 1px solid rgb(255 255 255 / .18);
+    border-radius: var(--ppl-radius-md);
+    background: rgb(255 255 255 / .08);
+    padding: 3px 10px;
+    font-family: var(--ppl-font-data); font-size: 11px;
+    color: var(--doc-codigo-tinta);
+    transition: background-color var(--ppl-fast) ease, color var(--ppl-fast) ease;
+  }
+  .copiar:hover { background: rgb(255 255 255 / .16); color: #fff; }
+  .copiar[data-copiado] { background: var(--ppl-success); border-color: transparent; color: #fff; }
+
+  /* Moldura para o que ocupa a tela inteira: shell, navegação, landing. */
+  .moldura {
+    margin-top: var(--ppl-space-4);
+    border: 1px solid var(--ppl-border);
+    border-radius: var(--ppl-radius-card);
+    overflow: hidden; background: var(--ppl-surface);
+  }
+  .moldura--alta { height: 520px; display: flex; }
+  .moldura--alta .ppl-nav { height: 100%; position: static; }
+  .moldura--estreita { max-width: 420px; }
+
+  /* ── Grades de referência ──────────────────────────────────────────── */
+  .cards { display: grid; gap: var(--ppl-space-3); margin-top: var(--ppl-space-4);
+           grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+  .cards a {
+    display: block; text-decoration: none;
+    border: 1px solid var(--ppl-border); border-radius: var(--ppl-radius-control);
+    background: var(--ppl-surface); padding: var(--ppl-space-4);
+    transition: border-color var(--ppl-fast) ease, transform var(--ppl-fast) ease;
+  }
+  .cards a:hover { border-color: var(--ppl-primary); transform: translateY(-2px); }
+  .cards a strong { display: block; font-size: var(--ppl-text-base); color: var(--ppl-ink); }
+  .cards a small { display: block; margin-top: 2px; font-size: var(--ppl-text-xs); color: var(--ppl-ink-soft); }
+
+  .sw-grid { display: grid; gap: 10px; margin-top: var(--ppl-space-3);
+             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  .sw { border: 1px solid var(--ppl-border); border-radius: var(--ppl-radius-control);
+        overflow: hidden; background: var(--ppl-surface); }
+  .sw i { display: block; height: 52px; }
+  .sw span { display: block; padding: 7px 10px; }
+  .sw b { display: block; font-size: 11px; color: var(--ppl-ink); }
+  .sw em { font-family: var(--ppl-font-data); font-size: 10.5px; font-style: normal; color: var(--ppl-ink-soft); }
+
+  .icones { display: grid; gap: 8px; margin-top: var(--ppl-space-3);
+            grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); }
+  .icones span {
+    display: grid; place-items: center; gap: 6px;
+    border: 1px solid var(--ppl-border); border-radius: var(--ppl-radius-control);
+    background: var(--ppl-surface); padding: 12px 4px;
+    font-family: var(--ppl-font-data); font-size: 10px; color: var(--ppl-ink-soft);
+    text-align: center; word-break: break-all;
+  }
+
+  .doc-main .ppl-table-wrap { margin-top: var(--ppl-space-4); }
+  .doc-main .ppl-table { min-width: 0; }
+  .doc-main .ppl-table td { vertical-align: top; }
+  .doc-main .ppl-table code { white-space: nowrap; }
+
+  /* ── Uma página por vez ────────────────────────────────────────────── */
+  .doc-pagina { display: none; }
+  .doc-pagina[data-atual] { display: block; animation: ppl-enter .4s var(--ppl-ease) both; }
+
+  /* ── Topo só onde a navegação vira gaveta ──────────────────────────── */
+  .doc-topo { display: none; }
+
+  @media (max-width: 900px) {
+    :root { --doc-topo: 57px; }
+    .doc-topo { display: block; position: sticky; top: 0; z-index: var(--ppl-z-bar); }
+    .doc-nav {
+      position: fixed; top: 0; bottom: 0; left: 0; z-index: var(--ppl-z-drawer);
+      height: 100vh;
+      transform: translateX(-100%);
+      transition: transform var(--ppl-slow) var(--ppl-ease);
+      box-shadow: 20px 0 60px -15px rgb(var(--ppl-shadow-color) / .45);
+    }
+    .doc-nav[data-aberta] { transform: translateX(0); }
+    .doc-main { padding-top: var(--ppl-space-5); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .doc-pagina[data-atual] { animation: none; }
+    .doc-nav { transition: none; }
+  }
+</style>
+</head>
+<body data-brand="people">
+
+<div class="ppl-shell">
+
+  <aside class="ppl-nav doc-nav" id="doc-nav">
+    <div class="ppl-nav__brand">
+      <span class="ppl-nav__mark">b</span>
+      <span class="ppl-nav__id">
+        <span class="ppl-nav__name">ppl-compass</span>
+        <span class="ppl-nav__tag">BNG People</span>
+      </span>
+    </div>
+
+    <!-- Os grupos aqui NÃO usam `.ppl-nav__group`: aquele é um botão que
+         recolhe, e numa documentação recolher esconde justamente o mapa que a
+         pessoa veio consultar. São rótulos, e ponto. -->
+    <nav aria-label="Navegação da documentação" class="ppl-nav__menu">
+      <p class="doc-nav__secao">Guia</p>
+      <a class="ppl-nav__item" href="#/home"><i data-ppl-icon="home" data-ppl-size="15"></i><span>Início</span></a>
+      <a class="ppl-nav__item" href="#/cdn"><i data-ppl-icon="send" data-ppl-size="15"></i><span>Uso via CDN</span></a>
+      <a class="ppl-nav__item" href="#/templates"><i data-ppl-icon="layers" data-ppl-size="15"></i><span>Templates de tela</span></a>
+      <a class="ppl-nav__item" href="#/regras"><i data-ppl-icon="shield" data-ppl-size="15"></i><span>Regras embutidas</span></a>
+
+      <p class="doc-nav__secao">Fundamentos</p>
+      <a class="ppl-nav__item" href="#/tokens"><span>Design tokens</span></a>
+      <a class="ppl-nav__item" href="#/superficies"><span>Superfícies e texto</span></a>
+      <a class="ppl-nav__item" href="#/icones"><span>Ícones</span></a>
+
+      <p class="doc-nav__secao">Componentes</p>
+      <a class="ppl-nav__item" href="#/botoes"><span>Botões</span></a>
+      <a class="ppl-nav__item" href="#/badges"><span>Badges e tiles</span></a>
+      <a class="ppl-nav__item" href="#/formulario"><span>Formulário</span></a>
+      <a class="ppl-nav__item" href="#/feedback"><span>Alert, toast e estados</span></a>
+      <a class="ppl-nav__item" href="#/dados"><span>Tabela e painel de dados</span></a>
+      <a class="ppl-nav__item" href="#/conteudo"><span>Painel, choice e stat</span></a>
+      <a class="ppl-nav__item" href="#/navegação"><span>Navegação e busca</span></a>
+      <a class="ppl-nav__item" href="#/sobreposicao"><span>Drawer e diálogo</span></a>
+      <a class="ppl-nav__item" href="#/confirmacao"><span>Confirmação por risco</span></a>
+      <a class="ppl-nav__item" href="#/wizard"><span>Wizard</span></a>
+      <a class="ppl-nav__item" href="#/landing"><span>Landing</span></a>
+      <a class="ppl-nav__item" href="#/layout"><span>Layout</span></a>
+
+      <p class="doc-nav__secao">Referência</p>
+      <a class="ppl-nav__item" href="#/api"><span>API JavaScript</span></a>
+      <a class="ppl-nav__item" href="#/atributos"><span>Atributos data-ppl-*</span></a>
+    </nav>
+
+    <div class="doc-nav__versao" id="doc-versao">v0.4.0</div>
+  </aside>
+
+  <div class="ppl-shell__col ppl-canvas">
+
+    <header class="doc-topo ppl-bar">
+      <div class="ppl-topbar__row">
+        <button class="ppl-btn ppl-btn--secondary ppl-btn--sm" id="doc-menu"
+                aria-expanded="false" aria-controls="doc-nav">
+          <i data-ppl-icon="menu" data-ppl-size="16"></i>Menu
+        </button>
+        <span class="ppl-eyebrow">ppl-compass</span>
+      </div>
+    </header>
+
+    <main class="doc-main">
+
+<!-- ══════════════════════════════════════════════════════════ INÍCIO ═══ -->
+<section class="doc-pagina" id="p-home">
+  <p class="ppl-eyebrow">Framework de prototipação · identidade v5</p>
+  <h1 class="doc-h1 ppl-display ppl-display--hero">ppl-compass</h1>
+  <p class="doc-sub">
+    Monte um protótipo navegável do BNG People <strong>escrevendo HTML</strong> — com o azul e o
+    dourado já corretos e as regras de acessibilidade já embutidas, para que o que sai do protótipo
+    seja implementável sem retrabalho de design.
+  </p>
+
+  <p>
+    <strong>O que é:</strong> camada de apresentação e comportamento para telas de mentira.<br>
+    <strong>O que não é:</strong> biblioteca de produção, roteador, gerenciador de estado, cliente de API.
+  </p>
+
+  <h3>Instalação</h3>
+  <p>
+    Dois arquivos do CDN e a página funciona. Sem <code>npm install</code>, sem bundler, sem passo
+    de build — o que está no repositório é o que o navegador recebe.
+  </p>
+  <div class="exemplo">
+    <template data-so-codigo>
+&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@VERSAO/dist/ppl-compass.css"&gt;
+
+&lt;button class="ppl-btn ppl-btn--primary"&gt;Concluir admissão&lt;/button&gt;
+
+&lt;script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@VERSAO/dist/ppl-compass.js"&gt;&lt;/script&gt;
+&lt;script&gt;addEventListener('DOMContentLoaded', () =&gt; PplCompass.init());&lt;/script&gt;
+    </template>
+  </div>
+  <p>Os hashes de integridade e as boas práticas estão em <a href="#/cdn">Uso via CDN</a>.</p>
+
+  <h3>Comece por um template</h3>
+  <p>
+    Oito arquétipos de tela prontos. Copie o mais próximo, troque a <code>rotaAtiva</code> do JSON
+    da navegação e escreva o miolo — <a href="#/templates">Templates de tela</a>.
+  </p>
+
+  <h3>O que existe</h3>
+  <div class="cards">
+    <a href="#/tokens"><strong>98 design tokens</strong><small>trocar isto troca a marca inteira</small></a>
+    <a href="#/superficies"><strong>187 classes</strong><small>em 23 grupos de receita</small></a>
+    <a href="#/icones"><strong>46 ícones</strong><small>desenhos próprios, sem licença de terceiro</small></a>
+    <a href="#/atributos"><strong>22 atributos</strong><small>comportamento sem escrever JavaScript</small></a>
+  </div>
+
+  <h3>Componentes</h3>
+  <div class="cards">
+    <a href="#/botoes"><strong>Botões</strong><small>um CTA sólido por tela</small></a>
+    <a href="#/badges"><strong>Badges e tiles</strong><small>estado nunca só por cor</small></a>
+    <a href="#/formulario"><strong>Formulário</strong><small>campo, checkbox e combobox com busca</small></a>
+    <a href="#/feedback"><strong>Alert, toast e estados</strong><small>erro é persistente e traz saída</small></a>
+    <a href="#/dados"><strong>Tabela e painel de dados</strong><small>a máquina de quatro estados</small></a>
+    <a href="#/conteudo"><strong>Painel, choice e stat</strong><small>a moldura de ~25 telas</small></a>
+    <a href="#/navegacao"><strong>Navegação e busca</strong><small>a navegação sai de um JSON</small></a>
+    <a href="#/sobreposicao"><strong>Drawer e diálogo</strong><small>foco preso, e devolvido ao gatilho</small></a>
+    <a href="#/confirmacao"><strong>Confirmação por risco</strong><small>R2 e R3 — e o que ela recusa</small></a>
+    <a href="#/wizard"><strong>Wizard</strong><small>fluxo numerado que termina em revisão</small></a>
+    <a href="#/landing"><strong>Landing</strong><small>a única superfície com tema escuro</small></a>
+    <a href="#/layout"><strong>Layout</strong><small>o mínimo para compor tela</small></a>
+  </div>
+
+  <h3>Antes de começar</h3>
+  <p>
+    O pacote carrega <a href="#/regras">regras de design embutidas</a> e <strong>falha fechado</strong>
+    em várias delas: navegação com rota ativa que não existe no menu, fluxo de efeito jurídico sem
+    etapa de revisão, confirmação em ação reversível. Nesses casos ele não desenha meio certo —
+    some e mostra o defeito.
+  </p>
+  <div class="ppl-alert ppl-alert--info">
+    <i data-ppl-icon="info" data-ppl-size="16"></i>
+    <span>
+      Esta documentação aponta para <code>dist/</code> local, então reflete o commit aberto.
+      A galeria de blocos original continua em <a href="demo/gallery.html">demo/gallery.html</a>.
+    </span>
+  </div>
+</section>
+
+<!-- ═════════════════════════════════════════════════════ USO VIA CDN ═══ -->
+<section class="doc-pagina" id="p-cdn">
+  <h2>Uso via CDN <span class="doc-tag">jsDelivr</span></h2>
+  <p>
+    O pacote é servido pelo <strong>jsDelivr direto do GitHub</strong> — sem publicação, sem
+    pipeline, sem npm. Tag nova no repositório, arquivo novo no CDN.
+  </p>
+
+  <h3>O bloco completo, com integridade</h3>
+  <p>
+    Use os arquivos com <code>integrity</code>. O hash cobre o <strong>byte exato</strong>: se o que
+    chegar ao navegador não for o que foi publicado, a página não carrega em vez de carregar
+    diferente.
+  </p>
+  <div class="exemplo">
+    <template data-so-codigo>
+&lt;link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@VERSAO/dist/ppl-compass.css"
+      integrity="SRI_CSS"
+      crossorigin="anonymous"&gt;
+
+&lt;script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@VERSAO/dist/ppl-compass-icons.js"
+        integrity="SRI_ICONS" crossorigin="anonymous"&gt;&lt;/script&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/FelipeSilveiraBNG/ppl-compass@VERSAO/dist/ppl-compass.js"
+        integrity="SRI_JS" crossorigin="anonymous"&gt;&lt;/script&gt;
+&lt;script&gt;addEventListener('DOMContentLoaded', () =&gt; PplCompass.init());&lt;/script&gt;
+    </template>
+  </div>
+
+  <h3>Aponte para uma tag, nunca para um branch</h3>
+  <div class="ppl-table-wrap">
+    <table class="ppl-table">
+      <thead><tr><th>Referência</th><th>Cache</th><th>Consequência</th></tr></thead>
+      <tbody>
+        <tr><td class="ppl-td-data" data-versao-tag>@0.4.0</td><td>1 ano, imutável</td><td>a demo de amanhã é byte a byte a de hoje</td></tr>
+        <tr><td class="ppl-td-data">@main</td><td>12 h no edge</td><td>a demo pode mudar sozinha antes da reunião</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Não use o <code>.min</code></h3>
+  <p>
+    O jsDelivr gera <code>.min.css</code> sob demanda e avisa, no cabeçalho do próprio arquivo, para
+    <strong>não</strong> usar SRI com arquivo gerado dinamicamente: o minificador muda de versão, o
+    byte muda, o hash quebra e a página inteira para de carregar. Servimos o arquivo legível e
+    travamos o byte com SRI — e os comentários das receitas são a documentação, cada um anotando o
+    componente React de origem e a regra de acessibilidade que o sustenta.
+  </p>
+
+  <h3>Os arquivos publicados</h3>
+  <div class="ppl-table-wrap">
+    <table class="ppl-table">
+      <thead><tr><th>Arquivo</th><th>O que é</th></tr></thead>
+      <tbody>
+        <tr><td><code>ppl-compass.css</code></td><td>fontes + tokens + componentes — <strong>o padrão, 1 requisição</strong></td></tr>
+        <tr><td><code>ppl-compass-nofonts.css</code></td><td>igual, sem <code>@font-face</code></td></tr>
+        <tr><td><code>ppl-compass-tokens.css</code></td><td>só as custom properties — trocar isto troca a marca</td></tr>
+        <tr><td><code>ppl-compass-components.css</code></td><td>só as receitas (exige um tokens)</td></tr>
+        <tr><td><code>ppl-compass.js</code></td><td>os comportamentos</td></tr>
+        <tr><td><code>ppl-compass-icons.js</code></td><td>os 46 ícones</td></tr>
+        <tr><td><code>fonts/*.woff2</code></td><td>Urbanist, Playfair Display itálica, JetBrains Mono — subset latin</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Onde abrir</h3>
+  <p>
+    O protótipo precisa ser <strong>servido por HTTP</strong>. Abrir por <code>file://</code> não
+    funciona: o Chrome bloqueia parte das requisições. Qualquer servidor estático serve —
+    <code>python -m http.server</code> resolve.
+  </p>
+
+  <h3>Compatibilidade</h3>
+  <p>
+    Duas últimas versões maiores de <strong>Chrome, Edge e Safari</strong>. Safari define o teto —
+    é o último a chegar. <strong>Sem polyfill:</strong> polyfill é dependência.
+  </p>
+  <p>
+    Em uso: <code>:has()</code>, <code>@container</code>, <code>color-mix()</code> e
+    <code>inert</code> — é ele que prende o foco no drawer sem gerenciar <code>tabindex</code> à
+    mão. Fora por ora: aninhamento nativo de CSS. <code>backdrop-filter</code> sempre acompanhado
+    de <code>-webkit-</code>, que o Safari exige.
+  </p>
+</section>
+
+<!-- ═════════════════════════════════════════════ TEMPLATES DE TELA ═══ -->
+<section class="doc-pagina" id="p-templates">
+  <h2>Templates de tela <span class="doc-tag">templates/</span></h2>
+  <p>
+    Oito arquétipos. Cada um é um <code>.html</code> autossuficiente que roda com dois
+    <code>&lt;link&gt;</code>/<code>&lt;script&gt;</code> apontando para o CDN — copie o arquivo,
+    troque o conteúdo, pronto.
+  </p>
+
+  <h3>Qual usar</h3>
+  <div class="ppl-table-wrap">
+    <table class="ppl-table">
+      <thead><tr><th>A tela que você quer</th><th>Template</th><th>O que ela é</th></tr></thead>
+      <tbody>
+        <tr><td>Qualquer uma — comece aqui</td><td><a href="templates/shell.html"><code>shell.html</code></a></td><td>navegação + topo + <code>&lt;main&gt;</code> vazio</td></tr>
+        <tr><td>Tabela de registros</td><td><a href="templates/lista.html"><code>lista.html</code></a></td><td>painel com tabela e os quatro estados</td></tr>
+        <tr><td>Tabela + edição num painel</td><td><a href="templates/form-drawer.html"><code>form-drawer.html</code></a></td><td>o padrão de 35 telas do console</td></tr>
+        <tr><td>Fluxo em etapas</td><td><a href="templates/wizard.html"><code>wizard.html</code></a></td><td>numerado, com revisão e conclusão</td></tr>
+        <tr><td>Ponto de partida do operador</td><td><a href="templates/home.html"><code>home.html</code></a></td><td>saudação e processos em cards grandes</td></tr>
+        <tr><td>Ficha de um registro</td><td><a href="templates/detalhe.html"><code>detalhe.html</code></a></td><td>contexto, seções colapsáveis e as confirmações</td></tr>
+        <tr><td>Página pública</td><td><a href="templates/landing.html"><code>landing.html</code></a></td><td>vidro e tema escuro</td></tr>
+        <tr><td>Aplicativo do colaborador</td><td><a href="templates/pwa.html"><code>pwa.html</code></a></td><td>molde móvel com tabbar</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="ppl-muted" style="font-size:12.5px">
+    Os links acima abrem o arquivo como ele é entregue — apontando para o CDN na tag publicada.
+  </p>
+
+  <h3>Como fazer a próxima tela</h3>
+  <ul>
+    <li>Copie o template mais próximo.</li>
+    <li>Troque a <strong><code>rotaAtiva</code></strong> do JSON da navegação e a <strong>migalha</strong>
+        do topo. São os dois lugares que dizem "onde estou", e desencontrar os dois é o defeito mais
+        comum ao copiar.</li>
+    <li>Troque o miolo do <code>&lt;main&gt;</code>.</li>
+    <li>Confira a tag do CDN nas três URLs — protótipo publicado aponta para <strong>tag fixa</strong>,
+        nunca para branch.</li>
+  </ul>
+
+  <h3>O critério que o <code>lista.html</code> cumpre</h3>
+  <p>
+    Ele <strong>é</strong> a tela de Folha do console, e cabe em <strong>menos de 200 linhas de
+    HTML</strong>, sem uma linha de CSS nova e sem nenhum <code>&lt;script&gt;</code> além do
+    <code>init()</code>. Se uma mudança fizer o arquivo passar de 200 linhas, o problema é falta de
+    componente — não excesso de tela.
+  </p>
+
+  <h3>Os limites, ditos na cara</h3>
+  <p>Os templates não guardam estado. Isso tem três consequências que não se descobrem numa demo:</p>
+  <ul>
+    <li><strong>O toast é o único registro do que aconteceu.</strong> Numa tela de verdade isso seria
+        defeito: a lista tem que ganhar a linha, e o estado da tela tem que mudar junto.</li>
+    <li><strong>Voltar uma etapa no wizard perde o que foi digitado</strong> — o formulário é
+        redesenhado.</li>
+    <li><strong>A navegação precisa de JavaScript.</strong> Com o script bloqueado o
+        <code>&lt;aside&gt;</code> fica vazio. Se um protótipo precisar sobreviver sem JS, escreva os
+        <code>&lt;a class="ppl-nav__item"&gt;</code> à mão: a receita CSS é a mesma.</li>
+  </ul>
+</section>
+
+<!-- ═══════════════════════════════════════════ REGRAS EMBUTIDAS ═══ -->
+<section class="doc-pagina" id="p-regras">
+  <h2>Regras que o pacote embute</h2>
+  <p>
+    Não são preferências de estilo. Um protótipo que as viola gera retrabalho na implementação — e
+    várias delas o pacote não deixa violar: ele <strong>falha fechado</strong>, some e mostra o
+    defeito em vez de desenhar meio certo.
+  </p>
+
+  <h3>De composição</h3>
+  <ul>
+    <li><strong>Um CTA primário sólido por tela.</strong> Rótulo verbo-primeiro ("Concluir admissão"),
+        nunca "OK". Vale por <em>superfície</em>: um drawer aberto tem o próprio CTA.</li>
+    <li><strong>No máximo um elemento dourado por tela.</strong> Dourado é acento, e acento repetido
+        deixa de acentuar.</li>
+    <li><strong>Vermelho é só erro e ação destrutiva.</strong> Nunca "chamar atenção".</li>
+    <li><strong>Gradiente só</strong> em navegação, CTA de destaque, marca e selo — a lista é fechada.</li>
+    <li><strong>Cards grandes para escolher caminho</strong>, não dropdown escondido. Alvo ≥ 160px.</li>
+  </ul>
+
+  <h3>De conteúdo</h3>
+  <ul>
+    <li><strong>Estado nunca só por cor</strong> — sempre ícone + texto.</li>
+    <li><strong>Dado de folha e ponto sempre em <code>.ppl-data</code></strong>, com
+        <code>tabular-nums</code>: matrícula, CPF/CNPJ, NSR, competência e todo valor em tabela.</li>
+    <li><strong>Contador é o número real</strong>, com separador de milhar — nunca <code>"99+"</code>.
+        <code>nav()</code> recusa um contador que não seja número.</li>
+    <li><strong>Competência é data civil <code>AAAA-MM</code></strong>, nunca <code>Date</code>, que
+        arrasta fuso. Valor monetário é string decimal no domínio: formate só na exibição.</li>
+    <li><strong>Zero emoji</strong> em qualquer superfície — ícone é ícone, e vem do pacote. O build
+        reprova, e a regra pega até o dingbat digitado no lugar do ícone de check.</li>
+    <li><strong>pt-BR fixo</strong>, sem framework de i18n.</li>
+  </ul>
+
+  <h3>De acessibilidade</h3>
+  <ul>
+    <li><strong>Alvo de toque ≥ 44px</strong> com <code>.ppl-btn--touch</code>. Em toque, o alvo é o
+        link inteiro — nunca a pílula.</li>
+    <li><strong>Foco visível</strong> em todo interativo, global em <code>*:focus-visible</code>.</li>
+    <li><strong>Um modal por vez.</strong> O foco é preso marcando os irmãos como <code>inert</code>,
+        então um segundo modal nasceria inerte — desenhado na tela e invisível ao teclado. Empilhar
+        aqui não degrada, apaga.</li>
+    <li><strong><code>Esc</code> nunca confirma</strong> — mas cancela, porque fechar diálogo pelo
+        teclado é requisito, não atalho de descoberta.</li>
+    <li><strong>Respeita <code>prefers-reduced-motion</code> e
+        <code>prefers-reduced-transparency</code></strong> — nesta, o vidro vira opaco.</li>
+  </ul>
+
+  <h3>De processo</h3>
+  <ul>
+    <li><strong>Fluxo de efeito jurídico ou financeiro termina em revisão.</strong> O
+        <a href="#/wizard"><code>Wizard</code></a> falha fechado: sem a etapa <code>revisao</code>
+        ele não renderiza. Um fluxo de rescisão que "esqueceu" a revisão não é um fluxo com uma tela
+        a menos — é um fluxo que assina sem conferir.</li>
+    <li><strong>Confirmação é proporcional ao risco do processo</strong>, e o risco é atributo do
+        processo, não decisão de tela. <a href="#/confirmacao">R0 e R1 não abrem diálogo</a>.</li>
+    <li><strong>Nunca listar-e-negar:</strong> a busca global é composta pelo que o operador pode
+        fazer.</li>
+    <li><strong>O contexto que decide fica visível</strong> do início ao fim do fluxo — quem, qual
+        CNPJ, qual competência.</li>
+  </ul>
+
+  <h3>De nome</h3>
+  <p>
+    Nada foi herdado do console. Lá as superfícies ainda se chamam <code>bento</code> e
+    <code>glass</code> — nomes de decisões já revertidas: a direção Bento UI e o glassmorphism que a
+    identidade v5 removeu da operação. Aqui cada nome descreve o que a coisa <strong>é</strong>:
+    <code>.ppl-card</code> é um card, <code>.ppl-bar</code> é uma barra,
+    <code>.ppl-disclosure</code> é o padrão ARIA que ele implementa.
+  </p>
+  <div class="ppl-alert ppl-alert--warning">
+    <i data-ppl-icon="alert" data-ppl-size="16"></i>
+    <span>O build <strong>reprova</strong> se um nome aposentado voltar ao fonte — inclusive na
+    documentação, de onde ele volta para o código pela mão de quem copiou o exemplo.</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ DESIGN TOKENS ═══ -->
+<section class="doc-pagina" id="p-tokens">
+  <h2>Design tokens <span class="doc-tag">--ppl-*</span></h2>
+  <p>
+    São <strong>98</strong>: 78 do shell autenticado e 20 da landing (<code>--ppl-lp-*</code>).
+    Trocar <code>ppl-compass-tokens.css</code> troca a marca inteira — as receitas de componente não
+    conhecem nenhum valor, só referenciam token.
+  </p>
+  <div class="ppl-alert ppl-alert--info">
+    <i data-ppl-icon="info" data-ppl-size="16"></i>
+    <span>O CI reprova <strong>token referenciado e nunca definido</strong>. É a classe de bug que
+    produziu quatro órfãos no console: badge transparente, foco sem cor, botão branco com texto
+    branco — nenhum quebrava o build, todos quebravam a tela.</span>
+  </div>
+
+  <h3>Azul — marca e interação</h3>
+  <div class="sw-grid">
+    <div class="sw"><i style="background:#f0f4fc"></i><span><b>blue-50</b><em>#F0F4FC</em></span></div>
+    <div class="sw"><i style="background:#e6edfc"></i><span><b>blue-100</b><em>#E6EDFC</em></span></div>
+    <div class="sw"><i style="background:#d2dbec"></i><span><b>blue-200</b><em>#D2DBEC</em></span></div>
+    <div class="sw"><i style="background:#a9bff2"></i><span><b>blue-300</b><em>#A9BFF2</em></span></div>
+    <div class="sw"><i style="background:#6c93ec"></i><span><b>blue-400 · céu</b><em>#6C93EC</em></span></div>
+    <div class="sw"><i style="background:#2f5ad0"></i><span><b>blue-500 · primária</b><em>#2F5AD0</em></span></div>
+    <div class="sw"><i style="background:#254bb4"></i><span><b>blue-600 · hover</b><em>#254BB4</em></span></div>
+    <div class="sw"><i style="background:#1e4193"></i><span><b>blue-700</b><em>#1E4193</em></span></div>
+    <div class="sw"><i style="background:#12305f"></i><span><b>blue-800</b><em>#12305F</em></span></div>
+    <div class="sw"><i style="background:#0d2551"></i><span><b>blue-900</b><em>#0D2551</em></span></div>
+  </div>
+
+  <h3>Dourado — o único acento quente</h3>
+  <div class="sw-grid">
+    <div class="sw"><i style="background:#f3c63f"></i><span><b>gold</b><em>#F3C63F</em></span></div>
+    <div class="sw"><i style="background:#e4b52c"></i><span><b>gold-deep</b><em>#E4B52C</em></span></div>
+    <div class="sw"><i style="background:#fbefbe"></i><span><b>gold-soft</b><em>#FBEFBE</em></span></div>
+  </div>
+
+  <h3>Neutros e semânticas</h3>
+  <div class="sw-grid">
+    <div class="sw"><i style="background:#132c63"></i><span><b>ink</b><em>#132C63</em></span></div>
+    <div class="sw"><i style="background:#5a6486"></i><span><b>ink-soft</b><em>#5A6486</em></span></div>
+    <div class="sw"><i style="background:#8492b2"></i><span><b>ink-faint</b><em>#8492B2</em></span></div>
+    <div class="sw"><i style="background:#e2e8f4"></i><span><b>border</b><em>#E2E8F4</em></span></div>
+    <div class="sw"><i style="background:#f2f5fc"></i><span><b>surface-sunk</b><em>#F2F5FC</em></span></div>
+    <div class="sw"><i style="background:#0e8a4f"></i><span><b>success</b><em>#0E8A4F</em></span></div>
+    <div class="sw"><i style="background:#b5892c"></i><span><b>warning</b><em>#B5892C</em></span></div>
+    <div class="sw"><i style="background:#c0392b"></i><span><b>danger</b><em>#C0392B</em></span></div>
+    <div class="sw"><i style="background:#3c6fe0"></i><span><b>info · foco</b><em>#3C6FE0</em></span></div>
+  </div>
+
+  <h3>Gradientes — lista fechada</h3>
+  <div class="sw-grid">
+    <div class="sw"><i style="background:var(--ppl-grad-nav)"></i><span><b>grad-nav</b><em>navegação</em></span></div>
+    <div class="sw"><i style="background:var(--ppl-grad-primary)"></i><span><b>grad-primary</b><em>CTA de destaque</em></span></div>
+    <div class="sw"><i style="background:var(--ppl-grad-gold)"></i><span><b>grad-gold</b><em>marca</em></span></div>
+    <div class="sw"><i style="background:var(--ppl-grad-seal)"></i><span><b>grad-seal</b><em>conquista</em></span></div>
+  </div>
+
+  <h3>Contraste</h3>
+  <p>
+    A meta é <strong>WCAG 2.1 AA</strong>, e o CI recalcula 16 pares a partir do
+    <code>tokens.css</code> de hoje, em claro e escuro — anotação em documento não segura ninguém,
+    porque quem troca o token deixa a anotação para trás.
+  </p>
+  <p>
+    Três pares herdados da paleta do console <strong>não atingem AA</strong> e estão nomeados como
+    dívida: <code>--ppl-ink-faint</code> (3,12:1), <code>--ppl-warning</code> (3,19:1) e
+    <code>--ppl-success</code> (4,41:1). A checagem mede os três a cada execução e reprova se algum
+    <strong>piorar</strong>. Pagá-los é decisão de identidade: <code>--ppl-ink-faint</code>
+    precisaria escurecer até encostar em <code>--ppl-ink-soft</code>, e a hierarquia de três níveis
+    do texto viraria dois.
+  </p>
+
+  <h3>Tipografia</h3>
+  <div class="ppl-table-wrap">
+    <table class="ppl-table">
+      <thead><tr><th>Token</th><th>Valor</th><th>Onde</th></tr></thead>
+      <tbody>
+        <tr><td><code>--ppl-font-sans</code></td><td class="ppl-td-data">Urbanist</td><td>tudo, por padrão</td></tr>
+        <tr><td><code>--ppl-font-display</code></td><td class="ppl-td-data">Playfair Display itálica</td><td>só saudação, sucesso e hero</td></tr>
+        <tr><td><code>--ppl-font-data</code></td><td class="ppl-td-data">JetBrains Mono</td><td>obrigatório em folha e ponto</td></tr>
+        <tr><td><code>--ppl-text-eyebrow</code></td><td class="ppl-td-data">11px</td><td>rótulo de contexto</td></tr>
+        <tr><td><code>--ppl-text-xs</code> · <code>--ppl-text-sm</code></td><td class="ppl-td-data">12px · 12,5px</td><td>metadado, linha de apoio</td></tr>
+        <tr><td><code>--ppl-text-base</code></td><td class="ppl-td-data">14px</td><td>corpo</td></tr>
+        <tr><td><code>--ppl-text-md</code> · <code>--ppl-text-lg</code></td><td class="ppl-td-data">15px · 18px</td><td>título de card · título de drawer</td></tr>
+        <tr><td><code>--ppl-text-h1</code> · <code>--ppl-text-display</code></td><td class="ppl-td-data">24px · 28px</td><td>título de página · saudação</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Forma, espaço e movimento</h3>
+  <div class="ppl-table-wrap">
+    <table class="ppl-table">
+      <thead><tr><th>Grupo</th><th>Tokens</th></tr></thead>
+      <tbody>
+        <tr><td>Raio</td><td class="ppl-td-data">sm 4 · md 8 · control 12 · card 16 · card-lg 18 · pill 999</td></tr>
+        <tr><td>Espaço</td><td class="ppl-td-data">1→4 · 2→8 · 3→12 · 4→16 · 5→20 · 6→24 · 8→32</td></tr>
+        <tr><td>Sombra</td><td class="ppl-td-data">--ppl-shadow-sm · --ppl-shadow-lg</td></tr>
+        <tr><td>Duração</td><td class="ppl-td-data">fast 120ms · base 180ms · slow 300ms</td></tr>
+        <tr><td>Camada</td><td class="ppl-td-data">bar 40 · overlay 50 · drawer 150 · toast 200</td></tr>
+        <tr><td>Medida</td><td class="ppl-td-data">--ppl-touch 44px · --ppl-nav-w 238px · --ppl-content-max 1152px</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═════════════════════════════════════════════ SUPERFÍCIES E TEXTO ═══ -->
+<section class="doc-pagina" id="p-superficies">
+  <h2>Superfícies e texto <span class="doc-tag">.ppl-card .ppl-display .ppl-data</span></h2>
+  <p>
+    O <code>.ppl-card</code> é o componente mais usado do sistema — 233 ocorrências no console. As
+    outras superfícies são a barra fixa de topo e o fundo da página.
+  </p>
+
+  <h3>Card</h3>
+  <p>
+    Só levanta no hover o que é <strong>clicável</strong>. Painel estático que sobe mente sobre ser
+    interativo, então o efeito exige um <code>&lt;a&gt;</code>, um <code>&lt;button&gt;</code> ou a
+    classe <code>--interactive</code>.
+  </p>
+  <div class="exemplo">
+    <template>
+      <div class="ppl-card ppl-panel" style="max-width:260px">Card estático — não sobe no hover.</div>
+      <a class="ppl-card ppl-panel ppl-card--interactive" href="#/superficies" style="max-width:260px">Card clicável — passe o mouse.</a>
+    </template>
+  </div>
+
+  <h3>Tipografia de papel</h3>
+  <p>
+    Três classes, e cada uma tem uma regra de uso que não é estética:
+    <code>.ppl-display</code> só aparece em superfície emocional — saudação, sucesso, hero — e
+    <strong>nunca</strong> em formulário, tabela ou cromo. <code>.ppl-data</code> é
+    <strong>obrigatório</strong> em matrícula, CPF/CNPJ, NSR, competência e todo valor em tabela: o
+    <code>tabular-nums</code> impede a coluna de dançar.
+  </p>
+  <div class="exemplo">
+    <template>
+      <div class="ppl-stack">
+        <p class="ppl-eyebrow">Competência 2026-08 · Gestão Hospitalar Ltda</p>
+        <p class="ppl-display ppl-display--hero">Boa tarde, Ana</p>
+        <p>Corpo · 14 / 400 — o padrão de leitura.</p>
+        <p class="ppl-data">2026-0042 · 111.222.333-44 · R$ 4.812,37</p>
+      </div>
+    </template>
+  </div>
+
+  <h3>Barra e fundo</h3>
+  <p>
+    <code>.ppl-bar</code> é a superfície fixa de topo: branco a 92% com hairline e
+    <code>backdrop-filter</code>. <code>.ppl-canvas</code> é o fundo do shell autenticado — três
+    gradientes radiais azuis muito diluídos sobre o cinza-azulado.
+  </p>
+  <div class="exemplo">
+    <template>
+      <div class="ppl-canvas" style="border-radius:var(--ppl-radius-card);padding:0;overflow:hidden;width:100%">
+        <div class="ppl-bar ppl-topbar__row">
+          <span class="ppl-eyebrow">Grupo Boas Novas</span>
+          <span class="ppl-topbar__crumb"><i data-ppl-icon="wallet" data-ppl-size="15"></i>Folha</span>
+        </div>
+        <div style="padding:24px"><p class="ppl-muted">O conteúdo da tela vive sobre o canvas.</p></div>
+      </div>
+    </template>
+  </div>
+
+  <h3>Entrada</h3>
+  <p>
+    <code>.ppl-enter</code> é a única animação de entrada — sobe 10px e revela. Respeita
+    <code>prefers-reduced-motion</code>: com a preferência ligada, ela simplesmente não roda.
+  </p>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════ ÍCONES ═══ -->
+<section class="doc-pagina" id="p-icones">
+  <h2>Ícones <span class="doc-tag">data-ppl-icon</span></h2>
+  <p>
+    São <strong>46</strong>, desenhados para o pacote — sem licença de terceiro e sem requisição
+    externa. Marque um <code>&lt;i&gt;</code> e o <code>init()</code> troca pelo SVG.
+  </p>
+  <div class="exemplo">
+    <template>
+      <i data-ppl-icon="wallet" data-ppl-size="24"></i>
+      <i data-ppl-icon="fingerprint" data-ppl-size="24"></i>
+      <i data-ppl-icon="palm" data-ppl-size="24"></i>
+      <i data-ppl-icon="shield" data-ppl-size="24"></i>
+    </template>
+  </div>
+
+  <h3>Em JavaScript</h3>
+  <div class="exemplo">
+    <template data-so-codigo>
+PplCompass.icon('wallet', 18)   // devolve a string do &lt;svg&gt;
+PplCompassIcons.nomes()         // a lista dos 46
+    </template>
+  </div>
+
+  <h3>Por que não existe emoji</h3>
+  <p>
+    Ícone é ícone. A regra vale também para o que "parece" um símbolo tipográfico: o caractere
+    de check digitado no lugar do ícone é exatamente o defeito que a checagem existe para pegar,
+    e o build reprova — a faixa proibida inclui os dingbats justamente por isso.
+  </p>
+
+  <h3>O catálogo</h3>
+  <p class="ppl-muted" style="font-size:12.5px">Lido do próprio pacote, não de uma lista à mão.</p>
+  <div class="icones" id="doc-catalogo-icones"></div>
+</section>
+
+<!-- ═════════════════════════════════════════════════════════ BOTÕES ═══ -->
+<section class="doc-pagina" id="p-botoes">
+  <h2>Botões <span class="doc-tag">.ppl-btn</span></h2>
+  <p>
+    <strong>Um CTA primário sólido por tela</strong>, com rótulo verbo-primeiro — "Concluir
+    admissão", nunca "OK". A regra vale por superfície: um drawer aberto cobre a página e tem o
+    próprio CTA. O CI reprova dois sólidos na mesma superfície.
+  </p>
+
+  <h3>Hierarquia</h3>
+  <div class="exemplo">
+    <template>
+      <button class="ppl-btn ppl-btn--primary">Concluir admissão</button>
+      <button class="ppl-btn ppl-btn--secondary">Cancelar</button>
+      <button class="ppl-btn ppl-btn--ghost">Ver detalhes</button>
+    </template>
+  </div>
+
+  <h3>Destaque e destruição</h3>
+  <p>
+    <code>--hero</code> é o CTA de destaque, o único com gradiente. <code>--danger</code> é
+    <strong>só</strong> erro e ação destrutiva — nunca "chamar atenção". <code>--gold</code> é o
+    acento quente, no máximo um por tela.
+  </p>
+  <div class="exemplo">
+    <template>
+      <button class="ppl-btn ppl-btn--hero">Entrar no console</button>
+      <button class="ppl-btn ppl-btn--danger">Rescindir contrato</button>
+      <button class="ppl-btn ppl-btn--gold">Destacar</button>
+    </template>
+  </div>
+
+  <h3>Tamanho, ícone e toque</h3>
+  <p>
+    <code>--touch</code> garante os 44px de altura mínima e é <strong>obrigatório</strong> em
+    superfície de toque. Botão só de ícone exige <code>aria-label</code>.
+  </p>
+  <div class="exemplo">
+    <template>
+      <button class="ppl-btn ppl-btn--primary ppl-btn--sm">Pequeno</button>
+      <button class="ppl-btn ppl-btn--secondary ppl-btn--touch">Alvo de toque</button>
+      <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Buscar">
+        <i data-ppl-icon="search" data-ppl-size="16"></i>
+      </button>
+      <button class="ppl-btn ppl-btn--primary"><i data-ppl-icon="plus" data-ppl-size="15"></i>Nova rubrica</button>
+    </template>
+  </div>
+
+  <h3>Desabilitado</h3>
+  <div class="exemplo">
+    <template>
+      <button class="ppl-btn ppl-btn--primary" disabled>Calcular folha</button>
+      <button class="ppl-btn ppl-btn--secondary" disabled>Exportar</button>
+    </template>
+  </div>
+
+  <h3>Alternância</h3>
+  <p>
+    Um botão que liga e desliga leva <code>aria-pressed</code>, e a receita o desenha marcado. Sem a
+    marca visível, o atributo conta ao leitor de tela o que a tela não mostra a ninguém.
+  </p>
+  <div class="exemplo">
+    <template>
+      <button class="ppl-btn ppl-btn--secondary ppl-btn--sm" aria-pressed="true">Dados</button>
+      <button class="ppl-btn ppl-btn--secondary ppl-btn--sm" aria-pressed="false">Vazio</button>
+    </template>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ BADGES E TILES ═══ -->
+<section class="doc-pagina" id="p-badges">
+  <h2>Badges e tiles <span class="doc-tag">.ppl-badge .ppl-icon-tile</span></h2>
+  <p>
+    <strong>Estado nunca só por cor.</strong> Um badge de situação leva ícone <em>e</em> texto — quem
+    não distingue as cores continua lendo o estado, e quem imprime em preto e branco também.
+  </p>
+
+  <h3>Situação</h3>
+  <div class="exemplo">
+    <template>
+      <span class="ppl-badge ppl-badge--success"><i data-ppl-icon="check" data-ppl-size="12"></i>Conferida</span>
+      <span class="ppl-badge ppl-badge--warning"><i data-ppl-icon="alert" data-ppl-size="12"></i>Divergência</span>
+      <span class="ppl-badge ppl-badge--danger"><i data-ppl-icon="x-circle" data-ppl-size="12"></i>Rejeitada</span>
+      <span class="ppl-badge ppl-badge--muted"><i data-ppl-icon="clock" data-ppl-size="12"></i>Em apuração</span>
+      <span class="ppl-badge ppl-badge--info">Provento</span>
+    </template>
+  </div>
+
+  <h3>Contador</h3>
+  <p>
+    O número <strong>real</strong>, com separador de milhar — nunca <code>"99+"</code>. Truncar o
+    contador esconde a ordem de grandeza justamente onde ela decide se a fila é de hoje ou do
+    trimestre. A <a href="#/navegacao">navegação</a> recusa um contador que não seja número.
+  </p>
+  <div class="exemplo">
+    <template>
+      <span class="ppl-badge ppl-badge--gold ppl-badge--count">184.368</span>
+      <span class="ppl-badge ppl-badge--count">42</span>
+    </template>
+  </div>
+
+  <h3>Tile de ícone</h3>
+  <p>O quadrado arredondado antes do título, em quatro tamanhos e dois tons.</p>
+  <div class="exemplo">
+    <template>
+      <span class="ppl-icon-tile ppl-icon-tile--sm"><i data-ppl-icon="list" data-ppl-size="15"></i></span>
+      <span class="ppl-icon-tile"><i data-ppl-icon="users" data-ppl-size="18"></i></span>
+      <span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="wallet" data-ppl-size="20"></i></span>
+      <span class="ppl-icon-tile ppl-icon-tile--lg ppl-icon-tile--gold"><i data-ppl-icon="user" data-ppl-size="20"></i></span>
+    </template>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ FORMULÁRIO ═══ -->
+<section class="doc-pagina" id="p-formulario">
+  <h2>Formulário <span class="doc-tag">.ppl-field .ppl-input .ppl-combo</span></h2>
+  <div class="ppl-alert ppl-alert--warning">
+    <i data-ppl-icon="alert" data-ppl-size="16"></i>
+    <span>Validação de tela é <strong>espelho, não autoridade</strong> — quem recusa de verdade é o
+    backend. <code>min</code>/<code>max</code> em campo de data é conveniência: digitação e colagem
+    furam.</span>
+  </div>
+
+  <h3>Campos</h3>
+  <p>
+    <code>.ppl-input--data</code> marca o campo que recebe identificador — CPF, CNPJ, matrícula,
+    competência, valor.
+  </p>
+  <div class="exemplo">
+    <template>
+      <div class="ppl-stack" style="width:100%;max-width:520px">
+        <div class="ppl-cols-2">
+          <label class="ppl-field">
+            <span class="ppl-field__label">Código</span>
+            <input class="ppl-input ppl-input--data" value="1042" inputmode="numeric">
+          </label>
+          <label class="ppl-field">
+            <span class="ppl-field__label">Tipo</span>
+            <select class="ppl-select"><option>Provento</option><option>Desconto</option></select>
+          </label>
+        </div>
+        <label class="ppl-field">
+          <span class="ppl-field__label">Descrição</span>
+          <input class="ppl-input" placeholder="Adicional noturno 20%">
+          <span class="ppl-field__hint">Aparece no holerite exatamente como for escrita aqui.</span>
+        </label>
+        <label class="ppl-field">
+          <span class="ppl-field__label">Observação <span class="ppl-optional">(opcional)</span></span>
+          <textarea class="ppl-textarea" rows="2"></textarea>
+        </label>
+        <label class="ppl-field">
+          <span class="ppl-field__label">Competência</span>
+          <input class="ppl-input ppl-input--data" value="2026-13">
+          <span class="ppl-field__error" role="alert">Competência inválida — o mês vai de 01 a 12.</span>
+        </label>
+      </div>
+    </template>
+  </div>
+
+  <h3>Agrupamento</h3>
+  <p>
+    Checkboxes relacionados moram num <code>&lt;fieldset&gt;</code> com <code>&lt;legend&gt;</code> —
+    é o agrupamento acessível, e o reset do pacote tira a moldura nativa que faria o agrupamento
+    certo parecer defeito.
+  </p>
+  <div class="exemplo">
+    <template>
+      <fieldset class="ppl-stack ppl-stack--tight">
+        <legend class="ppl-field__label">Incidências</legend>
+        <label class="ppl-check"><input type="checkbox" checked> INSS</label>
+        <label class="ppl-check"><input type="checkbox" checked> FGTS</label>
+        <label class="ppl-check"><input type="checkbox"> IRRF</label>
+      </fieldset>
+    </template>
+  </div>
+
+  <h3>Combobox com busca</h3>
+  <p>
+    O <code>&lt;select&gt;</code> nativo não aceita busca, e em lista paginada na origem o item
+    simplesmente não está lá. Este é o padrão ARIA combobox + listbox: setas navegam,
+    <code>Enter</code> escolhe, <code>Esc</code> fecha <strong>só o popup</strong> — sem isso, um
+    único <code>Esc</code> fecharia o drawer inteiro e perderia o formulário.
+  </p>
+  <div class="exemplo">
+    <template>
+      <div class="ppl-field" style="width:100%;max-width:360px">
+        <span class="ppl-field__label">Lotação</span>
+        <div class="ppl-combo" data-ppl-combo>
+          <input class="ppl-input ppl-combo__input" role="combobox" aria-expanded="false"
+                 aria-controls="doc-lista-lotacao" aria-autocomplete="list" autocomplete="off"
+                 placeholder="Todas as lotações">
+          <span class="ppl-combo__chevron"><i data-ppl-icon="chevron-updown" data-ppl-size="15"></i></span>
+          <ul class="ppl-combo__list" id="doc-lista-lotacao" role="listbox" hidden>
+            <li role="option" aria-selected="false"><span class="ppl-combo__option"><span><span>UTI Adulto</span><span class="ppl-combo__hint">42 contratos</span></span></span></li>
+            <li role="option" aria-selected="false"><span class="ppl-combo__option"><span><span>Pronto-socorro</span><span class="ppl-combo__hint">88 contratos</span></span></span></li>
+            <li role="option" aria-selected="false"><span class="ppl-combo__option"><span><span>Centro cirúrgico</span><span class="ppl-combo__hint">31 contratos</span></span></span></li>
+            <li class="ppl-combo__empty ppl-state ppl-state--empty" hidden>Nenhuma lotação com esse nome.</li>
+          </ul>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <h3>Envio sem persistência</h3>
+  <p>
+    O protótipo não guarda nada. <code>data-ppl-submit</code> intercepta o envio, fecha o painel que
+    contém o formulário e anuncia o resultado — é o que mantém sete dos oito templates com zero
+    JavaScript.
+  </p>
+  <div class="exemplo">
+    <template>
+      <form class="ppl-row" data-ppl-submit="Rubrica 1042 criada na competência 2026-08.">
+        <input class="ppl-input ppl-input--data" value="1042" style="width:110px">
+        <button type="submit" class="ppl-btn ppl-btn--primary">Criar rubrica</button>
+      </form>
+    </template>
+  </div>
+  <p class="ppl-muted" style="font-size:12.5px">
+    O limite, dito na cara: o toast é o único registro do que aconteceu, e a tela por baixo não muda.
+    Numa tela de verdade isso seria defeito.
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════ ALERT, TOAST E ESTADOS ═══ -->
+<section class="doc-pagina" id="p-feedback">
+  <h2>Alert, toast e estados <span class="doc-tag">.ppl-alert .ppl-toast .ppl-state</span></h2>
+
+  <h3>Alert — o aviso que fica na página</h3>
+  <div class="exemplo">
+    <template>
+      <div class="ppl-stack" style="width:100%">
+        <div class="ppl-alert ppl-alert--info"><i data-ppl-icon="info" data-ppl-size="16"></i><span>A rubrica passa a valer a partir da competência aberta.</span></div>
+        <div class="ppl-alert ppl-alert--success"><i data-ppl-icon="check-circle" data-ppl-size="16"></i><span>Competência 2026-07 fechada e transmitida.</span></div>
+        <div class="ppl-alert ppl-alert--warning"><i data-ppl-icon="alert" data-ppl-size="16"></i><span>184.368 pendências aguardam tratamento.</span></div>
+        <div class="ppl-alert ppl-alert--danger" role="alert"><i data-ppl-icon="x-circle" data-ppl-size="16"></i><span>Não foi possível transmitir o lote — o certificado expirou.</span></div>
+      </div>
+    </template>
+  </div>
+
+  <h3>Toast — o aviso que passa</h3>
+  <p>
+    Região <code>aria-live="polite"</code>, montada pelo próprio pacote. Sucesso e informação somem
+    sozinhos; <strong>erro é persistente e traz ação de recuperação</strong> — é o requisito do
+    design system, e é o que o console ainda não faz, onde tudo some em 4,2 s.
+  </p>
+  <div class="exemplo">
+    <template>
+      <button class="ppl-btn ppl-btn--secondary" onclick="PplCompass.toast.success('Rubrica 1042 criada.')">Sucesso</button>
+      <button class="ppl-btn ppl-btn--secondary" onclick="PplCompass.toast.info('Apuração em andamento.')">Informação</button>
+      <button class="ppl-btn ppl-btn--secondary" onclick="PplCompass.toast.error('Falha ao transmitir o lote.', { acao: { label: 'Tentar de novo', onClick: function () {} } })">Erro, com saída</button>
+    </template>
+  </div>
+  <p class="ppl-muted" style="font-size:12.5px">
+    O toast nunca é o único registro do estado — a tela também muda. No protótipo isso não acontece,
+    e é a consequência aceita de não haver estado.
+  </p>
+
+  <h3>Estados de lista</h3>
+  <p>
+    Toda lista repete os quatro. Em operação longa é <strong>proibido</strong> spinner infinito sem
+    contexto: use barra determinada com contador.
+  </p>
+  <div class="exemplo">
+    <template>
+      <div class="ppl-stack" style="width:100%">
+        <div class="ppl-state ppl-state--empty">
+          <span class="ppl-state__icon"><i data-ppl-icon="wallet" data-ppl-size="28"></i></span>
+          <p>Nenhum colaborador apurado nesta competência.</p>
+          <button class="ppl-btn ppl-btn--secondary ppl-btn--sm">Calcular folha</button>
+        </div>
+        <div class="ppl-state">
+          <span class="ppl-state__icon"><i data-ppl-icon="x-circle" data-ppl-size="28"></i></span>
+          <p>Não foi possível carregar a apuração.</p>
+          <button class="ppl-btn ppl-btn--secondary ppl-btn--sm">Tentar de novo</button>
+        </div>
+        <div class="ppl-stack ppl-stack--tight">
+          <div class="ppl-skeleton"></div><div class="ppl-skeleton"></div>
+        </div>
+        <div class="ppl-row"><span class="ppl-spinner ppl-spinner--sm"></span><span class="ppl-muted">Apurando 412 de 1.240…</span></div>
+        <div class="ppl-progress"><div class="ppl-progress__bar" style="width:33%"></div></div>
+      </div>
+    </template>
+  </div>
+  <p>
+    O erro traz a <strong>saída</strong>, não só o diagnóstico: quem lê precisa saber o que fazer
+    agora. Veja o <a href="#/dados">painel de dados</a> para trocar entre os quatro sem mexer em
+    <code>hidden</code>.
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════ TABELA E PAINEL DE DADOS ═══ -->
+<section class="doc-pagina" id="p-dados">
+  <h2>Tabela e painel de dados <span class="doc-tag">.ppl-table .ppl-data-panel</span></h2>
+  <p>
+    É a receita mais copiada do console: <strong>51 tabelas</strong> repetem a mesma máquina de
+    quatro estados à mão. Aqui os quatro blocos são escritos uma vez e quem escolhe é o
+    <code>data-ppl-state</code> do painel.
+  </p>
+
+  <h3>A máquina de quatro estados</h3>
+  <div class="exemplo">
+    <template>
+      <div class="ppl-stack" style="width:100%">
+        <div class="ppl-row">
+          <button class="ppl-btn ppl-btn--sm ppl-btn--secondary" data-ppl-state-set="doc-painel:dados">Dados</button>
+          <button class="ppl-btn ppl-btn--sm ppl-btn--secondary" data-ppl-state-set="doc-painel:carregando">Carregando</button>
+          <button class="ppl-btn ppl-btn--sm ppl-btn--secondary" data-ppl-state-set="doc-painel:vazio">Vazio</button>
+          <button class="ppl-btn ppl-btn--sm ppl-btn--secondary" data-ppl-state-set="doc-painel:erro">Erro</button>
+        </div>
+
+        <div class="ppl-card ppl-panel ppl-data-panel" id="doc-painel" data-ppl-state="dados">
+          <div class="ppl-panel__head">
+            <div class="ppl-panel__id">
+              <span class="ppl-icon-tile"><i data-ppl-icon="list" data-ppl-size="18"></i></span>
+              <div>
+                <div class="ppl-panel__title">Rubricas da competência</div>
+                <div class="ppl-panel__sub">O cabeçalho aparece nos quatro estados.</div>
+              </div>
+            </div>
+            <button class="ppl-btn ppl-btn--sm ppl-btn--secondary">Nova rubrica</button>
+          </div>
+
+          <div class="ppl-table-wrap" data-ppl-when="dados">
+            <table class="ppl-table">
+              <thead><tr><th>Código</th><th>Descrição</th><th class="ppl-td-num">Valor</th><th>Situação</th></tr></thead>
+              <tbody>
+                <tr><td class="ppl-td-data">1001</td><td>Salário base</td><td class="ppl-td-num">R$ 6.120,00</td><td><span class="ppl-badge ppl-badge--info">Provento</span></td></tr>
+                <tr><td class="ppl-td-data">1030</td><td>Horas extras 50%</td><td class="ppl-td-num">R$ 612,00</td><td><span class="ppl-badge ppl-badge--info">Provento</span></td></tr>
+                <tr><td class="ppl-td-data">3010</td><td>INSS</td><td class="ppl-td-num">R$ 1.113,63</td><td><span class="ppl-badge ppl-badge--muted">Desconto</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="ppl-stack ppl-stack--tight" data-ppl-when="carregando">
+            <div class="ppl-skeleton"></div><div class="ppl-skeleton"></div><div class="ppl-skeleton"></div>
+          </div>
+
+          <div class="ppl-state ppl-state--empty" data-ppl-when="vazio">
+            <span class="ppl-state__icon"><i data-ppl-icon="list" data-ppl-size="28"></i></span>
+            <p>Nenhuma rubrica ativa nesta competência.</p>
+            <button class="ppl-btn ppl-btn--secondary ppl-btn--sm">Criar a primeira</button>
+          </div>
+
+          <div class="ppl-state" data-ppl-when="erro">
+            <span class="ppl-state__icon"><i data-ppl-icon="x-circle" data-ppl-size="28"></i></span>
+            <p>Não foi possível carregar as rubricas.</p>
+            <button class="ppl-btn ppl-btn--secondary ppl-btn--sm">Tentar de novo</button>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <h3>Três decisões que a receita carrega</h3>
+  <ul>
+    <li><strong>O cabeçalho fica fora da troca.</strong> Ele não leva <code>data-ppl-when</code>, de
+        propósito: lista que perde o próprio título enquanto carrega obriga a esperar para saber o
+        que se está esperando.</li>
+    <li><strong>Só declaramos <code>display: none</code></strong>, nunca um valor de display. Forçar
+        <code>block</code> no bloco visível quebraria quem usa grid dentro dele — e quebraria em
+        silêncio.</li>
+    <li><strong>Estado desconhecido mostra os quatro empilhados.</strong> É para incomodar: um painel
+        que some inteiro esconde o defeito; quatro estados um sobre o outro apontam para ele.</li>
+  </ul>
+  <p>
+    Um bloco pode servir a mais de um estado — <code>data-ppl-when="vazio erro"</code> —, porque na
+    prática os dois costumam ser a mesma moldura com outro texto e outra ação.
+  </p>
+
+  <h3>Trocar por JavaScript</h3>
+  <div class="exemplo">
+    <template data-so-codigo>
+PplCompass.painel('painel-folha', 'carregando');
+// dados · carregando · vazio · erro
+    </template>
+  </div>
+
+  <h3>Colunas</h3>
+  <p>
+    <code>.ppl-td-data</code> para identificador, <code>.ppl-td-num</code> para valor — alinhado à
+    direita e em <code>tabular-nums</code>, para a coluna não dançar. O scroll horizontal vive no
+    <code>.ppl-table-wrap</code>, nunca na página.
+  </p>
+</section>
+
+<!-- ═════════════════════════════════ PAINEL, CHOICE E STAT ═══ -->
+<section class="doc-pagina" id="p-conteudo">
+  <h2>Painel, choice e stat <span class="doc-tag">.ppl-panel .ppl-choice .ppl-stat</span></h2>
+
+  <h3>Painel — a moldura de ~25 telas</h3>
+  <p>Anatomia fixa: tile, título e linha de apoio à esquerda; ação à direita.</p>
+  <div class="exemplo">
+    <template>
+      <div class="ppl-card ppl-panel" style="width:100%">
+        <div class="ppl-panel__head" style="margin-bottom:0">
+          <div class="ppl-panel__id">
+            <span class="ppl-icon-tile"><i data-ppl-icon="users" data-ppl-size="18"></i></span>
+            <div>
+              <div class="ppl-panel__title">Colaboradores da competência</div>
+              <div class="ppl-panel__sub">CNPJ 12.345.678/0001-90 · apurada em 25/08/2026</div>
+            </div>
+          </div>
+          <button class="ppl-btn ppl-btn--sm ppl-btn--secondary">Filtrar</button>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <h3>Cabeçalho de página</h3>
+  <p>
+    O contexto que decide — quem, qual CNPJ, qual competência — fica visível do início ao fim do
+    fluxo. Ele mora aqui, não numa tela anterior.
+  </p>
+  <div class="exemplo">
+    <template>
+      <div class="ppl-page-head" style="width:100%;margin-bottom:0">
+        <div class="ppl-page-head__id">
+          <div class="ppl-page-head__meta ppl-eyebrow">Competência 2026-08 · Gestão Hospitalar Ltda</div>
+          <h1 class="ppl-page-head__title">Folha da competência</h1>
+          <p class="ppl-page-head__desc">Apuração, conferência e fechamento por CNPJ.</p>
+        </div>
+        <div class="ppl-page-head__actions">
+          <button class="ppl-btn ppl-btn--secondary ppl-btn--sm">Exportar CSV</button>
+          <button class="ppl-btn ppl-btn--primary ppl-btn--sm">Calcular folha</button>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <h3>Choice — decisão de caminho</h3>
+  <p>
+    Cards grandes, alvo ≥ 160px, e <strong>não</strong> um dropdown escondido: escolher processo é a
+    decisão mais frequente do dia, e ela não pode custar dois cliques e uma lista. Só um card por
+    tela recebe o dourado.
+  </p>
+  <div class="exemplo">
+    <template>
+      <div class="ppl-choice-grid" style="width:100%">
+        <a class="ppl-card ppl-choice ppl-card--interactive" href="#/conteudo">
+          <span class="ppl-icon-tile ppl-icon-tile--gold ppl-icon-tile--lg"><i data-ppl-icon="user" data-ppl-size="20"></i></span>
+          <span class="ppl-choice__title">Admitir colaborador</span>
+          <span class="ppl-choice__line">Dados pessoais, contrato, jornada e o S-2200 do eSocial.</span>
+          <span class="ppl-choice__foot">7 admissões em agosto</span>
+        </a>
+        <a class="ppl-card ppl-choice ppl-card--interactive" href="#/conteudo">
+          <span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="wallet" data-ppl-size="20"></i></span>
+          <span class="ppl-choice__title">Fechar folha da competência</span>
+          <span class="ppl-choice__line">Apurar, conferir divergências e fechar por CNPJ.</span>
+          <span class="ppl-choice__foot">2026-08 · em apuração</span>
+        </a>
+      </div>
+    </template>
+  </div>
+
+  <h3>Stat — número grande</h3>
+  <p>Todo valor em <code>--ppl-font-data</code> com <code>tabular-nums</code>.</p>
+  <div class="exemplo">
+    <template>
+      <div class="ppl-stack" style="width:100%">
+        <div class="ppl-stat-hero">
+          <span class="ppl-stat-hero__label">Líquido de 2026-08</span>
+          <span class="ppl-stat-hero__value">R$ 1.284.930,55</span>
+        </div>
+        <div class="ppl-stat-grid">
+          <div class="ppl-card ppl-stat"><span class="ppl-stat__value">R$ 1.610.220,10</span><span class="ppl-stat__label">Proventos</span></div>
+          <div class="ppl-card ppl-stat"><span class="ppl-stat__value">R$ 325.289,55</span><span class="ppl-stat__label">Descontos</span></div>
+          <div class="ppl-card ppl-stat"><span class="ppl-stat__value">1.240</span><span class="ppl-stat__label">Colaboradores</span></div>
+          <div class="ppl-card ppl-stat"><span class="ppl-stat__value">12h</span><span class="ppl-stat__label">Extras 50%</span></div>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <h3>Disclosure — seção colapsável</h3>
+  <p>
+    Padrão ARIA: <code>&lt;button&gt;</code> dentro de <code>&lt;h2&gt;</code>, com
+    <code>aria-expanded</code> e <code>aria-controls</code>. <strong>Fechado, o cabeçalho continua
+    dizendo o que importa</strong> — contagem e resumo vivo. Disclosure que esconde a informação de
+    decisão obriga a abrir tudo para conferir qualquer coisa.
+  </p>
+  <div class="exemplo">
+    <template>
+      <div style="width:100%">
+        <section class="ppl-card" data-ppl-disclosure>
+          <h2>
+            <button class="ppl-disclosure__btn" aria-expanded="false" aria-controls="doc-sec-contrato">
+              <span>Contrato</span>
+              <span class="ppl-row">
+                <span class="ppl-disclosure__count">CLT · 44h semanais</span>
+                <span class="ppl-chevron"><i data-ppl-icon="chevron-down" data-ppl-size="16"></i></span>
+              </span>
+            </button>
+          </h2>
+          <div class="ppl-disclosure__body" id="doc-sec-contrato" hidden>
+            <dl class="ppl-review">
+              <div class="ppl-review__row"><dt class="ppl-review__key">Regime</dt><dd class="ppl-review__val">CLT — prazo indeterminado</dd></div>
+              <div class="ppl-review__row"><dt class="ppl-review__key">Admissão</dt><dd class="ppl-review__val ppl-review__val--data">01/09/2026</dd></div>
+              <div class="ppl-review__row"><dt class="ppl-review__key">Salário base</dt><dd class="ppl-review__val ppl-review__val--data">R$ 6.120,00</dd></div>
+            </dl>
+          </div>
+        </section>
+      </div>
+    </template>
+  </div>
+
+  <h3>Review — a lista de conferência</h3>
+  <p>
+    <code>.ppl-review</code> é um <code>&lt;dl&gt;</code> de chave e valor. É o que a etapa de revisão
+    do <a href="#/wizard">wizard</a> e o alvo da <a href="#/confirmacao">confirmação</a> usam.
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════ NAVEGAÇÃO E BUSCA ═══ -->
+<section class="doc-pagina" id="p-navegacao">
+  <h2>Navegação e busca <span class="doc-tag">PplCompass.nav(json)</span></h2>
+  <p>
+    A navegação inteira — marca, grupos, itens, ícone, rota ativa, contador e rodapé de usuário —
+    sai de um objeto. <strong>É o que faz um template virar dez sem copiar marcação:</strong> o
+    shell de todas as telas é a mesma lista com uma <code>rotaAtiva</code> diferente.
+  </p>
+
+  <h3>Declarativa — é a que os templates usam</h3>
+  <div class="exemplo">
+    <template data-so-codigo>
+&lt;aside class="ppl-nav" data-ppl-nav&gt;
+  &lt;script type="application/json"&gt;
+  {
+    "rotaAtiva": "/folha",
+    "marca":  { "sigla": "b", "nome": "BNG People", "tag": "Depto. Pessoal" },
+    "itens": [
+      { "label": "Início",     "icone": "home",         "href": "/" },
+      { "label": "Pendências", "icone": "alert-circle", "href": "/pendencias", "contador": 184368 },
+      { "grupo": "Folha", "itens": [
+        { "label": "Rubricas", "icone": "list",   "href": "/rubricas" },
+        { "label": "Folha",    "icone": "wallet", "href": "/folha" }
+      ]}
+    ],
+    "usuario": { "iniciais": "AR", "nome": "ana.ribeiro@…", "papel": "Console RH", "sair": "/sair" }
+  }
+  &lt;/script&gt;
+&lt;/aside&gt;
+    </template>
+  </div>
+
+  <div class="moldura moldura--alta" id="doc-nav-demo">
+    <aside class="ppl-nav" data-ppl-nav>
+      <script type="application/json">
+      {
+        "rotaAtiva": "/folha",
+        "marca":  { "sigla": "b", "nome": "BNG People", "tag": "Depto. Pessoal" },
+        "itens": [
+          { "label": "Início",     "icone": "home",         "href": "/" },
+          { "label": "Pendências", "icone": "alert-circle", "href": "/pendencias", "contador": 184368 },
+          { "grupo": "Estrutura", "itens": [
+            { "label": "Empresas",      "icone": "building", "href": "/empresas" },
+            { "label": "Colaboradores", "icone": "users",    "href": "/colaboradores" }
+          ]},
+          { "grupo": "Folha", "itens": [
+            { "label": "Rubricas", "icone": "list",       "href": "/rubricas" },
+            { "label": "Folha",    "icone": "wallet",     "href": "/folha" },
+            { "label": "Férias",   "icone": "palm",       "href": "/ferias" }
+          ]}
+        ],
+        "usuario": { "iniciais": "AR", "nome": "ana.ribeiro@gestaohospitalar.com.br",
+                     "papel": "Console RH", "sair": "/sair" }
+      }
+      </script>
+    </aside>
+    <div class="ppl-shell__col ppl-canvas" style="padding:24px">
+      <p class="ppl-muted">Os grupos nascem <strong>recolhidos</strong>, menos o que contém a rota
+      ativa. Recolher é gesto momentâneo de foco, não configuração: não persiste.</p>
+      <p class="ppl-muted" style="margin-top:12px">O item ativo carrega <code>aria-current="page"</code>
+      e ganha a barra dourada — o único dourado permanente do shell.</p>
+    </div>
+  </div>
+
+  <h3>Ela falha fechado, e é aqui que isso paga</h3>
+  <p>
+    Navegação malformada não aparece meio certa: some, e no lugar dela vem um alerta dizendo o
+    defeito. São seis casos:
+  </p>
+  <ul>
+    <li>item sem <code>label</code> ou sem <code>href</code>;</li>
+    <li>grupo sem itens;</li>
+    <li><code>contador</code> que não é número — o <code>"99+"</code> é exatamente o que o badge de
+        contagem existe para evitar;</li>
+    <li>tabbar com mais de <strong>5</strong> itens, que é o teto verificado no CI do produto;</li>
+    <li>tabbar fora de um <code>&lt;nav&gt;</code>;</li>
+    <li><strong><code>rotaAtiva</code> que não existe no menu</strong> — o mais importante dos seis.
+        Menu que não sabe onde você está é pior do que menu nenhum, porque mente com confiança.</li>
+  </ul>
+  <div class="exemplo">
+    <template>
+      <div style="width:100%">
+        <aside data-ppl-nav>
+          <script type="application/json">
+          { "rotaAtiva": "/inexistente", "itens": [ { "label": "Início", "href": "/" } ] }
+          </script>
+        </aside>
+      </div>
+    </template>
+  </div>
+
+  <h3>A mesma chamada desenha a tabbar</h3>
+  <p>
+    <code>"variante": "tabbar"</code>, o mesmo objeto: um produto não mantém duas listas de rotas.
+    O alvo de toque é o <strong>link inteiro</strong>, ≥ 44px — nunca a pílula de 36px.
+  </p>
+  <div class="exemplo">
+    <template>
+      <div class="moldura moldura--estreita" style="margin:0;width:100%">
+        <nav data-ppl-nav>
+          <script type="application/json">
+          {
+            "variante": "tabbar",
+            "rotaAtiva": "/espelho",
+            "itens": [
+              { "label": "Espelho",  "icone": "calendar",    "href": "/espelho" },
+              { "label": "Ponto",    "icone": "fingerprint", "href": "/ponto" },
+              { "label": "Holerite", "icone": "file",        "href": "/holerite" }
+            ]
+          }
+          </script>
+        </nav>
+      </div>
+    </template>
+  </div>
+
+  <h3>Topo — só cromo</h3>
+  <p>A navegação <strong>não</strong> mora aqui. O eyebrow diz o grupo econômico ativo; a migalha diz a tela.</p>
+  <div class="exemplo">
+    <template>
+      <div class="ppl-bar" style="width:100%;border-radius:var(--ppl-radius-card)">
+        <div class="ppl-topbar__row">
+          <span class="ppl-eyebrow">Grupo Boas Novas</span>
+          <span class="ppl-topbar__crumb"><i data-ppl-icon="wallet" data-ppl-size="15"></i>Folha</span>
+          <div class="ppl-topbar__actions">
+            <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Produtos"><i data-ppl-icon="grid" data-ppl-size="16"></i></button>
+            <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" aria-label="Buscar" data-ppl-search-open><i data-ppl-icon="search" data-ppl-size="16"></i></button>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <h3>Busca global</h3>
+  <p>
+    <code>Ctrl</code>/<code>⌘</code> + <code>K</code> — experimente agora, nesta página. O diálogo
+    <strong>não está no HTML</strong>: o pacote monta, como faz com a região do toast. A lista sai de
+    <code>acoes</code> e, <strong>sem essa chave, ela herda o que a navegação compôs</strong> —
+    declarar as rotas duas vezes cria duas verdades que divergem na primeira rota nova.
+  </p>
+  <p>
+    <code>Escape</code> vale em qualquer ponteiro, porque fechar diálogo é acessibilidade. Todo o
+    resto é desativado em <code>pointer: coarse</code>: num aparelho de dedo o <code>⌘K</code> não
+    tem como ser acionado, e o painel anunciaria teclas que não existem. Lá a porta é o botão da
+    barra de topo.
+  </p>
+  <div class="exemplo">
+    <template>
+      <button class="ppl-btn ppl-btn--secondary" data-ppl-search-open><i data-ppl-icon="search" data-ppl-size="16"></i>Abrir busca</button>
+      <span class="ppl-kbd">Ctrl</span><span class="ppl-kbd">K</span>
+    </template>
+  </div>
+</section>
+
+<!-- ═════════════════════════════════════════════ DRAWER E DIÁLOGO ═══ -->
+<section class="doc-pagina" id="p-sobreposicao">
+  <h2>Drawer e diálogo <span class="doc-tag">.ppl-drawer .ppl-dialog</span></h2>
+  <p>
+    O drawer é <strong>o padrão de edição de 35 telas</strong> do console. Ele abre e fecha por
+    atributo — nenhuma linha de JavaScript na página.
+  </p>
+
+  <h3>O contrato de acessibilidade</h3>
+  <ul>
+    <li><code>role="dialog"</code> + <code>aria-modal</code> + <code>aria-labelledby</code>;</li>
+    <li><code>Esc</code> fecha, e o clique no scrim também;</li>
+    <li>o foco vai para o painel ao abrir e <strong>volta ao gatilho</strong> ao fechar — sem isso,
+        fechar joga o teclado para o início do documento e a pessoa refaz o caminho inteiro;</li>
+    <li>o resto da página fica <code>inert</code> enquanto ele está aberto.</li>
+  </ul>
+  <div class="ppl-alert ppl-alert--warning">
+    <i data-ppl-icon="alert" data-ppl-size="16"></i>
+    <span><strong>Um modal por vez.</strong> O foco é preso marcando os irmãos de cada nível como
+    <code>inert</code>, então um segundo modal nasceria inerte — desenhado na tela e invisível para o
+    teclado e para o leitor de tela. Empilhar ali não degrada, apaga. Quem tenta abrir o segundo é
+    recusado.</span>
+  </div>
+
+  <h3>Exemplo</h3>
+  <div class="exemplo">
+    <template>
+      <button class="ppl-btn ppl-btn--primary" data-ppl-drawer-open="doc-drawer">
+        <i data-ppl-icon="plus" data-ppl-size="15"></i>Nova rubrica
+      </button>
+    </template>
+  </div>
+
+  <div class="ppl-drawer" id="doc-drawer" data-open="false" aria-hidden="true">
+    <div class="ppl-drawer__scrim"></div>
+    <div class="ppl-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="doc-drawer-t">
+      <div class="ppl-drawer__head">
+        <div>
+          <h2 class="ppl-drawer__title" id="doc-drawer-t">Nova rubrica</h2>
+          <p class="ppl-drawer__desc">Código, descrição e incidência na competência.</p>
+        </div>
+        <button class="ppl-btn ppl-btn--icon ppl-btn--ghost" data-ppl-drawer-close aria-label="Fechar painel">
+          <i data-ppl-icon="x" data-ppl-size="16"></i>
+        </button>
+      </div>
+      <div class="ppl-drawer__body">
+        <form class="ppl-stack" data-ppl-submit="Rubrica 1042 criada na competência 2026-08.">
+          <div class="ppl-cols-2">
+            <label class="ppl-field"><span class="ppl-field__label">Código</span>
+              <input class="ppl-input ppl-input--data" value="1042"></label>
+            <label class="ppl-field"><span class="ppl-field__label">Tipo</span>
+              <select class="ppl-select"><option>Provento</option><option>Desconto</option></select></label>
+          </div>
+          <label class="ppl-field"><span class="ppl-field__label">Descrição</span>
+            <input class="ppl-input" placeholder="Adicional noturno 20%" required></label>
+          <div class="ppl-alert ppl-alert--info">
+            <i data-ppl-icon="info" data-ppl-size="16"></i>
+            <span>Tente o <code>Tab</code>: o foco não sai deste painel. E o <code>Esc</code> devolve
+            o cursor exatamente ao botão que abriu.</span>
+          </div>
+          <div class="ppl-drawer__foot">
+            <button type="button" class="ppl-btn ppl-btn--secondary" data-ppl-drawer-close>Cancelar</button>
+            <button type="submit" class="ppl-btn ppl-btn--primary">Criar rubrica</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <h3>Diálogo</h3>
+  <p>
+    <code>.ppl-scrim</code> + <code>.ppl-dialog</code> são a base do diálogo centrado. A
+    <a href="#/confirmacao">confirmação por risco</a> monta os dois sozinha — na prática você
+    raramente escreve esta marcação à mão.
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════ CONFIRMAÇÃO POR RISCO ═══ -->
+<section class="doc-pagina" id="p-confirmacao">
+  <h2>Confirmação por risco <span class="doc-tag">PplCompass.confirmar()</span></h2>
+  <p>
+    O nível de risco é atributo do <strong>processo</strong>, definido no registro — não decisão de
+    tela. E é ele que escolhe o diálogo.
+  </p>
+
+  <div class="ppl-table-wrap">
+    <table class="ppl-table">
+      <thead><tr><th>Nível</th><th>Exemplos</th><th>O que a interface exige</th></tr></thead>
+      <tbody>
+        <tr><td class="ppl-td-data">R0</td><td>salvar rascunho, filtrar</td><td>nenhuma confirmação; toast de sucesso</td></tr>
+        <tr><td class="ppl-td-data">R1</td><td>aprovar correção de ponto, programar férias</td><td>toast com <strong>"Desfazer"</strong></td></tr>
+        <tr><td class="ppl-td-data">R2</td><td>reabrir competência, excluir dependente</td><td>consequência no título, alvo visível, botão destrutivo — e <strong>foco inicial no "Cancelar"</strong></td></tr>
+        <tr><td class="ppl-td-data">R3</td><td>concluir rescisão, fechamento definitivo</td><td>tudo do R2 + digitar o <strong>texto exato</strong>; evento de auditoria</td></tr>
+        <tr><td class="ppl-td-data">R4</td><td>alteração de dados bancários em lote</td><td>R3 + step-up de autenticação</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Experimente</h3>
+  <p>
+    Repare no que o pacote <strong>recusa</strong>: os dois últimos botões não abrem confirmação
+    nenhuma, e explicam por quê.
+  </p>
+  <div class="exemplo">
+    <template>
+      <button class="ppl-btn ppl-btn--secondary"
+              data-ppl-confirm="R2"
+              data-ppl-confirm-titulo="Reabrir a competência 2026-08?"
+              data-ppl-confirm-corpo="A folha volta para apuração e os holerites já emitidos deixam de valer."
+              data-ppl-confirm-alvo="Gestão Hospitalar Ltda · CNPJ 12.345.678/0001-90 · 1.240 contratos"
+              data-ppl-confirm-acao="Reabrir competência"
+              data-ppl-confirm-feito="Competência 2026-08 reaberta para apuração.">R2 — reabrir competência</button>
+
+      <button class="ppl-btn ppl-btn--danger"
+              data-ppl-confirm="R3"
+              data-ppl-confirm-titulo="Fechar a competência 2026-08 em definitivo?"
+              data-ppl-confirm-corpo="Gera os eventos S-1200 do eSocial para 1.240 contratos."
+              data-ppl-confirm-alvo="Gestão Hospitalar Ltda · competência 2026-08 · R$ 1.284.930,55 líquidos"
+              data-ppl-confirm-frase="2026-08"
+              data-ppl-confirm-processo="fechamento-definitivo"
+              data-ppl-confirm-acao="Fechar em definitivo"
+              data-ppl-confirm-feito="Competência 2026-08 fechada. S-1200 na fila do eSocial.">R3 — fechar competência</button>
+
+      <button class="ppl-btn ppl-btn--secondary"
+              data-ppl-confirm="R1" data-ppl-confirm-titulo="Aprovar a correção?"
+              data-ppl-confirm-alvo="Carlos Menezes · 26/08">R1 — recusado</button>
+
+      <button class="ppl-btn ppl-btn--secondary"
+              data-ppl-confirm="R3" data-ppl-confirm-titulo="Um R3 sem frase"
+              data-ppl-confirm-alvo="Alvo qualquer">R3 sem frase — recusado</button>
+    </template>
+  </div>
+
+  <h3>Por que R0 e R1 não abrem modal</h3>
+  <p>
+    <strong>Fadiga de confirmação é risco mapeado.</strong> Confirmar ação reversível treina o
+    operador a clicar sem ler — e aí o modal do R3, o que realmente importa, também não é lido.
+    Pedir confirmação demais custa a confirmação que importa. Por isso o pacote recusa, em vez de
+    obedecer.
+  </p>
+
+  <h3>Sobre o <code>Esc</code></h3>
+  <p>
+    Ele <strong>cancela nos dois níveis e nunca confirma</strong>. O requisito proíbe o
+    <code>Esc</code> <em>valer</em> como confirmação; prender a pessoa dentro do diálogo seria trocar
+    um risco por outro. No R3 o <strong>clique fora não faz nada</strong>: perder a frase digitada
+    por um clique torto custa refazer o caminho todo.
+  </p>
+
+  <h3>O que mais é recusado</h3>
+  <ul>
+    <li>R3 sem <code>frase</code> — é um R2 fantasiado; o que separa os dois níveis é digitar o texto exato;</li>
+    <li>diálogo sem <code>alvo</code> — sem ele o operador confirma o diálogo, não a operação;</li>
+    <li>título ausente — o título diz a <strong>consequência</strong>, não a ação: "Reabrir a
+        competência 2026-08?" e não "Tem certeza?";</li>
+    <li>R4 — exige step-up de autenticação, e um protótipo não tem como fazer isso de verdade;</li>
+    <li>um segundo modal por cima de outro.</li>
+  </ul>
+
+  <h3>A comparação do R3</h3>
+  <p>
+    Ignora acento, caixa e espaço sobrando: <code>"  JOSE   DA silva  "</code> casa com
+    <code>"José da Silva"</code>. O botão destrutivo nasce travado e só habilita com o texto
+    idêntico.
+  </p>
+
+  <h3>Em JavaScript</h3>
+  <div class="exemplo">
+    <template data-so-codigo>
+PplCompass.confirmar({
+  risco: 'R3',
+  titulo: 'Concluir a rescisão de Mariana Souza?',   // a consequência, não a ação
+  corpo: 'Gera as verbas rescisórias e o evento S-2299.',
+  alvo: [                                            // ou uma string
+    { chave: 'Colaboradora', valor: 'Mariana Souza' },
+    { chave: 'Matrícula', valor: '2026-0042', data: true }
+  ],
+  frase: 'Mariana Souza',            // só R3 — obrigatório nele
+  processo: 'rescisao-contrato',     // só R3 — o "o quê" do evento de auditoria
+  acao: 'Concluir rescisão',
+  onConfirmar() {}, onCancelar() {}
+});
+    </template>
+  </div>
+
+  <h3>O evento de auditoria</h3>
+  <p>
+    O R3 despacha <code>ppl:auditoria</code> em <code>document</code>, com
+    <code>{ processo, risco, alvo, quando }</code>. Num protótipo ele não tem para onde ir — o
+    contrato existe e está visível, e persistir é trabalho de quem construir de verdade.
+  </p>
+  <div class="exemplo">
+    <template data-so-codigo>
+document.addEventListener('ppl:auditoria', (e) =&gt; console.log(e.detail));
+    </template>
+  </div>
+</section>
+
+<!-- ═════════════════════════════════════════════════════════ WIZARD ═══ -->
+<section class="doc-pagina" id="p-wizard">
+  <h2>Wizard <span class="doc-tag">new PplCompass.Wizard()</span></h2>
+  <p>
+    Uma decisão por etapa. <strong>Avançar sempre valida</strong> a etapa corrente; voltar é direito
+    do operador; saltar para frente burlaria a validação e está bloqueado.
+  </p>
+  <div class="ppl-alert ppl-alert--danger">
+    <i data-ppl-icon="shield" data-ppl-size="16"></i>
+    <span><strong>Falha fechado:</strong> fluxo de efeito jurídico ou financeiro <strong>sem etapa de
+    revisão não renderiza</strong> — mostra o defeito. Um fluxo de rescisão que "esqueceu" a revisão
+    não é um fluxo com uma tela a menos: é um fluxo que assina sem conferir.</span>
+  </div>
+
+  <div class="ppl-card ppl-panel" style="margin-top:16px"><div id="doc-wizard"></div></div>
+
+  <h3>Configuração</h3>
+  <div class="exemplo">
+    <template data-so-codigo>
+new PplCompass.Wizard({
+  raiz: document.getElementById('wizard'),
+  efeito: 'juridico',                    // 'juridico' | 'financeiro' | 'nenhum'
+  rotuloConfirmar: 'Concluir admissão',
+  passos: [
+    { id: 'pessoais', label: 'Dados pessoais', validar: () =&gt; erro || null },
+    { id: 'contrato', label: 'Contrato' },
+    { id: 'revisao',  label: 'Revisão' }  // obrigatório se efeito ≠ 'nenhum'
+  ],
+  aoRenderizar(passo, corpo) { corpo.innerHTML = '…'; },
+  onConcluir() { /* a conclusão traz o ID e UM próximo passo */ }
+});
+    </template>
+  </div>
+
+  <h3>A conclusão</h3>
+  <p>
+    Traz o <strong>identificador</strong> e <strong>um</strong> próximo passo. Uma tela de sucesso
+    com quatro botões devolve ao operador a decisão que ela deveria tomar.
+  </p>
+
+  <h3>O limite</h3>
+  <p>
+    Voltar uma etapa redesenha o formulário, então o que foi digitado se perde — consequência de o
+    protótipo não guardar estado.
+  </p>
+</section>
+
+<!-- ════════════════════════════════════════════════════════ LANDING ═══ -->
+<section class="doc-pagina" id="p-landing">
+  <h2>Landing <span class="doc-tag">.ppl-landing .ppl-glass .ppl-hero</span></h2>
+  <p>
+    É a <strong>única</strong> superfície com vidro e tema escuro. No produto, o shell autenticado é
+    claro-only, e espelhar isso é intencional.
+  </p>
+
+  <div class="moldura">
+    <div class="ppl-landing ppl-landing__mesh" style="min-height:auto;padding:20px">
+      <nav class="ppl-glass ppl-landing__bar" aria-label="Exemplo">
+        <span class="ppl-row"><span class="ppl-nav__mark">b</span><strong>BNG People</strong></span>
+        <span class="ppl-row">
+          <button class="ppl-btn ppl-btn--icon ppl-btn--secondary" data-ppl-theme-toggle aria-label="Alternar tema">
+            <i data-ppl-icon="moon" data-ppl-size="16"></i>
+          </button>
+          <a href="#/landing" class="ppl-btn ppl-btn--secondary ppl-btn--sm">Entrar</a>
+        </span>
+      </nav>
+      <header class="ppl-hero">
+        <p class="ppl-eyebrow">Departamento pessoal para quem opera saúde</p>
+        <h2 class="ppl-hero__title" style="border:none;padding:0;margin:0">
+          A folha fecha <span class="ppl-grad-text">no prazo</span> porque o dado nasce certo.
+        </h2>
+        <p class="ppl-hero__line">Admissão, ponto, folha e eSocial no mesmo lugar.</p>
+        <div class="ppl-hero__cta"><a class="ppl-btn ppl-btn--hero ppl-btn--touch" href="#/landing">Entrar no console</a></div>
+      </header>
+    </div>
+  </div>
+  <p class="ppl-muted" style="font-size:12.5px;margin-top:8px">
+    Clique na lua para alternar o tema — a preferência é gravada em <code>localStorage</code>. É dado
+    de interface anônimo: não é cookie e não depende de consentimento.
+  </p>
+
+  <h3>Toda receita resolve na paleta pública aqui dentro</h3>
+  <p>
+    Dentro de <code>.ppl-landing</code>, tinta, borda e superfície são remapeadas para
+    <code>--ppl-lp-*</code>. Sem isso um componente reusado aqui aparece meio certo:
+    <code>.ppl-choice__title</code> pede <code>--ppl-ink</code>, que é o azul-marinho do shell e
+    <strong>não vira no escuro</strong> — título azul-marinho sobre fundo azul-marinho some, e some
+    em silêncio.
+  </p>
+  <p>
+    <code>--ppl-primary</code> fica <strong>de fora</strong> do remapeamento, de propósito: no escuro
+    o azul de marca perde contraste como <em>texto</em>, mas continua sendo o fundo certo para texto
+    branco. Trocar os dois juntos consertaria o link e quebraria o botão sólido.
+  </p>
+
+  <h3>Vidro é degradação, nunca requisito</h3>
+  <p>
+    Com <code>prefers-reduced-transparency</code>, <code>.ppl-glass</code> e os cards viram opacos —
+    sem pedir nada a quem escreveu a página. A folha de consentimento
+    (<code>.ppl-sheet</code>) já é quase opaca de propósito: texto jurídico precisa manter contraste
+    sobre qualquer conteúdo que role por baixo.
+  </p>
+</section>
+
+<!-- ═════════════════════════════════════════════════════════ LAYOUT ═══ -->
+<section class="doc-pagina" id="p-layout">
+  <h2>Layout <span class="doc-tag">.ppl-shell .ppl-main .ppl-stack</span></h2>
+  <p>
+    O mínimo para compor tela. <strong>Sem utilitários atômicos</strong> — não existe
+    <code>.mt-4</code> nem <code>.flex</code>: se uma tela precisa de dez classes para existir, o que
+    falta é componente, não utilitário.
+  </p>
+
+  <h3>O shell</h3>
+  <div class="exemplo">
+    <template data-so-codigo>
+&lt;div class="ppl-shell"&gt;
+  &lt;aside class="ppl-nav" data-ppl-nav&gt;…&lt;/aside&gt;
+  &lt;div class="ppl-shell__col ppl-canvas"&gt;
+    &lt;header class="ppl-topbar ppl-bar"&gt;…&lt;/header&gt;
+    &lt;main class="ppl-main"&gt;…&lt;/main&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+    </template>
+  </div>
+
+  <h3>O molde do aplicativo</h3>
+  <div class="exemplo">
+    <template data-so-codigo>
+&lt;div class="ppl-app"&gt;
+  &lt;header class="ppl-app__head ppl-bar"&gt;…&lt;/header&gt;
+  &lt;main class="ppl-app__body"&gt;…&lt;/main&gt;
+  &lt;nav class="ppl-app__foot" data-ppl-nav&gt;…&lt;/nav&gt;
+&lt;/div&gt;
+    </template>
+  </div>
+
+  <h3>Composição</h3>
+  <div class="ppl-table-wrap">
+    <table class="ppl-table">
+      <thead><tr><th>Classe</th><th>O que faz</th></tr></thead>
+      <tbody>
+        <tr><td><code>.ppl-stack</code></td><td>coluna com respiro de 16px · <code>--tight</code> reduz para 8px</td></tr>
+        <tr><td><code>.ppl-row</code></td><td>linha alinhada ao centro · <code>--end</code> empurra para a direita</td></tr>
+        <tr><td><code>.ppl-cols-2</code></td><td>duas colunas a partir de 640px, uma abaixo disso</td></tr>
+        <tr><td><code>.ppl-spacer</code></td><td>ocupa o vão entre dois blocos</td></tr>
+        <tr><td><code>.ppl-muted</code> · <code>.ppl-faint</code></td><td>texto secundário e metadado</td></tr>
+        <tr><td><code>.ppl-main</code></td><td>coluna de conteúdo com teto de 1152px</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Impressão</h3>
+  <p>
+    <code>.ppl-print</code> isola o documento ativo quando a página é impressa — <code>absolute</code>
+    e não <code>fixed</code>, para o conteúdo paginar em várias folhas A4. A receita do documento em
+    si (holerite, relatório de conferência) ainda não existe.
+  </p>
+</section>
+
+<!-- ═════════════════════════════════════════════════ API JAVASCRIPT ═══ -->
+<section class="doc-pagina" id="p-api">
+  <h2>API JavaScript <span class="doc-tag">window.PplCompass</span></h2>
+  <p>
+    Uma IIFE, um global. Sem <code>class</code> e sem sintaxe que exija transpilação — o que está no
+    repositório é o que o navegador executa.
+  </p>
+
+  <h3>Ligar</h3>
+  <div class="exemplo">
+    <template data-so-codigo>
+PplCompass.init();                                  // hidrata ícones e liga todos os comportamentos
+PplCompass.init({ acoes: [{ href, label }] });      // sem `acoes`, a busca herda a navegação
+    </template>
+  </div>
+  <p>
+    Chame uma vez, depois do <code>DOMContentLoaded</code>. Chamar de novo depois de injetar
+    marcação é seguro e é o que o wizard faz a cada etapa.
+  </p>
+
+  <h3>Superfícies</h3>
+  <div class="exemplo">
+    <template data-so-codigo>
+PplCompass.drawer.abrir(id, origem)   ·  .fechar(id)
+PplCompass.busca.abrir(origem)        ·  .fechar()
+PplCompass.tema.alternar()            ·  .aplicar('dark' | 'light')
+
+PplCompass.confirmar({ risco, titulo, alvo, corpo, frase, processo, acao,
+                       onConfirmar, onCancelar })
+    </template>
+  </div>
+
+  <h3>Conteúdo</h3>
+  <div class="exemplo">
+    <template data-so-codigo>
+PplCompass.nav({ alvo, variante, rotaAtiva, marca, itens, usuario })
+PplCompass.nav.acoes()                // o que a navegação compôs, para a busca
+
+PplCompass.painel('painel-folha', 'carregando')     // dados | carregando | vazio | erro
+
+PplCompass.icon('wallet', 18)         // a string do &lt;svg&gt;
+    </template>
+  </div>
+
+  <h3>Aviso</h3>
+  <div class="exemplo">
+    <template data-so-codigo>
+PplCompass.toast.success('Rubrica criada.')
+PplCompass.toast.info('Apuração em andamento.')
+PplCompass.toast.error('Falha ao transmitir.', {
+  acao: { label: 'Tentar de novo', onClick() {} }   // erro é PERSISTENTE
+})
+    </template>
+  </div>
+
+  <h3>Formato pt-BR</h3>
+  <div class="exemplo">
+    <template data-so-codigo>
+PplCompass.fmt.cpf('11122233344')        // 111.222.333-44
+PplCompass.fmt.cnpj('12345678000190')    // 12.345.678/0001-90
+PplCompass.fmt.dinheiro('4812.37')       // R$ 4.812,37
+PplCompass.fmt.contagem(184368)          // 184.368  — nunca "99+"
+PplCompass.fmt.competencia('2026-08')    // agosto/2026
+    </template>
+  </div>
+  <div class="ppl-alert ppl-alert--warning">
+    <i data-ppl-icon="alert" data-ppl-size="16"></i>
+    <span>Valor monetário é <strong>string decimal</strong> no domínio: formate só na exibição.
+    Converter para <code>Number</code> no caminho do dado perde precisão em folha. E competência é
+    data civil <code>AAAA-MM</code> — <code>Date</code> arrasta fuso.</span>
+  </div>
+
+  <h3>Fluxo</h3>
+  <div class="exemplo">
+    <template data-so-codigo>
+new PplCompass.Wizard({ raiz, efeito, rotuloConfirmar, passos,
+                        aoRenderizar, onConcluir })
+    </template>
+  </div>
+
+  <h3>Eventos</h3>
+  <div class="ppl-table-wrap">
+    <table class="ppl-table">
+      <thead><tr><th>Evento</th><th>Onde</th><th>Detalhe</th></tr></thead>
+      <tbody>
+        <tr><td><code>ppl:auditoria</code></td><td><code>document</code></td>
+            <td class="ppl-td-mute">emitido pelo R3 ao confirmar — <code>{ processo, risco, alvo, quando }</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>O que a API não tem</h3>
+  <p>
+    Nenhum gerenciador de estado, nenhum roteador, nenhum cliente de API. O protótipo é estático por
+    decisão: os dados moram no HTML.
+  </p>
+</section>
+
+<!-- ══════════════════════════════════════════ ATRIBUTOS data-ppl-* ═══ -->
+<section class="doc-pagina" id="p-atributos">
+  <h2>Atributos <span class="doc-tag">data-ppl-*</span></h2>
+  <p>
+    Quem monta o protótipo <strong>não escreve JavaScript</strong>: marca o HTML e chama
+    <code>init()</code> uma vez. Sete dos oito templates têm exatamente uma linha de script.
+  </p>
+
+  <h3>Navegação e conteúdo</h3>
+  <div class="ppl-table-wrap">
+    <table class="ppl-table">
+      <thead><tr><th>Atributo</th><th>Onde</th><th>O que faz</th></tr></thead>
+      <tbody>
+        <tr><td><code>data-ppl-nav</code></td><td>elemento</td><td>hidrata a navegação a partir do <code>&lt;script type="application/json"&gt;</code> dentro dele</td></tr>
+        <tr><td><code>data-ppl-state</code></td><td><code>.ppl-data-panel</code></td><td>o estado corrente: <code>dados</code> · <code>carregando</code> · <code>vazio</code> · <code>erro</code></td></tr>
+        <tr><td><code>data-ppl-when</code></td><td>filho do painel</td><td>em que estados este bloco aparece — aceita mais de um</td></tr>
+        <tr><td><code>data-ppl-state-set</code></td><td>botão</td><td><code>"id-do-painel:estado"</code> — troca o estado ao clicar</td></tr>
+        <tr><td><code>data-ppl-icon</code> · <code>data-ppl-size</code></td><td><code>&lt;i&gt;</code></td><td>troca o elemento pelo SVG do ícone</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Sobreposição</h3>
+  <div class="ppl-table-wrap">
+    <table class="ppl-table">
+      <thead><tr><th>Atributo</th><th>Onde</th><th>O que faz</th></tr></thead>
+      <tbody>
+        <tr><td><code>data-ppl-drawer-open</code></td><td>botão</td><td>abre o drawer com aquele <code>id</code></td></tr>
+        <tr><td><code>data-ppl-drawer-close</code></td><td>botão</td><td>fecha o drawer que o contém</td></tr>
+        <tr><td><code>data-ppl-search-open</code></td><td>botão</td><td>abre a busca global</td></tr>
+        <tr><td><code>data-ppl-theme-toggle</code></td><td>botão</td><td>alterna claro e escuro — só faz sentido na landing</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Confirmação</h3>
+  <div class="ppl-table-wrap">
+    <table class="ppl-table">
+      <thead><tr><th>Atributo</th><th>Obrigatório</th><th>O que é</th></tr></thead>
+      <tbody>
+        <tr><td><code>data-ppl-confirm</code></td><td>sim</td><td><code>"R2"</code> ou <code>"R3"</code> — R0, R1 e R4 são recusados</td></tr>
+        <tr><td><code>data-ppl-confirm-titulo</code></td><td>sim</td><td>a <strong>consequência</strong>, não a ação</td></tr>
+        <tr><td><code>data-ppl-confirm-alvo</code></td><td>sim</td><td>em quem se está mexendo — nome, matrícula, CNPJ</td></tr>
+        <tr><td><code>data-ppl-confirm-corpo</code></td><td>não</td><td>o que vai acontecer, em uma frase</td></tr>
+        <tr><td><code>data-ppl-confirm-frase</code></td><td>no R3</td><td>o texto exato a digitar</td></tr>
+        <tr><td><code>data-ppl-confirm-processo</code></td><td>no R3</td><td>o "o quê" do evento de auditoria</td></tr>
+        <tr><td><code>data-ppl-confirm-acao</code></td><td>não</td><td>o rótulo do botão destrutivo</td></tr>
+        <tr><td><code>data-ppl-confirm-feito</code></td><td>não</td><td>a mensagem do toast ao confirmar</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Formulário e seções</h3>
+  <div class="ppl-table-wrap">
+    <table class="ppl-table">
+      <thead><tr><th>Atributo</th><th>Onde</th><th>O que faz</th></tr></thead>
+      <tbody>
+        <tr><td><code>data-ppl-submit</code></td><td><code>&lt;form&gt;</code></td><td>intercepta o envio, fecha o painel que o contém e anuncia a mensagem</td></tr>
+        <tr><td><code>data-ppl-submit-tipo</code></td><td><code>&lt;form&gt;</code></td><td><code>success</code> (padrão) · <code>info</code> · <code>error</code></td></tr>
+        <tr><td><code>data-ppl-disclosure</code></td><td>seção</td><td>liga o botão de abrir e fechar</td></tr>
+        <tr><td><code>data-ppl-combo</code></td><td>elemento</td><td>liga o combobox com busca por teclado</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>O conjunto, em uma tela</h3>
+  <div class="exemplo">
+    <template data-so-codigo>
+&lt;aside class="ppl-nav" data-ppl-nav&gt;&lt;script type="application/json"&gt;{ … }&lt;/script&gt;&lt;/aside&gt;
+
+&lt;div class="ppl-data-panel" id="p" data-ppl-state="dados"&gt;
+  &lt;div data-ppl-when="dados"&gt;…&lt;/div&gt;
+  &lt;div data-ppl-when="vazio erro"&gt;…&lt;/div&gt;
+&lt;/div&gt;
+&lt;button data-ppl-state-set="p:vazio"&gt;Vazio&lt;/button&gt;
+
+&lt;button data-ppl-confirm="R2" data-ppl-confirm-titulo="…"
+        data-ppl-confirm-alvo="…" data-ppl-confirm-feito="…"&gt;Reabrir&lt;/button&gt;
+
+&lt;button data-ppl-drawer-open="meu-drawer"&gt;Abrir&lt;/button&gt;
+&lt;button data-ppl-drawer-close&gt;Fechar&lt;/button&gt;
+&lt;form data-ppl-submit="Rubrica criada."&gt;…&lt;/form&gt;
+&lt;section data-ppl-disclosure&gt;…&lt;/section&gt;
+&lt;div data-ppl-combo&gt;…&lt;/div&gt;
+&lt;button data-ppl-search-open&gt;Buscar&lt;/button&gt;
+&lt;button data-ppl-theme-toggle&gt;Tema&lt;/button&gt;
+&lt;i data-ppl-icon="wallet" data-ppl-size="16"&gt;&lt;/i&gt;
+    </template>
+  </div>
+</section>
+
+    </main>
+  </div>
+</div>
+
+<script src="dist/ppl-compass-icons.js"></script>
+<script src="dist/ppl-compass.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════════════════════════
+ * Cromo da documentação. Nada aqui faz parte do pacote.
+ * ═══════════════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+
+  var VERSAO = '0.4.0';
+  var $  = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  /* ── 1 · O exemplo e o código saem do MESMO <template> ────────────────────
+   * O bloco de código não é escrito à mão ao lado da demo. Duas cópias do mesmo
+   * trecho divergem na primeira correção, e aí a documentação passa a ensinar o
+   * que a página não faz. Aqui o `<template>` é a única fonte: dele saem a demo
+   * viva e o código exibido.
+   * ─────────────────────────────────────────────────────────────────────── */
+  function desindentar(texto) {
+    var linhas = texto.replace(/^\n/, '').replace(/\s+$/, '').split('\n');
+    var menor = linhas.reduce(function (m, l) {
+      if (!l.trim()) return m;
+      return Math.min(m, l.match(/^ */)[0].length);
+    }, Infinity);
+    if (!isFinite(menor)) menor = 0;
+    return linhas.map(function (l) { return l.slice(menor); }).join('\n');
+  }
+
+  $$('.exemplo > template').forEach(function (modelo) {
+    var caixa = modelo.parentElement;
+    var soCodigo = modelo.hasAttribute('data-so-codigo');
+
+    /* O código exibido é o texto do template, tal como escrito — sem os
+       atributos que o pacote injeta em runtime. Quem copia leva o que roda. */
+    var fonte = desindentar(modelo.innerHTML);
+
+    if (!soCodigo) {
+      var demo = document.createElement('div');
+      demo.className = 'preview';
+      demo.appendChild(modelo.content.cloneNode(true));
+      caixa.insertBefore(demo, modelo);
+    }
+
+    var envelope = document.createElement('div');
+    envelope.className = 'codigo';
+    var pre = document.createElement('pre');
+    var code = document.createElement('code');
+    /* textContent e não innerHTML: escapar é responsabilidade do DOM, não de
+       uma tabela de substituição que sempre esquece um caractere. */
+    code.textContent = soCodigo ? fonte.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&') : fonte;
+    pre.appendChild(code);
+
+    var copiar = document.createElement('button');
+    copiar.type = 'button';
+    copiar.className = 'copiar';
+    copiar.textContent = 'copiar';
+    copiar.addEventListener('click', function () {
+      navigator.clipboard.writeText(code.textContent).then(function () {
+        copiar.textContent = 'copiado';
+        copiar.setAttribute('data-copiado', '');
+        setTimeout(function () {
+          copiar.textContent = 'copiar';
+          copiar.removeAttribute('data-copiado');
+        }, 1600);
+      });
+    });
+
+    envelope.appendChild(pre);
+    envelope.appendChild(copiar);
+    caixa.insertBefore(envelope, modelo);
+    modelo.remove();
+  });
+
+  /* ── 2 · Versão e hashes ─────────────────────────────────────────────── */
+  $('#doc-versao').textContent = 'v' + VERSAO;
+  $$('[data-versao-tag]').forEach(function (n) { n.textContent = '@' + VERSAO; });
+  $$('.exemplo code').forEach(function (c) {
+    c.textContent = c.textContent
+      .replace(/VERSAO/g, VERSAO)
+      .replace(/SRI_CSS/g, 'sha384-E/qBbSGDbYr5hi+Q+4F1wUy5uXO+0q56bzlXkG86ngrjw1upmDRUvA3d1m/MBjhT')
+      .replace(/SRI_ICONS/g, 'sha384-o+I2YYIzrf7eiwXox6GFV1UX+gkIudlDtXnA0MwZvanJkBmjYwRCtA7LKJVwhPCx')
+      .replace(/SRI_JS/g, 'sha384-R6iJmhsWlAOh23kVKR1HujiFnIJjwWF+2Yvs227SM25jKcx8Yive8Q/Wqz+ZxBi4');
+  });
+
+  /* ── 3 · O catálogo de ícones sai do pacote, não de uma lista à mão ──── */
+  var catalogo = $('#doc-catalogo-icones');
+  if (catalogo && window.PplCompassIcons) {
+    PplCompassIcons.nomes().forEach(function (nome) {
+      var cel = document.createElement('span');
+      cel.innerHTML = PplCompassIcons.svg(nome, 20);
+      cel.append(nome);
+      catalogo.appendChild(cel);
+    });
+  }
+
+  /* ── 4 · Uma página por vez, pelo hash ──────────────────────────────────
+   * O roteador só reage a hash que começa com "#/". Âncora comum na página
+   * continua funcionando sem derrubar a rota.
+   * ─────────────────────────────────────────────────────────────────────── */
+  var PADRAO = 'home';
+
+  function rota() {
+    var h = location.hash;
+    return /^#\//.test(h) ? h.slice(2).split('?')[0] : null;
+  }
+
+  function mostrar(nome) {
+    var pagina = $('#p-' + nome) || $('#p-' + PADRAO);
+    $$('.doc-pagina').forEach(function (p) {
+      if (p === pagina) p.setAttribute('data-atual', '');
+      else p.removeAttribute('data-atual');
+    });
+    $$('#doc-nav .ppl-nav__item').forEach(function (a) {
+      if (a.getAttribute('href') === '#/' + nome) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+    /* O título da aba acompanha a rota: quem deixa a documentação aberta em
+       três abas precisa distinguir as três. */
+    /* O nome da rota vem do título SEM a etiqueta da classe: "Navegação e
+       busca", e não "Navegação e busca PplCompass.nav(json)". E na home o nome
+       da rota JÁ é o nome do pacote, então repetir daria "ppl-compass ·
+       ppl-compass". */
+    var cabeca = pagina && pagina.querySelector('h1, h2');
+    var nome = '';
+    if (cabeca) {
+      var copia = cabeca.cloneNode(true);
+      var etiqueta = copia.querySelector('.doc-tag');
+      if (etiqueta) etiqueta.remove();
+      nome = copia.textContent.trim().replace(/\s+/g, ' ');
+    }
+    document.title = (nome && nome !== 'ppl-compass' ? nome + ' · ' : '') + 'ppl-compass';
+    window.scrollTo(0, 0);
+    $('#doc-nav').removeAttribute('data-aberta');
+    $('#doc-menu').setAttribute('aria-expanded', 'false');
+  }
+
+  addEventListener('hashchange', function () {
+    var r = rota();
+    if (r) mostrar(r);
+  });
+
+  /* ── 5 · A navegação vira gaveta abaixo de 900px ─────────────────────── */
+  $('#doc-menu').addEventListener('click', function () {
+    var nav = $('#doc-nav');
+    var aberta = nav.hasAttribute('data-aberta');
+    if (aberta) nav.removeAttribute('data-aberta');
+    else nav.setAttribute('data-aberta', '');
+    this.setAttribute('aria-expanded', String(!aberta));
+  });
+
+  /* ── 6 · A navegação de EXEMPLO não navega ──────────────────────────────
+   * Ela mostra rotas do produto (/folha, /rubricas), que não existem aqui.
+   * Deixar o clique passar daria 404 no meio da demonstração.
+   * ─────────────────────────────────────────────────────────────────────── */
+  var demoNav = $('#doc-nav-demo');
+  if (demoNav) {
+    demoNav.addEventListener('click', function (e) {
+      if (e.target.closest('a')) e.preventDefault();
+    });
+  }
+
+  /* ── 7 · Liga o pacote ──────────────────────────────────────────────────
+   * Depois de expandir os templates, para que os ícones marcados dentro deles
+   * sejam hidratados e os comportamentos encontrem a marcação.
+   *
+   * A busca recebe as rotas DESTA documentação. Sem `acoes` ela herdaria a
+   * navegação de exemplo, e o Ctrl+K passaria a oferecer /folha e /rubricas —
+   * telas que não existem aqui.
+   * ─────────────────────────────────────────────────────────────────────── */
+  PplCompass.init({
+    acoes: $$('#doc-nav .ppl-nav__item').map(function (a) {
+      return { href: a.getAttribute('href'), label: a.textContent.trim() };
+    })
+  });
+
+  /* ── 8 · O wizard da página de fluxo ────────────────────────────────── */
+  var raizWizard = $('#doc-wizard');
+  if (raizWizard) {
+    new PplCompass.Wizard({
+      raiz: raizWizard,
+      efeito: 'juridico',
+      rotuloConfirmar: 'Concluir admissão',
+      passos: [
+        { id: 'pessoais', label: 'Dados pessoais',
+          validar: function () {
+            var campo = $('#doc-w-cpf');
+            return campo && campo.value.replace(/\D/g, '').length === 11
+              ? null : 'Informe um CPF com 11 dígitos.';
+          } },
+        { id: 'contrato', label: 'Contrato' },
+        { id: 'jornada',  label: 'Jornada' },
+        { id: 'revisao',  label: 'Revisão' }
+      ],
+      aoRenderizar: function (passo, corpo) {
+        if (passo.id === 'revisao') {
+          corpo.innerHTML =
+            '<h4 style="margin:0 0 10px">Revise antes de enviar</h4>' +
+            '<dl class="ppl-review">' +
+            '<div class="ppl-review__row"><dt class="ppl-review__key">Colaboradora</dt><dd class="ppl-review__val">Mariana Souza</dd></div>' +
+            '<div class="ppl-review__row"><dt class="ppl-review__key">CPF</dt><dd class="ppl-review__val ppl-review__val--data">111.222.333-44</dd></div>' +
+            '<div class="ppl-review__row"><dt class="ppl-review__key">Admissão</dt><dd class="ppl-review__val ppl-review__val--data">01/09/2026</dd></div></dl>' +
+            '<div class="ppl-alert ppl-alert--warning" style="margin-top:16px">' +
+            '<i data-ppl-icon="shield" data-ppl-size="16"></i>' +
+            '<span>Concluir gera o evento S-2200 do eSocial. Depois de transmitido, corrigir exige retificação.</span></div>';
+        } else if (passo.id === 'pessoais') {
+          corpo.innerHTML =
+            '<div class="ppl-cols-2">' +
+            '<label class="ppl-field"><span class="ppl-field__label">Nome completo</span>' +
+            '<input class="ppl-input" value="Mariana Souza"></label>' +
+            '<label class="ppl-field"><span class="ppl-field__label">CPF</span>' +
+            '<input class="ppl-input ppl-input--data" id="doc-w-cpf" value="111.222.333-44"></label></div>';
+        } else {
+          corpo.innerHTML =
+            '<p class="ppl-eyebrow" style="margin-bottom:8px">Etapa: ' + passo.label + '</p>' +
+            '<p class="ppl-muted">Uma decisão por etapa. O conteúdo real do passo entra aqui.</p>';
+        }
+        PplCompass.init();
+      },
+      onConcluir: function () {
+        raizWizard.innerHTML =
+          '<div class="ppl-state">' +
+          '<span class="ppl-icon-tile ppl-icon-tile--lg"><i data-ppl-icon="check-circle" data-ppl-size="22"></i></span>' +
+          '<p class="ppl-display ppl-display--hero">Admissão concluída</p>' +
+          '<p>Matrícula <span class="ppl-data">2026-0042</span> criada. O S-2200 entrou na fila do eSocial.</p>' +
+          '</div>';
+        PplCompass.init();
+        PplCompass.toast.success('Admissão concluída — matrícula 2026-0042 criada.');
+      }
+    });
+  }
+
+  /* ── 9 · Abre a rota pedida ─────────────────────────────────────────── */
+  mostrar(rota() || PADRAO);
+})();
+</script>
+</body>
+</html>

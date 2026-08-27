@@ -277,7 +277,7 @@ async function checarContraste(_arquivos, ler) {
  * quem copiou o exemplo.
  * ═══════════════════════════════════════════════════════════════════════ */
 /** O que o navegador recebe. Fora daqui, só as regras de nome valem. */
-const ENTREGUE = /^(src|templates|demo)\/|^(README|NOTICE)\.md$/;
+const ENTREGUE = /^(src|templates|demo)\/|^(README|NOTICE)\.md$|^index\.html$/;
 
 async function checarNomes(arquivos, ler) {
   const erros = [];

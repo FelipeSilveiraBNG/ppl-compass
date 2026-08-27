@@ -33,12 +33,16 @@ já correta e as regras de acessibilidade já embutidas.
 </html>
 ```
 
+**Comece pela documentação:** [`index.html`](index.html) — 21 páginas com o exemplo vivo e o
+código copiável de cada receita, as regras que o pacote embute e a referência da API. Sirva a raiz
+do repositório e abra na porta escolhida.
+
 **Para montar uma tela:** [`templates/`](templates/README.md) traz oito arquétipos prontos —
 lista, lista com drawer de edição, wizard, home, detalhe, landing, molde móvel e a casca vazia.
 Copie o mais próximo e troque o conteúdo.
 
-**Para escolher um componente:** [`demo/gallery.html`](demo/gallery.html) traz os 19 blocos com o
-HTML copiável de cada um.
+**Para conferir um componente isolado:** [`demo/gallery.html`](demo/gallery.html) traz os 21 blocos
+soltos, sem a navegação da documentação em volta.
 
 ### Arquivos publicados
 
@@ -272,6 +276,7 @@ três níveis do texto viraria dois.
 
 | Página | Aponta para | Serve para |
 |---|---|---|
+| `index.html` | `dist/` | a documentação — 21 páginas, exemplo vivo e código |
 | `demo/gallery.html` | `../dist/` | ver todos os componentes do commit aberto |
 | `demo/proof-local.html` | `../dist/` | validar o **conteúdo** antes de publicar |
 | `demo/proof.html` | o CDN | validar a **entrega** depois de publicar |
