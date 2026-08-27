@@ -1,0 +1,65 @@
+# Higiene do repositório. Não toca em nada que o consumidor baixa — R3 é sobre
+# o consumidor, não sobre nós.
+#
+# A ordem dos passos não é arbitrária:
+#
+#   1. o autoteste roda ANTES de tudo. Ele confere as CHECAGENS, não o código.
+#      Um lint que parou de morder deixa o repositório verde e a garantia virada
+#      decoração, sem ninguém perceber. Se ele falhar, o resto não quer dizer nada.
+#   2. o build reprova nome aposentado, emoji e dependência externa no fonte, e
+#      monta dist/.
+#   3. o lint confere token órfão, CTA duplicado, dourado repetido e contraste.
+#   4. o smoke aperta Tab e Esc de verdade, no Chrome.
+#   5. o SRI do README precisa bater com o dist/ recém-montado — se não bater,
+#      alguém editou o fonte e não regerou os hashes, e a página de quem consome
+#      pararia de carregar com um erro de integridade que não aponta a causa.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  higiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # Só o playwright-core (~3 MB). Nenhum navegador é baixado: o smoke usa o
+      # Chrome que já vem no runner.
+      - run: npm ci
+
+      - name: As checagens ainda mordem
+        run: npm run lint:autoteste
+
+      - name: Build e invariantes do fonte
+        run: npm run build
+
+      - name: Higiene do repositório
+        run: npm run lint
+
+      - name: Smoke de teclado
+        run: npm run smoke
+
+      - name: dist/ é reprodutível e o SRI do README bate
+        run: |
+          if [ -n "$(git status --porcelain dist/)" ]; then
+            echo "dist/ mudou ao rodar o build — o que está commitado não é o que o fonte gera."
+            git --no-pager diff --stat dist/
+            exit 1
+          fi
+          node scripts/sri.mjs | grep -o 'sha384-[A-Za-z0-9+/=]*' | sort -u > /tmp/dist.sri
+          grep -rho 'sha384-[A-Za-z0-9+/=]*' README.md demo/proof.html templates/ | sort -u > /tmp/doc.sri
+          if ! diff -q /tmp/dist.sri /tmp/doc.sri > /dev/null; then
+            echo "Os hashes documentados não batem com dist/. Rode: node scripts/sri.mjs"
+            diff /tmp/dist.sri /tmp/doc.sri || true
+            exit 1
+          fi
+          echo "dist/ reprodutível e SRI conferido."

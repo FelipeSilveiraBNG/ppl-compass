@@ -1,6 +1,10 @@
-# Não é um pacote npm — por design. Ver PLANO.md R1/R2.
+# O pacote NÃO é publicado no npm, e o consumidor nunca instala nada — R1/R2.
+# O package.json existe só para o playwright-core do smoke de teclado no CI.
 node_modules/
-package-lock.json
+
+# O package-lock.json É versionado: o `npm ci` do CI precisa dele, e sem ele
+# cada execução instalaria uma versão diferente do playwright — o que faria o
+# smoke passar ou falhar por motivo que não está no diff.
 
 # SO / editor
 .DS_Store

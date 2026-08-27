@@ -1,0 +1,18 @@
+{
+  "name": "ppl-compass",
+  "private": true,
+  "type": "module",
+  "description": "Framework de prototipacao do BNG People. NAO e publicado no npm — este package.json existe apenas para o playwright-core do smoke de teclado no CI. O que o consumidor recebe sao dois arquivos do CDN, sem build e sem dependencia.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "lint": "node scripts/lint.mjs",
+    "lint:autoteste": "node scripts/lint.mjs --autoteste",
+    "smoke": "node scripts/smoke.mjs",
+    "preview": "node scripts/preview.mjs",
+    "sri": "node scripts/sri.mjs",
+    "check": "npm run lint:autoteste && npm run build && npm run lint && npm run smoke"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.49.1"
+  }
+}

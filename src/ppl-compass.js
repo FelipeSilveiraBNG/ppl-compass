@@ -33,11 +33,25 @@
     var gatilho = null;
     var overflow = '';
 
+    /* Sobe do modal até o <body> marcando os IRMÃOS de cada nível. O caminho
+       do body até o modal fica de fora, e todo o resto fica inerte.
+
+       Antes isto marcava só os filhos diretos de <body> — e aí um modal
+       aninhado em qualquer container ficava inerte ELE MESMO, junto com o
+       container. Desenhado na tela, morto para o teclado. Funcionava enquanto
+       todo drawer por acaso era filho direto de <body>: uma armadilha que só
+       aparece quando alguém aninha, e que não dá nenhum sinal quando aparece. */
     function inertizar(el, ligado) {
-      $$('body > *').forEach(function (n) {
-        if (n === el || n.classList.contains('ppl-toaster')) return;
-        if (ligado) n.setAttribute('inert', ''); else n.removeAttribute('inert');
-      });
+      var no = el;
+      while (no && no !== document.body && no.parentElement) {
+        var irmaos = no.parentElement.children;
+        for (var i = 0; i < irmaos.length; i++) {
+          var irmao = irmaos[i];
+          if (irmao === no || irmao.classList.contains('ppl-toaster')) continue;
+          if (ligado) irmao.setAttribute('inert', ''); else irmao.removeAttribute('inert');
+        }
+        no = no.parentElement;
+      }
     }
 
     return {
@@ -258,15 +272,25 @@
       });
     }
 
-    function abrir() {
-      if (!el) return;
+    /* A busca declara `aria-modal="true"`. Declarar e não prender o foco é
+       mentir para o leitor de tela: ele anuncia que o resto da página está
+       fora, e o Tab passeia por ela assim mesmo. Então ela entra na mesma
+       trava dos outros modais — inclusive na de um por vez. */
+    function abrir(origem) {
+      if (!el || !el.hidden) return;
+      if (modal.aberto()) return;
       el.hidden = false;
       input.value = '';
       ativo = 0;
       render();
+      modal.abrir(el, origem);
       input.focus();
     }
-    function fechar() { if (el) el.hidden = true; }
+    function fechar() {
+      if (!el || el.hidden) return;
+      el.hidden = true;
+      if (modal.aberto() === el) modal.fechar(el);
+    }
 
     /* O diálogo é montado aqui, como a região do toast. Antes, toda tela que
        quisesse busca precisava colar catorze linhas de marcação e manter os
@@ -342,7 +366,10 @@
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') { fechar(); return; }
         if (touch()) return;
-        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); abrir(); }
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          abrir(document.activeElement);
+        }
       });
 
       input.addEventListener('keydown', function (e) {
@@ -358,7 +385,9 @@
         }
       });
 
-      $$('[data-ppl-search-open]').forEach(function (b) { b.addEventListener('click', abrir); });
+      $$('[data-ppl-search-open]').forEach(function (b) {
+        b.addEventListener('click', function () { abrir(b); });
+      });
     }
 
     return { abrir: abrir, fechar: fechar, _ligar: ligar };

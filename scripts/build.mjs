@@ -11,6 +11,7 @@
 import { readdir, readFile, writeFile, mkdir, rm, copyFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { conferir } from './invariantes.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = join(raiz, 'src');
@@ -33,27 +34,6 @@ const BUNDLES = [
   { saida: 'ppl-compass-icons.js',       partes: ['ppl-compass-icons.js'] },
 ];
 
-/**
- * Invariantes verificadas no FONTE. Falham fechado: o build reprova com exit 1
- * em vez de deixar a dívida passar silenciosa.
- */
-const PROIBIDO = [
-  { re: /--color-people-|\.people-(bento|glass|mesh|serif|mono|eyebrow|fade-up)\b/,
-    motivo: 'nome herdado do console — o sistema de nomes deste pacote é próprio (prefixo ppl-)' },
-  { re: /#6f00ff/i,
-    motivo: 'violeta da identidade anterior — a marca é o azul #2F5AD0' },
-  { re: /\bfonts\.googleapis\.com|\bfonts\.gstatic\.com/,
-    motivo: 'CDN de fonte de terceiro — as fontes são self-hospedadas em src/fonts/' },
-  { re: /\bcdn\.jsdelivr\.net\/(?!gh\/FelipeSilveiraBNG\/ppl-compass)/,
-    motivo: 'referência a pacote de terceiro no CDN — o pacote é zero dependência' },
-  // Emoji em string de UI. Zero emoji é regra do design system: ícone é ícone.
-  { re: /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u,
-    motivo: 'emoji — proibido em qualquer superfície; use um ícone de ppl-compass-icons.js' },
-];
-
-/** Linhas que citam um nome antigo para explicar a substituição são legítimas. */
-const EXPLICATIVA = /→|->|console:|era |em vez de|substitu|herdad|no lugar de/i;
-
 async function listar(dir, base = dir) {
   const saida = [];
   for (const item of await readdir(dir, { withFileTypes: true })) {
@@ -68,16 +48,14 @@ const arquivos = await listar(SRC);
 const textuais = arquivos.filter((f) => /\.(css|js)$/.test(f));
 const binarios = arquivos.filter((f) => !/\.(css|js)$/.test(f));
 
-/* ── 1. conferir ───────────────────────────────────────────────────────── */
+/* ── 1. conferir ───────────────────────────────────────────────────────────
+ * As invariantes moram em invariantes.mjs, porque o lint.mjs confere as mesmas
+ * em arquivos que nunca entram em dist/. Uma regra, um lugar.
+ * ─────────────────────────────────────────────────────────────────────────── */
 const erros = [];
 for (const rel of textuais) {
-  const linhas = (await readFile(join(SRC, rel), 'utf8')).split('\n');
-  linhas.forEach((linha, i) => {
-    if (EXPLICATIVA.test(linha)) return;
-    for (const { re, motivo } of PROIBIDO) {
-      if (re.test(linha)) erros.push(`  src/${rel}:${i + 1}  ${motivo}\n    ${linha.trim()}`);
-    }
-  });
+  const achados = conferir(await readFile(join(SRC, rel), 'utf8'), `src/${rel}`);
+  for (const a of achados) erros.push(`  ${a.rotulo}:${a.linha}  ${a.motivo}\n    ${a.trecho}`);
 }
 for (const pasta of HTML) {
   const base = join(raiz, pasta);
@@ -88,13 +66,8 @@ for (const pasta of HTML) {
     continue;                       // a pasta pode não existir ainda
   }
   for (const rel of lista) {
-    const linhas = (await readFile(join(base, rel), 'utf8')).split('\n');
-    linhas.forEach((linha, i) => {
-      if (EXPLICATIVA.test(linha)) return;
-      for (const { re, motivo } of PROIBIDO) {
-        if (re.test(linha)) erros.push(`  ${pasta}/${rel}:${i + 1}  ${motivo}\n    ${linha.trim()}`);
-      }
-    });
+    const achados = conferir(await readFile(join(base, rel), 'utf8'), `${pasta}/${rel}`);
+    for (const a of achados) erros.push(`  ${a.rotulo}:${a.linha}  ${a.motivo}\n    ${a.trecho}`);
   }
 }
 
